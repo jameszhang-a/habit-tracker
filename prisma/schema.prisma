@@ -38,6 +38,7 @@ model Account {
     user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
     @@unique([provider, providerAccountId])
+    @@index([userId])
 }
 
 model Session {
@@ -46,6 +47,8 @@ model Session {
     userId       String
     expires      DateTime
     user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
 }
 
 model User {
@@ -56,6 +59,7 @@ model User {
     image         String?
     accounts      Account[]
     sessions      Session[]
+    Habit         Habit[]
 }
 
 model VerificationToken {
@@ -64,4 +68,29 @@ model VerificationToken {
     expires    DateTime
 
     @@unique([identifier, token])
+}
+
+model Habit {
+    id        String     @id @default(cuid())
+    createdAt DateTime   @default(now())
+    updatedAt DateTime   @updatedAt
+    name      String
+    user      User       @relation(fields: [userId], references: [id])
+    userId    String
+    streak    Int        @default(0)
+    HabitLog  HabitLog[]
+
+    @@index([userId])
+}
+
+model HabitLog {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    habit     Habit    @relation(fields: [habitId], references: [id])
+    habitId   String
+    date      DateTime
+    completed Boolean  @default(false)
+
+    @@index([habitId])
 }
