@@ -1,8 +1,11 @@
 import { useSession, signOut, signIn } from "next-auth/react";
-import Link from "next/link";
 import { useState, useEffect } from "react";
-import Habit from "../Components/Habit";
+import Link from "next/link";
+import { DatePicker } from "@mantine/dates";
+
 import type { RouterOutputs } from "../utils/api";
+
+import Habit from "../Components/Habit";
 import { api } from "../utils/api";
 
 type Habits = RouterOutputs["habit"]["getHabits"];
@@ -12,6 +15,7 @@ const habitAPI = api.habit;
 const Page = () => {
   const [habitForm, setHabitForm] = useState("");
   const [habits, setHabits] = useState<Habits>([]);
+  const [date, setDate] = useState<Date>(new Date());
 
   const { data: sessionData } = useSession();
 
@@ -64,6 +68,8 @@ const Page = () => {
         {sessionData ? "Sign out" : "Sign in"}
       </button>
 
+      <DatePicker value={date} onChange={setDate} clearable={false} />
+
       {sessionData && (
         <>
           <div className="mb-10 flex flex-col items-center gap-4">
@@ -76,6 +82,7 @@ const Page = () => {
                   key={habit.id}
                   habit={habit}
                   handleDelete={handleDelete}
+                  date={date}
                 />
               ))
             )}

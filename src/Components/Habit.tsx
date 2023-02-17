@@ -6,6 +6,7 @@ type Habit = RouterOutputs["habit"]["getHabits"][0];
 
 type Props = {
   habit: Habit;
+  date: Date;
   handleDelete: (id: string) => void;
 };
 
@@ -21,17 +22,18 @@ const formatDate = (date: Date) => {
 
 const habitAPI = api.habit;
 
-const Habit = ({ habit, handleDelete }: Props) => {
+const Habit = ({ habit, date, handleDelete }: Props) => {
   const [showCheck, setShowCheck] = useState(false);
 
-  const { logHabit, loggedToday } = habitAPI;
+  const { logHabit, loggedOnDate } = habitAPI;
 
   const habitLogCreation = logHabit.useMutation({
     onSuccess(data) {
       setShowCheck(data.completed);
     },
   });
-  const { data } = loggedToday.useQuery({ id: habit.id });
+
+  const { data } = loggedOnDate.useQuery({ id: habit.id, date });
 
   const handleCheck = (habitID: string) => {
     // create a habit log for the day that it's checked
@@ -40,9 +42,7 @@ const Habit = ({ habit, handleDelete }: Props) => {
   };
 
   useEffect(() => {
-    if (data) {
-      setShowCheck(data.completed);
-    }
+    setShowCheck(data ? true : false);
   }, [data]);
 
   return (

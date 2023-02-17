@@ -12,8 +12,8 @@ const formatDate = (date: string) => {
   return `${year}-${month}-${day}`;
 };
 
-const getDateInterval = () => {
-  const now = new Date();
+const getDateInterval = (currDate?: Date) => {
+  const now = currDate ? new Date(currDate) : new Date();
 
   const dayStart = new Date(now);
   dayStart.setHours(0, 0, 0, 0);
@@ -129,4 +129,32 @@ export const habitRouter = createTRPCRouter({
 
       return habitLogs;
     }),
+
+  loggedOnDate: protectedProcedure
+    .input(z.object({ id: z.string(), date: z.date() }))
+    .query(({ ctx, input }) => {
+      const { dayStart, dayEnd } = getDateInterval(input.date);
+
+      const habitLogs = ctx.prisma.habitLog.findFirst({
+        where: {
+          habitId: input.id,
+          date: {
+            gte: dayStart,
+            lt: dayEnd,
+          },
+          completed: true,
+        },
+      });
+
+      return habitLogs;
+    }),
+
+  /**
+   * Nukes all habit logs for the current user
+   */
+  loggedDataNuke: protectedProcedure.mutation(({ ctx }) => {
+    const habitLogs = ctx.prisma.habitLog.deleteMany({});
+
+    return habitLogs;
+  }),
 });
