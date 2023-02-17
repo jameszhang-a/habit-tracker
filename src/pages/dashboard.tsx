@@ -7,6 +7,7 @@ import type { RouterOutputs } from "../utils/api";
 
 import Habit from "../Components/Habit";
 import { api } from "../utils/api";
+import popupCenter from "../Components/Popup";
 
 type Habits = RouterOutputs["habit"]["getHabits"];
 
@@ -63,7 +64,11 @@ const Page = () => {
       </div>
       <button
         className="rounded-full bg-sky-500 px-10 py-3 font-semibold text-white no-underline transition hover:bg-sky-400"
-        onClick={sessionData ? () => void signOut() : () => void signIn()}
+        onClick={
+          sessionData
+            ? () => void signOut()
+            : () => popupCenter("/discord-signin", "Sample Sign In")
+        }
       >
         {sessionData ? "Sign out" : "Sign in"}
       </button>
