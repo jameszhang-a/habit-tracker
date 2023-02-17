@@ -35,10 +35,10 @@ const Habit = ({ habit, date, handleDelete }: Props) => {
 
   const { data } = loggedOnDate.useQuery({ id: habit.id, date });
 
-  const handleCheck = (habitID: string) => {
+  const handleCheck = () => {
     // create a habit log for the day that it's checked
     // if it's already checked, then uncheck it
-    habitLogCreation.mutate({ id: habitID });
+    habitLogCreation.mutate({ id: habit.id, date });
   };
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const Habit = ({ habit, date, handleDelete }: Props) => {
       <div>
         <input
           type="checkbox"
-          onChange={() => handleCheck(habit.id)}
+          onChange={() => handleCheck()}
           checked={showCheck}
         />
       </div>

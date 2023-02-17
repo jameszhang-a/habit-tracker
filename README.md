@@ -7,9 +7,10 @@ Keep track of your habits and goals.
 ## TODO
 
 - [ ] calculate streak
-- [ ] Check habit status for ALL days
-- [ ] when deleting habit, delete all habit logs
 - [ ] Order habits
+- [x] Check habit status for ALL past days
+- [x] see habit status for ALL past days
+- [x] when deleting habit, delete all habit logs
 - [x] Check habit status for today
 
 ### calculating streaks

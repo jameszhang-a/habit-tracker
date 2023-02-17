@@ -68,7 +68,12 @@ const Page = () => {
         {sessionData ? "Sign out" : "Sign in"}
       </button>
 
-      <DatePicker value={date} onChange={setDate} clearable={false} />
+      <DatePicker
+        value={date}
+        onChange={setDate}
+        clearable={false}
+        maxDate={new Date()}
+      />
 
       {sessionData && (
         <>
