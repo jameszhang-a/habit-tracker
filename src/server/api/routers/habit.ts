@@ -74,7 +74,7 @@ export const habitRouter = createTRPCRouter({
    * if the habit doesn't exist, it will be created and marked as completed.
    */
   logHabit: protectedProcedure
-    .input(z.object({ id: z.string(), date: z.date() }))
+    .input(z.object({ id: z.string().min(1), date: z.date() }))
     .mutation(async ({ ctx, input }) => {
       // check to see if the habit has already been logged for the date provided
       // to do this, we need to check that the date of the log is less than the beginning 00:00 of the next day and greater than the beginning of the last dat 00:00

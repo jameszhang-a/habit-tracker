@@ -6,7 +6,11 @@ Keep track of your habits and goals.
 
 ## TODO
 
-- [ ] calculate streak
+- [ ] calculate streak (different for each habit type)
+- [ ] separate habits into daily, weekly, monthly
+  - [ ] creation modal for habits
+- [ ] archive habits (move to archive page, keep data but doesn't show up in main page)
+- [ ] spaced habits (only show up on certain days/based on pattern)
 - [ ] Order habits
 - [x] Check habit status for ALL past days
 - [x] see habit status for ALL past days
