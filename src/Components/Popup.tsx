@@ -15,13 +15,7 @@ const popupCenter = (url: string, title: string) => {
   const left = (width - 500) / 2 / systemZoom + dualScreenLeft;
   const top = (height - 550) / 2 / systemZoom + dualScreenTop;
 
-  const newWindow = window.open(
-    url,
-    title,
-    `width=${500 / systemZoom},height=${
-      550 / systemZoom
-    },top=${top},left=${left}`
-  );
+  const newWindow = window.open(url, title, `popup`);
 
   newWindow?.focus();
 };
