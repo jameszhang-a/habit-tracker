@@ -16,7 +16,8 @@ Deployed to [Vercel](https://vercel.com).
 
 ## TODO
 
-- [ ] Add a way to add a new goal
-- [ ] Order habits
-- [ ] Check habit status for today
+- [ ] calculate streak
 - [ ] Check habit status for ALL days
+- [ ] when deleting habit, delete all habit logs
+- [ ] Order habits
+- [x] Check habit status for today
