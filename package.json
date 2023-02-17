@@ -5,7 +5,7 @@
   "scripts": {
     "build": "next build",
     "dev": "next dev",
-    "postinstall": "prisma generate",
+    "postinstall": "prisma generate && npx patch-package",
     "lint": "next lint",
     "start": "next start"
   },
@@ -21,6 +21,7 @@
     "dayjs": "^1.11.7",
     "next": "13.1.6",
     "next-auth": "^4.19.0",
+    "patch-package": "^6.5.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "superjson": "1.9.1",

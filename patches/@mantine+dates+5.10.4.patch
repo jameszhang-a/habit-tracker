@@ -1,0 +1,13 @@
+diff --git a/node_modules/@mantine/dates/lib/components/DatePicker/DatePicker.d.ts b/node_modules/@mantine/dates/lib/components/DatePicker/DatePicker.d.ts
+index ea2ee6b..85592c3 100644
+--- a/node_modules/@mantine/dates/lib/components/DatePicker/DatePicker.d.ts
++++ b/node_modules/@mantine/dates/lib/components/DatePicker/DatePicker.d.ts
+@@ -6,7 +6,7 @@ export interface DatePickerProps extends Omit<DatePickerBaseSharedProps, 'onChan
+     /** Selected date, required with controlled input */
+     value?: Date | null;
+     /** Called when date changes */
+-    onChange?(value: Date | null): void;
++    onChange?(value: Date): void;
+     /** Default value for uncontrolled input */
+     defaultValue?: Date | null;
+     /** Set to false to force dropdown to stay open after date was selected */
