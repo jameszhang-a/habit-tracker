@@ -26,6 +26,9 @@ const getDateInterval = () => {
 };
 
 export const habitRouter = createTRPCRouter({
+  /**
+   * Returns all habits for the current user
+   */
   getHabits: protectedProcedure.query(({ ctx }) => {
     const habits = ctx.prisma.habit.findMany({
       where: { userId: ctx.session.user.id },
@@ -34,6 +37,9 @@ export const habitRouter = createTRPCRouter({
     return habits;
   }),
 
+  /**
+   * Creates a new habit for the current user
+   */
   createHabit: protectedProcedure
     .input(z.object({ name: z.string() }))
     .mutation(({ ctx, input }) => {
@@ -47,6 +53,9 @@ export const habitRouter = createTRPCRouter({
       return habit;
     }),
 
+  /**
+   * Deletes a habit for the current user
+   */
   deleteHabit: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
@@ -57,6 +66,13 @@ export const habitRouter = createTRPCRouter({
       return habit;
     }),
 
+  /**
+   * Marks the current day as completed for the habit
+   *
+   * if the habit has already been logged today, it will be marked as not completed.
+   * if the habit has not been logged today, it will be marked as completed.
+   * if the habit doesn't exist, it will be created and marked as completed.
+   */
   logHabit: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(async ({ ctx, input }) => {
@@ -76,8 +92,6 @@ export const habitRouter = createTRPCRouter({
       });
 
       if (!habitLog) {
-        console.log("No log today, creating new log");
-
         return ctx.prisma.habitLog.create({
           data: {
             habitId: input.id,
@@ -85,25 +99,18 @@ export const habitRouter = createTRPCRouter({
             completed: true,
           },
         });
-      } else if (!habitLog.completed) {
-        // set the habit to completed
-        console.log("have not completed, setting to completed");
-
-        return ctx.prisma.habitLog.update({
-          where: { id: habitLog.id },
-          data: { completed: true },
-        });
       } else {
-        // set the habit to not completed
-        console.log("have completed, setting to not completed");
-
+        // set the habit to completed if it's not already
         return ctx.prisma.habitLog.update({
           where: { id: habitLog.id },
-          data: { completed: false },
+          data: { completed: !habitLog.completed },
         });
       }
     }),
 
+  /**
+   * Returns the habit log for the current day if it's completed
+   */
   loggedToday: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
