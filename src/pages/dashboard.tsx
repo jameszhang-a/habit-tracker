@@ -48,6 +48,7 @@ const Page = () => {
     habitDeletion.mutate({ id });
     setHabits((oldHabits) => oldHabits.filter((habit) => habit.id !== id));
   };
+  console.log(sessionData?.user);
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
@@ -59,15 +60,17 @@ const Page = () => {
           <h3 className="text-l font-bold">← back</h3>
         </Link>
         <div className="text-center text-2xl text-black">
-          {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
+          {sessionData && (
+            <span>
+              Logged in as {sessionData.user?.name}, {sessionData.user.id}
+            </span>
+          )}
         </div>
       </div>
       <button
         className="rounded-full bg-sky-500 px-10 py-3 font-semibold text-white no-underline transition hover:bg-sky-400"
         onClick={
-          sessionData
-            ? () => void signOut()
-            : () => popupCenter("/discord-signin", "Sample Sign In")
+          sessionData ? () => void signOut() : () => void signIn("discord")
         }
       >
         {sessionData ? "Sign out" : "Sign in"}

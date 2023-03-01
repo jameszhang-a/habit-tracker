@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
     provider = "prisma-client-js"
 }
@@ -11,7 +8,6 @@ datasource db {
     url          = env("DATABASE_URL")
 }
 
-// Necessary for Next auth
 model Account {
     id                String  @id @default(cuid())
     userId            String
@@ -42,7 +38,7 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String    @id @default(cuid()) // clegntvpo00003v055qnjrwxv
     name          String?
     email         String?   @unique
     emailVerified DateTime?
@@ -61,12 +57,15 @@ model VerificationToken {
 }
 
 model Habit {
-    id        String     @id @default(cuid())
-    createdAt DateTime   @default(now())
-    updatedAt DateTime   @updatedAt
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
     name      String
     user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String
+    frequency Frequency  @default(DAILY)
+    goal      Int        @default(1)
     HabitLog  HabitLog[]
 
     @@index([userId])
@@ -82,4 +81,10 @@ model HabitLog {
     completed Boolean  @default(false)
 
     @@index([habitId])
+}
+
+enum Frequency {
+    DAILY
+    WEEKLY
+    MONTHLY
 }
