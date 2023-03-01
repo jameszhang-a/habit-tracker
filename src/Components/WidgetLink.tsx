@@ -22,7 +22,7 @@ const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
           </button>
         </Link>
 
-        <CopyToClipboard text={url} />
+        <CopyToClipboard url={url} />
       </div>
     </div>
   );
@@ -30,7 +30,7 @@ const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
 
 export default WidgetLink;
 
-const CopyToClipboard = ({ text }: { text: string }) => {
+const CopyToClipboard = ({ url }: { url: string }) => {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -44,12 +44,8 @@ const CopyToClipboard = ({ text }: { text: string }) => {
   }, [copied]);
 
   const copyToClipboard = async () => {
-    await navigator.clipboard
-      .writeText(text)
-      .then()
-      .catch((err) => {
-        console.error(err);
-      });
+    await navigator.clipboard.writeText(url);
+
     setCopied(true);
   };
 
