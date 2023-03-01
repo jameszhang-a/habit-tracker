@@ -6,16 +6,13 @@ Keep track of your habits and goals.
 
 ## TODO
 
-- [ ] generate unique endpoint for each user
-  - [ ] new table for habit-tracker
-  - [ ] each user foreign id to habit-tracker 
-  - [ ] store data of all habits 
 - [ ] calculate streak (different for each habit type)
 - [ ] separate habits into daily, weekly, monthly
   - [ ] creation modal for habits
 - [ ] archive habits (move to archive page, keep data but doesn't show up in main page)
 - [ ] spaced habits (only show up on certain days/based on pattern)
 - [ ] Order habits
+- [x] generate unique endpoint for each user
 - [x] Check habit status for ALL past days
 - [x] see habit status for ALL past days
 - [x] when deleting habit, delete all habit logs

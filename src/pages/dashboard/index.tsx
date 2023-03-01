@@ -80,7 +80,7 @@ const Page = () => {
         <>
           <section>
             <h1 className="text-2xl text-sky-400">Dashboard</h1>
-            <div className="text-xl font-semibold">
+            <div className="mb-4 text-xl font-semibold">
               Get your embeddable links here!
             </div>
             <div>

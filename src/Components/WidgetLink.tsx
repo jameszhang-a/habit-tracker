@@ -12,17 +12,22 @@ const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
   const url = `${baseURL}/${to}/${uid}`;
 
   return (
-    <div className="flex flex-row items-center justify-between pb-4">
-      {url}
+    <div>
+      <div className="font-bold uppercase">{to}</div>
 
-      <div className="ml-5 flex flex-row gap-2">
-        <Link href={url}>
-          <button className="inline-block rounded bg-blue-400 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-blue-500 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-blue-500 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-blue-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]">
+      <div className="flex flex-row items-center justify-between pb-4">
+        {url}
+
+        <div className="ml-5 flex flex-row gap-2">
+          <Link
+            href={url}
+            className="inline-block rounded bg-blue-400 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-blue-500 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-blue-500 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-blue-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+          >
             visit
-          </button>
-        </Link>
+          </Link>
 
-        <CopyToClipboard url={url} />
+          <CopyToClipboard url={url} />
+        </div>
       </div>
     </div>
   );
