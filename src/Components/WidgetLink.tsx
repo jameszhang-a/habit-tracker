@@ -4,15 +4,15 @@ import { useEffect, useState } from "react";
 const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
   const baseURL =
     process.env.NODE_ENV === "production"
-      ? !process.env.NEXT_PUBLIC_VERCEL_URL
+      ? !process.env.NEXT_PUBLIC_URL
         ? ""
-        : `https://${process.env.NEXT_PUBLIC_VERCEL_URL}`
+        : `https://${process.env.NEXT_PUBLIC_URL}`
       : "http://localhost:3000";
 
   const url = `${baseURL}/${to}/${uid}`;
 
   console.log("vercel url: ", process.env.VERCEL_URL);
-  console.log("public vercel url: ", process.env.NEXT_PUBLIC_VERCEL_URL);
+  console.log("public vercel url: ", process.env.NEXT_PUBLIC_URL);
 
   return (
     <div className="flex flex-row items-center justify-between pb-4">
