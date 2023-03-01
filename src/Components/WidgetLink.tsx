@@ -11,6 +11,8 @@ const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
 
   const url = `${baseURL}/${to}/${uid}`;
 
+  console.log("vercel url: ", process.env.VERCEL_URL);
+
   return (
     <div className="flex flex-row items-center justify-between pb-4">
       {url}
