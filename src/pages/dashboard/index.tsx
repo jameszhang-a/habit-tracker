@@ -3,11 +3,12 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { DatePicker } from "@mantine/dates";
 
-import type { RouterOutputs } from "../utils/api";
+import type { RouterOutputs } from "~/utils/api";
 
-import Habit from "../Components/Habit";
-import { api } from "../utils/api";
-import popupCenter from "../Components/Popup";
+import Habit from "~/Components/Habit";
+import { api } from "~/utils/api";
+
+import WidgetLink from "~/Components/WidgetLink";
 
 type Habits = RouterOutputs["habit"]["getHabits"];
 
@@ -48,7 +49,6 @@ const Page = () => {
     habitDeletion.mutate({ id });
     setHabits((oldHabits) => oldHabits.filter((habit) => habit.id !== id));
   };
-  console.log(sessionData?.user);
 
   return (
     <div className="flex flex-col items-center justify-center gap-4">
@@ -65,26 +65,36 @@ const Page = () => {
               Logged in as {sessionData.user?.name}, {sessionData.user.id}
             </span>
           )}
+          <button
+            className="rounded-full bg-sky-500 px-4 py-2 font-semibold text-white no-underline transition hover:bg-sky-400"
+            onClick={
+              sessionData ? () => void signOut() : () => void signIn("discord")
+            }
+          >
+            {sessionData ? "Sign out" : "Sign in"}
+          </button>
         </div>
       </div>
-      <button
-        className="rounded-full bg-sky-500 px-10 py-3 font-semibold text-white no-underline transition hover:bg-sky-400"
-        onClick={
-          sessionData ? () => void signOut() : () => void signIn("discord")
-        }
-      >
-        {sessionData ? "Sign out" : "Sign in"}
-      </button>
-
-      <DatePicker
-        value={date}
-        onChange={setDate}
-        clearable={false}
-        maxDate={new Date()}
-      />
 
       {sessionData && (
         <>
+          <section>
+            <h1 className="text-2xl text-sky-400">Dashboard</h1>
+            <div className="text-xl font-semibold">
+              Get your embeddable links here!
+            </div>
+            <div>
+              <WidgetLink to="tracker" uid={sessionData.user.id} />
+              <WidgetLink to="stats" uid={sessionData.user.id} />
+            </div>
+          </section>
+
+          <DatePicker
+            value={date}
+            onChange={setDate}
+            clearable={false}
+            maxDate={new Date()}
+          />
           <div className="mb-10 flex flex-col items-center gap-4">
             <h1 className="text-xl text-amber-400">Habits</h1>
             {isLoading ? (

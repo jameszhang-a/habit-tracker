@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import type { RouterOutputs } from "../utils/api";
-import { api } from "../utils/api";
+import type { RouterOutputs } from "~/utils/api";
+import { api } from "~/utils/api";
 
 type Habit = RouterOutputs["habit"]["getHabits"][0];
 
