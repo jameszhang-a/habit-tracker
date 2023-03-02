@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
 // helper function to turn ISO date string into a date in the form of "2021-01-01"
 const formatDate = (date: string) => {
@@ -29,13 +29,15 @@ export const habitRouter = createTRPCRouter({
   /**
    * Returns all habits for the current user
    */
-  getHabits: protectedProcedure.query(({ ctx }) => {
-    const habits = ctx.prisma.habit.findMany({
-      where: { userId: ctx.session.user.id },
-    });
+  getHabits: publicProcedure
+    .input(z.object({ uid: z.string().optional() }))
+    .query(({ ctx, input }) => {
+      const habits = ctx.prisma.habit.findMany({
+        where: { userId: input.uid },
+      });
 
-    return habits;
-  }),
+      return habits;
+    }),
 
   /**
    * Creates a new habit for the current user
@@ -73,7 +75,7 @@ export const habitRouter = createTRPCRouter({
    * if the habit has not been logged today, it will be marked as completed.
    * if the habit doesn't exist, it will be created and marked as completed.
    */
-  logHabit: protectedProcedure
+  logHabit: publicProcedure
     .input(z.object({ id: z.string().min(1), date: z.date() }))
     .mutation(async ({ ctx, input }) => {
       // check to see if the habit has already been logged for the date provided
@@ -111,7 +113,7 @@ export const habitRouter = createTRPCRouter({
   /**
    * Returns the habit log for the current day if it's completed
    */
-  loggedToday: protectedProcedure
+  loggedToday: publicProcedure
     .input(z.object({ id: z.string() }))
     .query(({ ctx, input }) => {
       const { dayStart, dayEnd } = getDateInterval();
@@ -130,7 +132,7 @@ export const habitRouter = createTRPCRouter({
       return habitLogs;
     }),
 
-  loggedOnDate: protectedProcedure
+  loggedOnDate: publicProcedure
     .input(z.object({ id: z.string(), date: z.date() }))
     .query(({ ctx, input }) => {
       const { dayStart, dayEnd } = getDateInterval(input.date);

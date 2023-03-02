@@ -23,7 +23,9 @@ const Page = () => {
 
   const { getHabits, createHabit, deleteHabit } = habitAPI;
 
-  const { data: habitsData, isLoading } = getHabits.useQuery();
+  const { data: habitsData, isLoading } = getHabits.useQuery({
+    uid: sessionData?.user.id,
+  });
 
   useEffect(() => {
     if (habitsData) {
@@ -67,9 +69,7 @@ const Page = () => {
           )}
           <button
             className="rounded-full bg-sky-500 px-4 py-2 font-semibold text-white no-underline transition hover:bg-sky-400"
-            onClick={
-              sessionData ? () => void signOut() : () => void signIn("discord")
-            }
+            onClick={sessionData ? () => void signOut() : () => void signIn()}
           >
             {sessionData ? "Sign out" : "Sign in"}
           </button>
