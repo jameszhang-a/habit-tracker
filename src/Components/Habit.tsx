@@ -7,7 +7,7 @@ type Habit = RouterOutputs["habit"]["getHabits"][0];
 type Props = {
   habit: Habit;
   date: Date;
-  handleDelete: (id: string) => void;
+  handleDelete?: (id: string) => void;
 };
 
 const formatDate = (date: Date) => {
@@ -56,12 +56,15 @@ const Habit = ({ habit, date, handleDelete }: Props) => {
       </div>
       <div>{habit.name}</div>
       <div>{formatDate(habit.createdAt)}</div>
-      <button
-        className="rounded bg-red-400 px-2 hover:bg-red-200"
-        onClick={() => handleDelete(habit.id)}
-      >
-        x
-      </button>
+
+      {handleDelete && (
+        <button
+          className="rounded bg-red-400 px-2 hover:bg-red-200"
+          onClick={() => handleDelete(habit.id)}
+        >
+          x
+        </button>
+      )}
     </div>
   );
 };
