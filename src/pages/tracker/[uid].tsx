@@ -1,7 +1,9 @@
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+
 import Habit from "~/Components/Habit";
+import Refresh from "~/Components/Refresh";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 
@@ -12,6 +14,9 @@ type Habits = RouterOutputs["habit"]["getHabits"];
 const Tracker: NextPage = () => {
   const [habits, setHabits] = useState<Habits>([]);
   const [date, setDate] = useState<Date>(new Date());
+  const [reload, setReload] = useState<boolean>(false);
+
+  console.log("reload", reload);
 
   const router = useRouter();
   const uid = router.query.uid as string;
@@ -41,7 +46,8 @@ const Tracker: NextPage = () => {
             <Habit key={habit.id} habit={habit} date={date} />
           ))
         )}
-        <ul></ul>
+
+        <Refresh trigger={setReload} />
       </div>
     </div>
   );
