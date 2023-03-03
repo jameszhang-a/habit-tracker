@@ -34,7 +34,7 @@ const Tracker: NextPage = () => {
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-pink-300 to-blue-900">
       {/* actual component */}
-      <div className="flex flex-col border border-gray-200  px-4 py-10 shadow-xl backdrop-blur sm:rounded-3xl sm:p-20">
+      <div className="relative flex flex-col border  border-gray-200 px-4 py-10 shadow-xl backdrop-blur sm:rounded-3xl sm:p-20">
         <div>Tracker page</div>
         <div>User id: {uid}</div>
 
@@ -47,7 +47,7 @@ const Tracker: NextPage = () => {
           ))
         )}
 
-        <Refresh trigger={setReload} />
+        <Refresh />
       </div>
     </div>
   );

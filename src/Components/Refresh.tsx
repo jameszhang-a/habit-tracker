@@ -1,14 +1,8 @@
-import { useState } from "react";
-import type { Dispatch, SetStateAction } from "react";
 import { useRouter } from "next/router";
-
+import { useState } from "react";
 import { RefreshCircleOutline } from "react-ionicons";
 
-const RefreshButton = ({
-  trigger,
-}: {
-  trigger: Dispatch<SetStateAction<boolean>>;
-}) => {
+const RefreshButton = () => {
   const [hover, setHover] = useState(false);
   const router = useRouter();
 
@@ -16,7 +10,7 @@ const RefreshButton = ({
     <button
       onMouseOver={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
-      onClick={() => trigger((prev) => !prev)}
+      onClick={() => router.reload()}
       className="absolute bottom-3 right-5 rounded-md text-lg font-bold text-white shadow-lg transition duration-200 ease-in-out hover:shadow-xl"
     >
       <RefreshCircleOutline
