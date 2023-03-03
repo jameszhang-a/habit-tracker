@@ -3,7 +3,9 @@ import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import Gradient from "./Gradient";
 
-type Habit = RouterOutputs["habit"]["getHabits"][0];
+import { default as c } from "classnames";
+
+type Habit = RouterOutputs["habit"]["getHabits"][number];
 
 type Props = {
   habit: Habit;
@@ -11,20 +13,11 @@ type Props = {
   handleDelete?: (id: string) => void;
 };
 
-const formatDate = (date: Date) => {
-  return date.toLocaleString("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "numeric",
-    minute: "2-digit",
-  });
-};
-
 const habitAPI = api.habit;
 
-const Habit = ({ habit, date, handleDelete }: Props) => {
+const Habit = ({ habit, date }: Props) => {
   const [showCheck, setShowCheck] = useState(false);
+  const [animate, setAnimate] = useState(false);
   const { current: inputId } = useRef(`habit-${habit.id}`);
 
   const { logHabit, loggedOnDate } = habitAPI;
@@ -35,21 +28,42 @@ const Habit = ({ habit, date, handleDelete }: Props) => {
   }, [data]);
 
   const habitLogCreation = logHabit.useMutation({
-    onSuccess(data) {
-      setShowCheck(data.completed);
+    onError() {
+      setShowCheck((prev) => !prev);
     },
   });
 
   const handleCheck = () => {
+    setAnimate(true);
+    setShowCheck((prev) => !prev);
+
     // create a habit log for the day that it's checked
     // if it's already checked, then uncheck it
     habitLogCreation.mutate({ id: habit.id, date });
+
+    setTimeout(() => {
+      setAnimate(false);
+    }, 3000);
   };
 
+  const hoverEffect =
+    "hover:scale-110 transition ease-in-out delay-50 duration-150";
+
   return (
-    <div className="relative grid h-[100px] w-[150px] grid-cols-3 overflow-hidden rounded-2xl border border-gray-100/20 p-3 pl-4 shadow-lg">
+    <div
+      className={`${hoverEffect} relative grid h-[100px] w-[150px] grid-cols-3 overflow-hidden rounded-2xl border border-gray-100/20 p-3 pl-4 shadow-lg`}
+    >
       <Gradient />
-      <div className={`text-4xl`}>🏋️‍♀️</div>
+      <div
+        className={c(
+          {
+            "scale-[400]": animate,
+          },
+          `transform text-4xl duration-[10000ms] ease-in-out`
+        )}
+      >
+        🏋️‍♀️
+      </div>
 
       <div className={`relative col-start-3`}>
         <input
