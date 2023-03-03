@@ -57,6 +57,7 @@ const Gradient = () => {
           width: "100%",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
+          borderRadius: "1rem",
           zIndex: -1,
         }}
       />
