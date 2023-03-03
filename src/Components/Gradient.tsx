@@ -12,6 +12,7 @@ const Gradient = () => {
           background: "#9593D9",
           borderRadius: "50%",
           zIndex: -1,
+          filter: "blur(15px)",
         }}
       />
       <div
@@ -24,6 +25,7 @@ const Gradient = () => {
           background: "#fe9378",
           borderRadius: "50%",
           zIndex: -1,
+          filter: "blur(15px)",
         }}
       />
       <div
@@ -36,6 +38,7 @@ const Gradient = () => {
           background: "#FCF6BD",
           borderRadius: "50%",
           zIndex: -1,
+          filter: "blur(15px)",
         }}
       />
       <div
@@ -48,9 +51,10 @@ const Gradient = () => {
           background: "#D0F4DE",
           borderRadius: "50%",
           zIndex: -1,
+          filter: "blur(15px)",
         }}
       />
-      <div
+      {/* <div
         style={{
           position: "absolute",
           height: "100%",
@@ -60,7 +64,7 @@ const Gradient = () => {
           borderRadius: "1rem",
           zIndex: -1,
         }}
-      />
+      /> */}
     </>
   );
 };
