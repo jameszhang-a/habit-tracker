@@ -51,7 +51,7 @@ const Habit = ({ habit, date }: Props) => {
 
   return (
     <div
-      className={`${hoverEffect} relative grid h-[100px] w-[150px] grid-cols-3 overflow-hidden rounded-2xl border border-gray-100/20 p-3 pl-4 shadow-lg`}
+      className={`${hoverEffect} grid h-[100px] min-w-[150px] max-w-[150px] transform grid-cols-3 overflow-hidden rounded-2xl border border-gray-100/20 p-3 pl-4 shadow-lg`}
     >
       <Gradient />
       <div

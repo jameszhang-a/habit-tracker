@@ -1,12 +1,12 @@
 import { useSession, signOut, signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { DatePicker } from "@mantine/dates";
 
-import type { RouterOutputs } from "~/utils/api";
+import { DateInput } from "@mantine/dates";
+import { useAutoAnimate } from "@formkit/auto-animate/react";
 
-import Habit from "~/Components/Habit";
 import { api } from "~/utils/api";
+import type { RouterOutputs } from "~/utils/api";
 
 import WidgetLink from "~/Components/WidgetLink";
 
@@ -17,7 +17,8 @@ const habitAPI = api.habit;
 const Page = () => {
   const [habitForm, setHabitForm] = useState("");
   const [habits, setHabits] = useState<Habits>([]);
-  const [date, setDate] = useState<Date>(new Date());
+  const [date, setDate] = useState<Date | null>(null);
+  const [parent] = useAutoAnimate();
 
   const { data: sessionData } = useSession();
 
@@ -89,24 +90,23 @@ const Page = () => {
             </div>
           </section>
 
-          <DatePicker
-            value={date}
-            onChange={setDate}
-            clearable={false}
-            maxDate={new Date()}
-          />
-          <div className="mb-10 flex flex-col items-center gap-4">
+          <DateInput value={date} onChange={setDate} maxDate={new Date()} />
+          <div ref={parent} className="mb-10 flex flex-col items-center gap-4">
             <h1 className="text-xl text-amber-400">Habits</h1>
             {isLoading ? (
               <div>loading...</div>
             ) : (
               habits?.map((habit) => (
-                <Habit
-                  key={habit.id}
-                  habit={habit}
-                  handleDelete={handleDelete}
-                  date={date}
-                />
+                <div key={habit.id}>
+                  {habit.name}
+
+                  <span
+                    onClick={() => handleDelete(habit.id)}
+                    className="cursor-pointer"
+                  >
+                    x
+                  </span>
+                </div>
               ))
             )}
           </div>
