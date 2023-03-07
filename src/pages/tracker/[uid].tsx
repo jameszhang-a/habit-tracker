@@ -8,6 +8,7 @@ import { createStyles, getStylesRef } from "@mantine/core";
 import Habit from "~/Components/Habit";
 import HabitLoading from "~/Components/HabitLoading";
 import Refresh from "~/Components/Refresh";
+import { DatePicker } from "~/Components/DatePicker";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 
@@ -52,6 +53,7 @@ const Tracker: NextPage = () => {
           <HabitLoading />
         </Carousel.Slide>
       ));
+  console.log("date", date);
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-pink-300 to-blue-900">
@@ -66,6 +68,7 @@ const Tracker: NextPage = () => {
             day: "numeric",
           })}
         </div>
+        <DatePicker numDays={5} onDateChange={setDate} activeDate={date} />
         <Carousel
           slideSize={`33.333333%`}
           align="start"
