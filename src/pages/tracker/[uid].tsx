@@ -40,7 +40,7 @@ const Tracker: NextPage = () => {
     ? habits.map((habit) => (
         <Carousel.Slide
           key={habit.id}
-          className="relative grid items-center justify-center border"
+          className="relative grid items-center justify-center"
         >
           <Habit key={habit.id} habit={habit} date={date} />
         </Carousel.Slide>
@@ -48,7 +48,7 @@ const Tracker: NextPage = () => {
     : Array.from({ length: 3 }, (_, i) => (
         <Carousel.Slide
           key={i}
-          className="relative grid items-center justify-center border"
+          className="relative grid items-center justify-center"
         >
           <HabitLoading />
         </Carousel.Slide>
@@ -59,7 +59,7 @@ const Tracker: NextPage = () => {
     <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-pink-300 to-blue-900">
       {/* actual component */}
       <div className="relative border border-gray-200 px-4 py-4 shadow-xl backdrop-blur sm:h-[300px] sm:w-[600px] sm:rounded-3xl">
-        <div>
+        {/* <div>
           Today&apos;s date is:{" "}
           {date.toLocaleDateString("en-US", {
             weekday: "long",
@@ -67,7 +67,7 @@ const Tracker: NextPage = () => {
             month: "long",
             day: "numeric",
           })}
-        </div>
+        </div> */}
         <DatePicker numDays={5} onDateChange={setDate} activeDate={date} />
         <Carousel
           slideSize={`33.333333%`}
@@ -91,7 +91,14 @@ export default Tracker;
 
 const useStyles = createStyles(() => ({
   control: {
-    ref: getStylesRef("abc"),
+    ref: getStylesRef("control"),
+    transition: "opacity 150ms ease",
+    opacity: 0.1,
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+  },
+
+  indicator: {
+    ref: getStylesRef("indicator"),
     transition: "opacity 150ms ease",
     opacity: 0.1,
     backgroundColor: "rgba(255, 255, 255, 0.5)",
@@ -99,7 +106,7 @@ const useStyles = createStyles(() => ({
 
   root: {
     "&:hover": {
-      [`& .${getStylesRef("abc")}`]: {
+      [`& .${getStylesRef("control")}`]: {
         opacity: 1,
       },
     },

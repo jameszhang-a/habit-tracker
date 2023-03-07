@@ -1,5 +1,7 @@
 import type { Dispatch, SetStateAction } from "react";
+import { useState } from "react";
 import { useMemo } from "react";
+import { default as c } from "classnames";
 
 interface ChildDateProps {
   date: Date;
@@ -13,17 +15,30 @@ export const ChildDate: React.FC<ChildDateProps> = ({
   onClick,
   activeDate,
 }) => {
+  const [hover, setHover] = useState(false);
+
   const isActive = useMemo(
     () => activeDate.toDateString() === date.toDateString(),
     [activeDate, date]
   );
 
+  const hoverClasses = `hover:-translate-y-1 ${
+    isActive ? "hover:bg-cyan-200" : "hover:bg-yellow-100"
+  } hover:text-gray-900 hover:shadow-lg`;
+
   return (
     <div
       onClick={() => onClick(date)}
-      className={`${
-        isActive ? "bg-red-300 hover:bg-red-200" : ""
-      } mx-1 flex h-10 w-7 cursor-pointer flex-col items-center justify-center rounded-lg bg-gray-200 p-4 py-4 text-sm leading-tight text-gray-700 transition hover:scale-105 hover:bg-gray-300 hover:text-gray-900 hover:shadow-lg`}
+      className={c(
+        {
+          "bg-transparent p-4 text-white": !isActive,
+          "bg-cyan-300 px-6 hover:bg-cyan-200": isActive,
+          [hoverClasses]: hover,
+        },
+        "mx-1 flex h-10 w-7 cursor-pointer flex-col items-center justify-center rounded-lg border py-5 text-sm font-semibold leading-normal transition-all ease-in-out"
+      )}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
     >
       <span>{toDay(date)}</span>
       <span>{toDate(date)}</span>
@@ -36,5 +51,5 @@ const toDay = (date: Date) => {
 };
 
 const toDate = (date: Date) => {
-  return date.getDate();
+  return date.toLocaleDateString("en-US", { day: "2-digit" });
 };

@@ -76,7 +76,7 @@ const Habit = ({ habit, date }: Props) => {
         <label
           htmlFor={inputId}
           className={`absolute h-8 w-8 cursor-pointer rounded-full ${
-            showCheck ? "bg-green-200" : "bg-red-200"
+            showCheck ? "bg-green-300 outline outline-green-200" : "bg-white"
           }`}
           style={{
             top: "50%",
@@ -85,7 +85,9 @@ const Habit = ({ habit, date }: Props) => {
           }}
         />
       </div>
-      <div className={`col-span-3 self-center font-body text-xl`}>
+      <div
+        className={`col-span-3 self-center font-body text-xl leading-none tracking-tighter`}
+      >
         {habit.name}
       </div>
     </div>
