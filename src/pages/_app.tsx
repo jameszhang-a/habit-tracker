@@ -1,13 +1,11 @@
 import { type AppType } from "next/app";
 import { type Session } from "next-auth";
 import { SessionProvider } from "next-auth/react";
-
-import { api } from "~/utils/api";
+import { MantineProvider } from "@mantine/core";
 
 import "~/styles/globals.css";
-import { createEmotionCache, MantineProvider } from "@mantine/core";
-
-const appendCache = createEmotionCache({ key: "mantine", prepend: false });
+import { api } from "~/utils/api";
+import { styleCache } from "style-cache";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -18,7 +16,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
       <MantineProvider
         withGlobalStyles
         withNormalizeCSS
-        emotionCache={appendCache}
+        emotionCache={styleCache}
       >
         <Component {...pageProps} />
       </MantineProvider>
