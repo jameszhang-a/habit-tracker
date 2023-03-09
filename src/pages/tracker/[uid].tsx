@@ -59,15 +59,6 @@ const Tracker: NextPage = () => {
     <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-pink-300 to-blue-900">
       {/* actual component */}
       <div className="relative border border-gray-200 px-4 py-4 shadow-xl backdrop-blur sm:h-[300px] sm:w-[600px] sm:rounded-3xl">
-        {/* <div>
-          Today&apos;s date is:{" "}
-          {date.toLocaleDateString("en-US", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
-        </div> */}
         <DatePicker numDays={5} onDateChange={setDate} activeDate={date} />
         <Carousel
           slideSize={`33.333333%`}
@@ -76,7 +67,7 @@ const Tracker: NextPage = () => {
           height={200}
           controlsOffset={"-10px"}
           classNames={classes}
-          withIndicators
+          withIndicators={habits.length > 3}
         >
           {slides}
         </Carousel>
@@ -94,14 +85,14 @@ const useStyles = createStyles(() => ({
     ref: getStylesRef("control"),
     transition: "opacity 150ms ease",
     opacity: 0.1,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    backgroundColor: "rgba(255, 255, 255, 0.5) !important",
   },
 
   indicator: {
     ref: getStylesRef("indicator"),
     transition: "opacity 150ms ease",
     opacity: 0.1,
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    backgroundColor: "rgba(255, 255, 255, 0.5) !important",
   },
 
   root: {
