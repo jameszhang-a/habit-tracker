@@ -11,6 +11,7 @@ import Refresh from "~/Components/Refresh";
 import { DatePicker } from "~/Components/DatePicker";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
+import { useWindowSize } from "~/hooks/useWindowSize";
 
 type Habits = RouterOutputs["habit"]["getHabits"];
 
@@ -19,6 +20,20 @@ const habitAPI = api.habit;
 const Tracker: NextPage = () => {
   const [habits, setHabits] = useState<Habits>([]);
   const [date, setDate] = useState<Date>(new Date());
+
+  const [isHorizontal, setIsHorizontal] = useState(true);
+
+  const winSize = useWindowSize();
+
+  useEffect(() => {
+    if (winSize.width < 540) {
+      setIsHorizontal(false);
+    } else {
+      setIsHorizontal(true);
+    }
+  }, [winSize]);
+
+  console.log(winSize);
 
   const router = useRouter();
 
@@ -36,42 +51,44 @@ const Tracker: NextPage = () => {
     }
   }, [habitsData]);
 
-  const slides = !isLoading
-    ? habits.map((habit) => (
-        <Carousel.Slide
-          key={habit.id}
-          className="relative grid items-center justify-center"
-        >
-          <Habit key={habit.id} habit={habit} date={date} />
-        </Carousel.Slide>
-      ))
-    : Array.from({ length: 3 }, (_, i) => (
-        <Carousel.Slide
-          key={i}
-          className="relative grid items-center justify-center"
-        >
-          <HabitLoading />
-        </Carousel.Slide>
-      ));
-  console.log("date", date);
+  const slides =
+    !habitsData || isLoading
+      ? Array.from({ length: 3 }, (_, i) => (
+          <Carousel.Slide
+            key={i}
+            className="relative grid items-center justify-center"
+          >
+            <HabitLoading />
+          </Carousel.Slide>
+        ))
+      : habits.map((habit) => (
+          <Carousel.Slide
+            key={habit.id}
+            className="relative grid items-center justify-center"
+          >
+            <Habit key={habit.id} habit={habit} date={date} />
+          </Carousel.Slide>
+        ));
 
   return (
     <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-pink-300 to-blue-900">
       {/* actual component */}
-      <div className="relative border border-gray-200 px-4 py-4 shadow-xl backdrop-blur sm:h-[300px] sm:w-[600px] sm:rounded-3xl">
+      <div className="relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 px-4 py-4 shadow-xl backdrop-blur sm:h-[250px] sm:w-[550px]">
         <DatePicker numDays={5} onDateChange={setDate} activeDate={date} />
-        <Carousel
-          slideSize={`33.333333%`}
-          align="start"
-          slidesToScroll={3}
-          height={200}
-          controlsOffset={"-10px"}
-          classNames={classes}
-          withIndicators={habits.length > 3}
-        >
-          {slides}
-        </Carousel>
-
+        <div className="min-w-[300px] max-w-[500px]">
+          <Carousel
+            slideSize={`${isHorizontal ? 33.333333 : 25}%`}
+            align="start"
+            slidesToScroll={isHorizontal ? 3 : 4}
+            height={isHorizontal ? 150 : 500}
+            controlsOffset={"-30px"}
+            classNames={classes}
+            withIndicators={habits.length > 3 && isHorizontal}
+            orientation={isHorizontal ? "horizontal" : "vertical"}
+          >
+            {slides}
+          </Carousel>
+        </div>
         <Refresh />
       </div>
     </div>
@@ -81,6 +98,11 @@ const Tracker: NextPage = () => {
 export default Tracker;
 
 const useStyles = createStyles(() => ({
+  controls: {
+    left: "-17px",
+    right: "-17px",
+  },
+
   control: {
     ref: getStylesRef("control"),
     transition: "opacity 150ms ease",
