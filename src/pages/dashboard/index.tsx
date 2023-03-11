@@ -9,13 +9,13 @@ import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
 import WidgetLink from "~/Components/WidgetLink";
+import HabitCreation from "~/Components/HabitCreation/HabitCreation";
 
 type Habits = RouterOutputs["habit"]["getHabits"];
 
 const habitAPI = api.habit;
 
 const Page = () => {
-  const [habitForm, setHabitForm] = useState("");
   const [habits, setHabits] = useState<Habits>([]);
   const [date, setDate] = useState<Date | null>(null);
   const [parent] = useAutoAnimate();
@@ -40,11 +40,7 @@ const Page = () => {
     },
   });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    habitCreation.mutate({ name: habitForm });
-    setHabitForm("");
-  };
+  
 
   const habitDeletion = deleteHabit.useMutation();
 
@@ -54,7 +50,7 @@ const Page = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
+    <div className="flex h-screen flex-col items-center gap-4 bg-[#aecde9]">
       <div className="flex w-screen flex-row justify-around">
         <Link
           className="max-w-xs  rounded-xl bg-gray-500 p-2 text-slate-200 hover:bg-gray-400"
@@ -112,17 +108,8 @@ const Page = () => {
           </div>
 
           <div>
-            <div>create habits</div>
-            <form onSubmit={handleSubmit}>
-              <input
-                type="text"
-                name="habit"
-                className="mr-5 rounded border-2 border-amber-500"
-                value={habitForm}
-                onChange={(e) => setHabitForm(e.target.value)}
-              />
-              <button type="submit">create</button>
-            </form>
+            <HabitCreation></HabitCreation>
+            <div className="mb-40"></div>
           </div>
         </>
       )}

@@ -62,9 +62,10 @@ model Habit {
     updatedAt DateTime @updatedAt
 
     name      String
+    emoji     String     @default("🏋️‍♀️")
     user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId    String
-    frequency Frequency  @default(DAILY)
+    frequency Int        @default(1)
     goal      Int        @default(1)
     HabitLog  HabitLog[]
 
@@ -81,10 +82,4 @@ model HabitLog {
     completed Boolean  @default(false)
 
     @@index([habitId])
-}
-
-enum Frequency {
-    DAILY
-    WEEKLY
-    MONTHLY
 }

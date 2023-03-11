@@ -62,7 +62,7 @@ const Habit = ({ habit, date }: Props) => {
           `transform text-4xl duration-[10000ms] ease-in-out`
         )}
       >
-        🏋️‍♀️
+        {habit.emoji}
       </div>
 
       <div className={`relative col-start-3`}>

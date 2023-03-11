@@ -43,12 +43,20 @@ export const habitRouter = createTRPCRouter({
    * Creates a new habit for the current user
    */
   createHabit: protectedProcedure
-    .input(z.object({ name: z.string() }))
+    .input(
+      z.object({
+        name: z.string(),
+        emoji: z.string().regex(/\p{Emoji}/gu),
+        frequency: z.number().min(1).max(7),
+      })
+    )
     .mutation(({ ctx, input }) => {
       const habit = ctx.prisma.habit.create({
         data: {
           name: input.name,
           userId: ctx.session.user.id,
+          emoji: input.emoji,
+          frequency: input.frequency,
         },
       });
 

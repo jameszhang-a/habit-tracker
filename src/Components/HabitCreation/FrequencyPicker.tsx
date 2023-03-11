@@ -30,10 +30,8 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export function FrequencyPicker({
-  value,
   onChange,
 }: {
-  value: string;
   onChange: (value: string) => void;
 }) {
   const { classes } = useStyles();
@@ -41,7 +39,7 @@ export function FrequencyPicker({
   return (
     <SegmentedControl
       radius="xl"
-      size="md"
+      size="sm"
       data={["1", "2", "3", "4", "5", "6", "7"]}
       classNames={classes}
       onChange={(value) => onChange(value)}
