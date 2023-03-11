@@ -1,12 +1,19 @@
 "use client";
 
 import type { Dispatch, RefObject, SetStateAction } from "react";
-import { MouseEventHandler, useEffect } from "react";
+import { useEffect } from "react";
 import { useState } from "react";
 import { TextInput, createStyles, rem } from "@mantine/core";
 
 const useStyles = createStyles(
-  (theme, { floating }: { floating: boolean }) => ({
+  (
+    theme,
+    {
+      floating,
+      carrot,
+      emoji,
+    }: { floating: boolean; carrot: boolean; emoji: boolean }
+  ) => ({
     root: {
       position: "relative",
     },
@@ -44,15 +51,19 @@ const useStyles = createStyles(
         color: !floating ? "transparent" : "black",
         opacity: !floating ? 0 : 0.2,
       },
+      caretColor: carrot ? "transparent" : "black",
+      width: emoji ? "64px" : "100%",
+      height: emoji ? "64px" : "100%",
     },
   })
 );
 
-export function FloatingLabelInput({
+export const FloatingLabelInput = ({
   onChange,
   value,
   label,
   placeholder,
+  emoji = false,
   onFocus,
   buttonRef,
 }: {
@@ -60,13 +71,16 @@ export function FloatingLabelInput({
   value: string;
   label: string;
   placeholder: string;
+  emoji?: boolean;
   onFocus?: (arg0: boolean) => void;
   buttonRef?: RefObject<HTMLButtonElement>;
-}) {
+}) => {
   const [focused, setFocused] = useState(false);
 
   const { classes } = useStyles({
     floating: value.trim().length !== 0 || focused,
+    carrot: emoji && value.length > 0,
+    emoji,
   });
 
   useEffect(() => {
@@ -98,7 +112,7 @@ export function FloatingLabelInput({
     <TextInput
       label={label}
       placeholder={placeholder}
-      required
+      // required
       classNames={classes}
       value={value}
       onChange={(event) => onChange(event.currentTarget.value)}
@@ -108,4 +122,4 @@ export function FloatingLabelInput({
       autoComplete="nope"
     />
   );
-}
+};
