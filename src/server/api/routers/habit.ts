@@ -167,4 +167,10 @@ export const habitRouter = createTRPCRouter({
 
     return habitLogs;
   }),
+
+  habitNuke: protectedProcedure.mutation(({ ctx }) => {
+    const habits = ctx.prisma.habit.deleteMany({});
+
+    return habits;
+  }),
 });

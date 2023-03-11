@@ -40,8 +40,6 @@ const Page = () => {
     },
   });
 
-  
-
   const habitDeletion = deleteHabit.useMutation();
 
   const handleDelete = (id: string) => {
