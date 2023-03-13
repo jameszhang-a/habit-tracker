@@ -44,7 +44,7 @@ const Page = () => {
 
   return (
     // background
-    <div className="relative h-screen bg-[#f4f5f6]">
+    <div className="relative flex h-screen flex-col bg-[#f4f5f6]">
       {/* header */}
       <div className="flex w-screen flex-row justify-around border border-red-600 bg-slate-600 text-xl">
         {sessionData && <span>Welcome {sessionData.user?.name}</span>}
@@ -57,7 +57,7 @@ const Page = () => {
       </div>
 
       {sessionData && (
-        <main className="container mx-auto flex flex-col items-center gap-4 bg-yellow-100">
+        <main className="container mx-auto flex grow flex-col items-center gap-4 bg-yellow-100">
           <section className="flex w-[700px] flex-row rounded-xl border border-slate-400 bg-red-200 p-5">
             <h1 className="flex flex-1 items-center justify-center border border-red-500 text-2xl font-bold">
               Get your links!
@@ -71,7 +71,7 @@ const Page = () => {
 
           <section
             ref={parent}
-            className="container mx-auto mb-10 flex w-[700px] flex-col items-center gap-4 rounded-xl border border-slate-400 bg-blue-300 p-5"
+            className="container mx-auto mb-10 flex w-[700px] flex-col items-center gap-4 rounded-xl border border-slate-400 p-5"
           >
             <div className="relative w-full text-center">
               <h1 className="text-2xl font-bold text-slate-800">
@@ -85,22 +85,24 @@ const Page = () => {
               </h1>
             </div>
 
-            {isLoading ? (
-              <div>loading...</div>
-            ) : (
-              habits?.map((habit) => (
-                <div key={habit.id}>
-                  {habit.name}
+            <div className="flex w-2/3 flex-col divide-y divide-slate-400/25">
+              {isLoading ? (
+                <div>loading...</div>
+              ) : (
+                habits?.map((habit) => (
+                  <div key={habit.id} className="flex justify-between pt-4">
+                    <div>{habit.name}</div>
 
-                  <span
-                    onClick={() => handleDelete(habit.id)}
-                    className="cursor-pointer"
-                  >
-                    x
-                  </span>
-                </div>
-              ))
-            )}
+                    <div
+                      onClick={() => handleDelete(habit.id)}
+                      className="cursor-pointer"
+                    >
+                      x
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
           </section>
 
           <Modal
