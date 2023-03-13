@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { CopyIcon } from "@radix-ui/react-icons";
 
 const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
   const baseURL =
@@ -12,16 +13,14 @@ const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
   const url = `${baseURL}/${to}/${uid}`;
 
   return (
-    <div>
-      <div className="font-bold uppercase">{to}</div>
+    <div className="flex items-center justify-between border border-green-700">
+      <div className="font-bold capitalize">{to}</div>
 
-      <div className="flex flex-row items-center justify-between pb-4">
-        {url}
-
+      <div className="flex flex-row items-center justify-between">
         <div className="ml-5 flex flex-row gap-2">
           <Link
             href={url}
-            className="inline-block rounded bg-blue-400 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-blue-500 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-blue-500 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-blue-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+            className="mr-1 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 px-4 py-1 text-center text-sm font-medium text-white drop-shadow-lg transition-all hover:bg-gradient-to-bl hover:drop-shadow-none focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
           >
             visit
           </Link>
@@ -56,10 +55,10 @@ const CopyToClipboard = ({ url }: { url: string }) => {
 
   return (
     <button
-      className="inline-block rounded bg-teal-400 px-6 pt-2.5 pb-2 text-xs font-medium uppercase leading-normal text-white shadow-[0_4px_9px_-4px_#3b71ca] transition duration-150 ease-in-out hover:bg-teal-500 hover:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:bg-teal-600 focus:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)] focus:outline-none focus:ring-0 active:bg-teal-700 active:shadow-[0_8px_9px_-4px_rgba(59,113,202,0.3),0_4px_18px_0_rgba(59,113,202,0.2)]"
+      className="drop-shadow-l h-fit rounded-lg bg-slate-700 p-2 shadow-lg shadow-orange-600/40 transition-all hover:border-slate-700 hover:bg-slate-600 hover:shadow-none hover:drop-shadow-none"
       onClick={() => void copyToClipboard()}
     >
-      {copied ? "copied!" : "copy"}
+      <CopyIcon color="orange"></CopyIcon>
     </button>
   );
 };
