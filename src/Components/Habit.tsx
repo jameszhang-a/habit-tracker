@@ -43,7 +43,7 @@ const Habit = ({ habit, date }: Props) => {
 
     setTimeout(() => {
       setAnimate(false);
-    }, 3000);
+    }, 500);
   };
 
   const hoverEffect =
@@ -57,9 +57,9 @@ const Habit = ({ habit, date }: Props) => {
       <div
         className={c(
           {
-            "scale-[400]": animate,
+            "rotate-180 scale-[20]": animate,
           },
-          `transform text-4xl duration-[10000ms] ease-in-out`
+          `transform text-4xl duration-[500ms] ease-in-out`
         )}
       >
         {habit.emoji}
