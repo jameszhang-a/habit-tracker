@@ -9,6 +9,7 @@ import type { RouterOutputs } from "~/utils/api";
 import WidgetLink from "~/Components/WidgetLink";
 import HabitCreation from "~/Components/HabitCreation/HabitCreation";
 import { createStyles, Modal } from "@mantine/core";
+import { TrashIcon } from "@radix-ui/react-icons";
 
 type Habits = RouterOutputs["habit"]["getHabits"];
 
@@ -57,7 +58,7 @@ const Page = () => {
       </div>
 
       {sessionData && (
-        <main className="container mx-auto flex grow flex-col items-center gap-4 bg-yellow-100">
+        <main className="container mx-auto flex grow flex-col items-center gap-4 bg-yellow-100 pt-4">
           <section className="flex w-[700px] flex-row rounded-xl border border-slate-400 bg-red-200 p-5">
             <h1 className="flex flex-1 items-center justify-center border border-red-500 text-2xl font-bold">
               Get your links!
@@ -69,10 +70,7 @@ const Page = () => {
             </div>
           </section>
 
-          <section
-            ref={parent}
-            className="container mx-auto mb-10 flex w-[700px] flex-col items-center gap-4 rounded-xl border border-slate-400 p-5"
-          >
+          <section className="container mx-auto mb-10 flex h-full w-[700px] flex-col items-center gap-4 rounded-xl border border-slate-400 bg-green-100 p-5">
             <div className="relative w-full text-center">
               <h1 className="text-2xl font-bold text-slate-800">
                 Your Habits
@@ -85,7 +83,10 @@ const Page = () => {
               </h1>
             </div>
 
-            <div className="flex w-2/3 flex-col divide-y divide-slate-400/25">
+            <div
+              ref={parent}
+              className="flex w-2/3 flex-col divide-y divide-slate-400/25"
+            >
               {isLoading ? (
                 <div>loading...</div>
               ) : (
@@ -97,7 +98,7 @@ const Page = () => {
                       onClick={() => handleDelete(habit.id)}
                       className="cursor-pointer"
                     >
-                      x
+                      <TrashIcon />
                     </div>
                   </div>
                 ))
