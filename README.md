@@ -1,6 +1,6 @@
 # Habit Genie
 
-Keep track of your habits and goals.
+Keep track of your habits and goals with a personalized [Notion](https://www.notion.so/) widget. 
 
 
 
