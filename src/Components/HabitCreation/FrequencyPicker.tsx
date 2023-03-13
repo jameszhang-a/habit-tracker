@@ -13,7 +13,7 @@ const useStyles = createStyles((theme) => ({
   },
 
   indicator: {
-    backgroundImage: theme.fn.gradient({ from: "pink", to: "orange" }),
+    backgroundImage: theme.fn.gradient({ from: "pink", to: "indigo" }),
   },
 
   control: {

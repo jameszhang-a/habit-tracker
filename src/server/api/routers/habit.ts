@@ -2,16 +2,6 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
-// helper function to turn ISO date string into a date in the form of "2021-01-01"
-const formatDate = (date: string) => {
-  const d = new Date(date);
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-};
-
 const getDateInterval = (currDate?: Date) => {
   const now = currDate ? new Date(currDate) : new Date();
 

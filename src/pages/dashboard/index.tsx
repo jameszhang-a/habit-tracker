@@ -1,8 +1,6 @@
 import { useSession, signOut, signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
-import Link from "next/link";
 
-import { DateInput } from "@mantine/dates";
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 
 import { api } from "~/utils/api";
@@ -10,6 +8,7 @@ import type { RouterOutputs } from "~/utils/api";
 
 import WidgetLink from "~/Components/WidgetLink";
 import HabitCreation from "~/Components/HabitCreation/HabitCreation";
+import { createStyles, Modal } from "@mantine/core";
 
 type Habits = RouterOutputs["habit"]["getHabits"];
 
@@ -17,12 +16,14 @@ const habitAPI = api.habit;
 
 const Page = () => {
   const [habits, setHabits] = useState<Habits>([]);
-  const [date, setDate] = useState<Date | null>(null);
+  const [showCreation, setShowCreation] = useState(false);
+
   const [parent] = useAutoAnimate();
 
   const { data: sessionData } = useSession();
+  const { classes } = useStyles();
 
-  const { getHabits, createHabit, deleteHabit } = habitAPI;
+  const { getHabits, deleteHabit } = habitAPI;
 
   const { data: habitsData, isLoading } = getHabits.useQuery({
     uid: sessionData?.user.id,
@@ -34,12 +35,6 @@ const Page = () => {
     }
   }, [habitsData]);
 
-  const habitCreation = createHabit.useMutation({
-    onSuccess(data) {
-      setHabits((oldHabits) => [...oldHabits, data]);
-    },
-  });
-
   const habitDeletion = deleteHabit.useMutation();
 
   const handleDelete = (id: string) => {
@@ -48,45 +43,48 @@ const Page = () => {
   };
 
   return (
-    <div className="flex h-screen flex-col items-center gap-4 bg-[#aecde9]">
-      <div className="flex w-screen flex-row justify-around">
-        <Link
-          className="max-w-xs  rounded-xl bg-gray-500 p-2 text-slate-200 hover:bg-gray-400"
-          href="/"
+    // background
+    <div className="relative h-screen bg-[#f4f5f6]">
+      {/* header */}
+      <div className="flex w-screen flex-row justify-around border border-red-600 bg-slate-600 text-xl">
+        {sessionData && <span>Welcome {sessionData.user?.name}</span>}
+        <button
+          className="rounded-full bg-sky-500 px-4 py-2 font-semibold text-white no-underline transition hover:bg-sky-400"
+          onClick={sessionData ? () => void signOut() : () => void signIn()}
         >
-          <h3 className="text-l font-bold">← back</h3>
-        </Link>
-        <div className="text-center text-2xl text-black">
-          {sessionData && (
-            <span>
-              Logged in as {sessionData.user?.name}, {sessionData.user.id}
-            </span>
-          )}
-          <button
-            className="rounded-full bg-sky-500 px-4 py-2 font-semibold text-white no-underline transition hover:bg-sky-400"
-            onClick={sessionData ? () => void signOut() : () => void signIn()}
-          >
-            {sessionData ? "Sign out" : "Sign in"}
-          </button>
-        </div>
+          {sessionData ? "Sign out" : "Sign in"}
+        </button>
       </div>
 
       {sessionData && (
-        <>
-          <section>
-            <h1 className="text-2xl text-sky-400">Dashboard</h1>
-            <div className="mb-4 text-xl font-semibold">
-              Get your embeddable links here!
-            </div>
-            <div>
+        <main className="container mx-auto flex flex-col items-center gap-4 bg-yellow-100">
+          <section className="flex w-[700px] flex-row rounded-xl border border-slate-400 bg-red-200 p-5">
+            <h1 className="flex flex-1 items-center justify-center border border-red-500 text-2xl font-bold">
+              Get your links!
+            </h1>
+
+            <div className="flex-1">
               <WidgetLink to="tracker" uid={sessionData.user.id} />
               <WidgetLink to="stats" uid={sessionData.user.id} />
             </div>
           </section>
 
-          <DateInput value={date} onChange={setDate} maxDate={new Date()} />
-          <div ref={parent} className="mb-10 flex flex-col items-center gap-4">
-            <h1 className="text-xl text-amber-400">Habits</h1>
+          <section
+            ref={parent}
+            className="container mx-auto mb-10 flex w-[700px] flex-col items-center gap-4 rounded-xl border border-slate-400 bg-blue-300 p-5"
+          >
+            <div className="relative w-full text-center">
+              <h1 className="text-2xl font-bold text-slate-800">
+                Your Habits
+                <button
+                  className="absolute right-[5px] top-0 rounded-xl bg-blue-600 p-2 text-base text-white hover:bg-blue-500"
+                  onClick={() => setShowCreation((old) => !old)}
+                >
+                  create new
+                </button>
+              </h1>
+            </div>
+
             {isLoading ? (
               <div>loading...</div>
             ) : (
@@ -103,16 +101,33 @@ const Page = () => {
                 </div>
               ))
             )}
-          </div>
+          </section>
 
-          <div>
-            <HabitCreation></HabitCreation>
-            <div className="mb-40"></div>
-          </div>
-        </>
+          <Modal
+            opened={showCreation}
+            onClose={() => setShowCreation(false)}
+            size={"auto"}
+            overlayProps={{
+              color: "rgb(148 163 184)",
+              opacity: 0.55,
+              blur: 3,
+            }}
+            transitionProps={{ transition: "rotate-right" }}
+            withCloseButton={false}
+            classNames={classes}
+          >
+            <HabitCreation onClose={() => setShowCreation(false)} />
+          </Modal>
+        </main>
       )}
     </div>
   );
 };
 
 export default Page;
+
+const useStyles = createStyles(() => ({
+  content: {
+    borderRadius: 20,
+  },
+}));

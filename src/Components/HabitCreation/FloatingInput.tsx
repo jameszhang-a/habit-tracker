@@ -1,8 +1,8 @@
 "use client";
 
-import type { Dispatch, RefObject, SetStateAction } from "react";
-import { useEffect } from "react";
-import { useState } from "react";
+import type { RefObject, ChangeEventHandler } from "react";
+import { useState, useEffect } from "react";
+
 import { TextInput, createStyles, rem } from "@mantine/core";
 
 const useStyles = createStyles(
@@ -36,6 +36,7 @@ const useStyles = createStyles(
       transform: floating
         ? `translate(-${theme.spacing.sm}, ${rem(-28)})`
         : "none",
+      width: floating ? "200px" : "100%",
       fontSize: floating ? theme.fontSizes.xs : theme.fontSizes.sm,
       fontWeight: floating ? 500 : 400,
     },
@@ -52,28 +53,30 @@ const useStyles = createStyles(
         opacity: !floating ? 0 : 0.2,
       },
       caretColor: carrot ? "transparent" : "black",
-      width: emoji ? "64px" : "100%",
-      height: emoji ? "64px" : "100%",
+      width: emoji ? "66px" : "100%",
+      height: emoji ? "66px" : "100%",
+      fontSize: emoji ? "4rem" : "1rem",
+      padding: emoji ? "0" : "0 0 0 0.5rem",
     },
   })
 );
 
 export const FloatingLabelInput = ({
-  onChange,
+  buttonRef,
   value,
   label,
   placeholder,
-  emoji = false,
+  onChange,
   onFocus,
-  buttonRef,
+  emoji = false,
 }: {
-  onChange: Dispatch<SetStateAction<string>>;
+  buttonRef?: RefObject<HTMLButtonElement>;
   value: string;
   label: string;
   placeholder: string;
-  emoji?: boolean;
+  onChange: ChangeEventHandler<HTMLInputElement>;
   onFocus?: (arg0: boolean) => void;
-  buttonRef?: RefObject<HTMLButtonElement>;
+  emoji?: boolean;
 }) => {
   const [focused, setFocused] = useState(false);
 
@@ -112,10 +115,9 @@ export const FloatingLabelInput = ({
     <TextInput
       label={label}
       placeholder={placeholder}
-      // required
       classNames={classes}
       value={value}
-      onChange={(event) => onChange(event.currentTarget.value)}
+      onChange={onChange}
       onFocus={handleFocus}
       // onBlur={handleBlur}
       mt="md"

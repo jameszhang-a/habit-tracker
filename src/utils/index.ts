@@ -7,3 +7,9 @@ export const formatDate = (date: Date) => {
     minute: "2-digit",
   });
 };
+
+export const emojiLength = (text: string) => {
+  const x = [...new Intl.Segmenter().segment(text)];
+
+  return x.length;
+};
