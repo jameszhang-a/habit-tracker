@@ -5,10 +5,10 @@ import { useEffect, useState } from "react";
 import { Carousel } from "@mantine/carousel";
 import { createStyles, getStylesRef } from "@mantine/core";
 
-import Habit from "~/Components/Habit";
-import HabitLoading from "~/Components/HabitLoading";
-import Refresh from "~/Components/Refresh";
-import { DatePicker } from "~/Components/DatePicker";
+import Habit from "~/components/Habit";
+import HabitLoading from "~/components/HabitLoading";
+import Refresh from "~/components/Refresh";
+import { DatePicker } from "~/components/DatePicker";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useWindowSize } from "~/hooks/useWindowSize";
