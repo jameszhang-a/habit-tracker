@@ -8,6 +8,13 @@ module.exports = {
       fontSize: {
         h1: "3rem",
       },
+      backgroundImage: {
+        "gradient-full":
+          "linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab)",
+      },
+      backgroundSize: {
+        huge: "400% 400%",
+      },
     },
     fontFamily: {
       body: ["JetBrains Mono", "monospace"],

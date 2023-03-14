@@ -49,6 +49,8 @@ const Test: NextPage = () => {
       >
         {slides}
       </Carousel>
+
+      <div className="animate-gradient-x h-20 w-40 rounded border bg-gradient-full bg-huge"></div>
     </div>
   );
 };

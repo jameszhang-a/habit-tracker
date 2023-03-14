@@ -105,7 +105,7 @@ const Page = () => {
                 <h1 className="text-2xl font-bold text-slate-800">
                   Your Habits
                   <button
-                    className="absolute right-[5px] top-0 rounded-xl bg-blue-600 p-2 text-base text-white hover:bg-blue-500"
+                    className="btn-primary absolute right-[5px] top-0 text-white"
                     onClick={() => setShowCreation((old) => !old)}
                   >
                     create new
@@ -130,11 +130,7 @@ const Page = () => {
                   </div>
                 ) : (
                   habits?.map((hData) => (
-                    <HabitRow
-                      key={hData.id}
-                      habit={hData}
-                      // editHabit={editHabit}
-                    />
+                    <HabitRow key={hData.id} habit={hData} />
                   ))
                 )}
               </div>

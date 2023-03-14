@@ -177,7 +177,7 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
           />
         </div>
 
-        <div className="min-w-full gap-1 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+        <div className="min-w-full gap-2 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
           {edit ? (
             <button
               type="submit"
@@ -188,15 +188,17 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
           ) : (
             <button
               type="submit"
-              className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+              // className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+              className="btn-primary"
             >
-              create
+              done
             </button>
           )}
           <button
             type="button"
             onClick={() => onClose(false)}
-            className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold capitalize text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            // className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold capitalize text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
+            className="btn-secondary"
           >
             cancel
           </button>

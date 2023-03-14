@@ -20,7 +20,7 @@ const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
         <div className="ml-5 flex flex-row gap-2">
           <Link
             href={url}
-            className="mr-1 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 px-4 py-1 text-center text-sm font-medium text-white drop-shadow-lg transition-all hover:bg-gradient-to-bl hover:drop-shadow-none focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
+            className="hover:animate-gradient-fast mr-1 rounded-lg bg-gradient-to-br from-purple-600 to-blue-500 px-4 py-1 text-center text-sm font-medium text-white drop-shadow-lg hover:drop-shadow-none focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800"
           >
             visit
           </Link>
