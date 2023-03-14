@@ -33,8 +33,6 @@ const Tracker: NextPage = () => {
     }
   }, [winSize]);
 
-  console.log(winSize);
-
   const router = useRouter();
 
   const { classes } = useStyles();
@@ -44,6 +42,8 @@ const Tracker: NextPage = () => {
   const { data: habitsData, isLoading } = habitAPI.getHabits.useQuery({
     uid,
   });
+
+  if (isLoading) console.log("loading");
 
   useEffect(() => {
     if (habitsData) {
