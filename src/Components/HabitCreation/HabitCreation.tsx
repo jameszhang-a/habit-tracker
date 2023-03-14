@@ -1,23 +1,25 @@
-import type { ChangeEvent, ChangeEventHandler } from "react";
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 
 import { Popover, Button, Tooltip } from "@mantine/core";
-import type { OS } from "@mantine/hooks";
 import { useOs } from "@mantine/hooks";
 import { z } from "zod";
 
+import type { FloatingInputProps } from "./FloatingInput";
 import { FloatingLabelInput } from "./FloatingInput";
 import { FrequencyPicker } from "./FrequencyPicker";
-
-import { api } from "~/utils/api";
 import { emojiLength } from "~/utils";
+import { HabitDataContext } from "~/pages/dashboard/HabitDataContext";
+
+import type { ChangeEvent } from "react";
+import type { Habit } from "../Habit";
+import type { OS } from "@mantine/hooks";
 
 interface HabitCreationProps {
   children?: React.ReactNode;
   onClose: (b: boolean) => void;
+  edit?: boolean;
+  habit?: Habit;
 }
-
-const habitAPI = api.habit;
 
 const HabitData = z.object({
   name: z.string().min(1, { message: "Please enter a name" }),
@@ -30,28 +32,48 @@ const HabitData = z.object({
   frequency: z.number().min(1).max(7),
 });
 
-const HabitCreation: React.FC<HabitCreationProps> = ({ onClose }) => {
+const HabitCreation: React.FC<HabitCreationProps> = ({
+  onClose,
+  edit = false,
+  habit,
+}) => {
   const [habitForm, setHabitForm] = useState("");
   const [emojiForm, setEmojiForm] = useState("");
   const [frequency, setFrequency] = useState("1");
   const [nameError, setNameError] = useState("");
   const [emojiError, setEmojiError] = useState("");
 
-  const { createHabit } = habitAPI;
-
-  const habitCreation = createHabit.useMutation();
+  const ctx = useContext(HabitDataContext);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    let nameData = habitForm;
+    let emojiData = emojiForm;
+
+    // make it so that if the user doesn't change the habit name or emoji,
+    // it will use the habit's current name and emoji
+    if (edit && habit) {
+      if (habitForm === "") {
+        nameData = habit.name;
+      }
+      if (emojiForm === "") {
+        emojiData = habit.emoji;
+      }
+    }
+
     const parsed = HabitData.safeParse({
-      name: habitForm,
-      emoji: emojiForm,
+      name: nameData,
+      emoji: emojiData,
       frequency: parseInt(frequency),
     });
 
     if (parsed.success) {
-      habitCreation.mutate(parsed.data);
+      ctx?.handleHabitCreation({
+        ...parsed.data,
+        habitId: habit ? habit.id : "1",
+      });
+
       setHabitForm("");
       setEmojiForm("");
       setFrequency("1");
@@ -67,9 +89,11 @@ const HabitCreation: React.FC<HabitCreationProps> = ({ onClose }) => {
     }
   };
 
+  /**
+   * can't have more than one emoji
+   * @param e
+   */
   const handleEmojiChange = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
-
     if (emojiLength(e.target.value) > 1) {
       setEmojiForm(e.target.value.replace(emojiForm, ""));
     } else {
@@ -81,11 +105,24 @@ const HabitCreation: React.FC<HabitCreationProps> = ({ onClose }) => {
     setHabitForm(e.target.value);
   };
 
+  const handleNameFocus = () => {
+    setNameError("");
+    console.log("clear name error");
+  };
+
+  const handleEmojiFocus = () => {
+    setEmojiError("");
+  };
+
   return (
     <div
       className={`flex w-[500px] flex-col items-center rounded-lg bg-white font-body backdrop-blur`}
     >
-      <div className="text-h1">Create a Habit!</div>
+      {edit ? (
+        <div className="mb-3 text-2xl">Editing: {habit?.name}</div>
+      ) : (
+        <div className="text-h1">Create a Habit!</div>
+      )}
       <form
         className="flex w-full flex-col items-center justify-center gap-6"
         onSubmit={handleSubmit}
@@ -101,10 +138,11 @@ const HabitCreation: React.FC<HabitCreationProps> = ({ onClose }) => {
             <div>
               <FloatingLabelInput
                 value={habitForm}
+                label={`Give it a ${edit ? "new" : ""} name`}
+                placeholder={edit && habit ? habit.name : "Working out"}
+                float={edit}
+                onInputFocus={handleNameFocus}
                 onChange={handleNameChange}
-                label={"Give it a name"}
-                placeholder={"Working out"}
-                onFocus={() => setNameError("")}
               />
             </div>
           </Tooltip>
@@ -121,8 +159,11 @@ const HabitCreation: React.FC<HabitCreationProps> = ({ onClose }) => {
             <div>
               <EmojiPicker
                 value={emojiForm}
+                label={`${edit ? "Update" : "Pick an"} emoji`}
+                placeholder={edit && habit ? habit.emoji : "🏋️"}
+                float={edit}
+                onInputFocus={handleEmojiFocus}
                 onChange={handleEmojiChange}
-                onFocus={() => setEmojiError("")}
               />
             </div>
           </Tooltip>
@@ -130,16 +171,28 @@ const HabitCreation: React.FC<HabitCreationProps> = ({ onClose }) => {
 
         <div className="">
           <div>Times per week?</div>
-          <FrequencyPicker onChange={setFrequency} />
+          <FrequencyPicker
+            onChange={setFrequency}
+            defaultValue={edit && habit ? habit.frequency.toString() : "1"}
+          />
         </div>
 
         <div className="min-w-full gap-1 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-          <button
-            type="submit"
-            className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
-          >
-            create
-          </button>
+          {edit ? (
+            <button
+              type="submit"
+              className="inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-violet-700 sm:ml-3 sm:w-auto"
+            >
+              Save
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
+            >
+              create
+            </button>
+          )}
           <button
             type="button"
             onClick={() => onClose(false)}
@@ -166,34 +219,37 @@ const tipMessage = (os: OS) => {
   }
 };
 
-const EmojiPicker = ({
+const EmojiPicker: React.FC<FloatingInputProps> = ({
   value,
+  placeholder,
+  label,
+  float,
   onChange,
-  onFocus,
-}: {
-  value: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  onFocus: () => void;
+  onInputFocus,
+  onBlur,
 }) => {
-  const [focused, setFocused] = useState(false);
+  const [showTooltip, setShowTooltip] = useState(false);
+
   const ref = useRef<HTMLButtonElement>(null);
   const os = useOs();
 
-  const handleFocus = (b: boolean) => {
-    onFocus();
-    setFocused(b);
+  const handleFocus = () => {
+    onInputFocus();
+    setShowTooltip(true);
   };
 
   return (
     <div className="relative">
       <FloatingLabelInput
         value={value}
-        onChange={onChange}
-        label={"Pick an emoji"}
-        placeholder={"🏋️‍♀️"}
-        onFocus={handleFocus}
+        label={label}
+        placeholder={placeholder}
         buttonRef={ref}
         emoji
+        float={float}
+        onInputFocus={handleFocus}
+        onChange={onChange}
+        onBlur={onBlur}
       />
 
       <Popover width={200} position="bottom" withArrow shadow="md">
@@ -210,7 +266,7 @@ const EmojiPicker = ({
                 backgroundImage:
                   "linear-gradient(to right, #fbc2eb 0%, #a6c1ee 100%)",
                 transition: "all 0.3s ease",
-                display: focused ? "block" : "none",
+                display: showTooltip ? "block" : "none",
               },
             })}
           >

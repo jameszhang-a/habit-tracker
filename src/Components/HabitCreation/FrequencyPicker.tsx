@@ -1,5 +1,4 @@
-"use client";
-
+import { useState } from "react";
 import { createStyles, SegmentedControl, rem } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
@@ -31,18 +30,35 @@ const useStyles = createStyles((theme) => ({
 
 export function FrequencyPicker({
   onChange,
+  defaultValue,
 }: {
   onChange: (value: string) => void;
+  defaultValue?: string;
 }) {
+  const [value, setValue] = useState(defaultValue || "1");
   const { classes } = useStyles();
+
+  const handleValueChange = (value: string) => {
+    setValue(value);
+    onChange(value);
+  };
 
   return (
     <SegmentedControl
       radius="xl"
       size="sm"
-      data={["1", "2", "3", "4", "5", "6", "7"]}
+      value={value}
+      data={[
+        { label: "1", value: "1" },
+        { label: "2", value: "2" },
+        { label: "3", value: "3" },
+        { label: "4", value: "4" },
+        { label: "5", value: "5" },
+        { label: "6", value: "6" },
+        { label: "7", value: "7" },
+      ]}
       classNames={classes}
-      onChange={(value) => onChange(value)}
+      onChange={(value) => handleValueChange(value)}
     />
   );
 }

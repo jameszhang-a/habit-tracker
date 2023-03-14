@@ -61,27 +61,34 @@ const useStyles = createStyles(
   })
 );
 
-export const FloatingLabelInput = ({
-  buttonRef,
-  value,
-  label,
-  placeholder,
-  onChange,
-  onFocus,
-  emoji = false,
-}: {
+export interface FloatingInputProps {
   buttonRef?: RefObject<HTMLButtonElement>;
   value: string;
   label: string;
   placeholder: string;
-  onChange: ChangeEventHandler<HTMLInputElement>;
-  onFocus?: (arg0: boolean) => void;
   emoji?: boolean;
+  float: boolean;
+
+  onChange: ChangeEventHandler<HTMLInputElement>;
+  onInputFocus: (b?: boolean) => void;
+  onBlur?: () => void;
+}
+
+export const FloatingLabelInput: React.FC<FloatingInputProps> = ({
+  buttonRef,
+  value,
+  label,
+  placeholder,
+  emoji = false,
+  float,
+  onChange,
+  onInputFocus,
+  onBlur,
 }) => {
   const [focused, setFocused] = useState(false);
 
   const { classes } = useStyles({
-    floating: value.trim().length !== 0 || focused,
+    floating: float || value.trim().length !== 0 || focused,
     carrot: emoji && value.length > 0,
     emoji,
   });
@@ -95,8 +102,8 @@ export const FloatingLabelInput = ({
       ) {
         return;
       }
+
       setFocused(false);
-      onFocus && onFocus(false);
     };
 
     document.addEventListener("mousedown", handleClick);
@@ -104,11 +111,11 @@ export const FloatingLabelInput = ({
     return () => {
       document.removeEventListener("mousedown", handleClick);
     };
-  }, [buttonRef, onFocus]);
+  }, [buttonRef, onBlur]);
 
   const handleFocus = () => {
     setFocused(true);
-    onFocus && onFocus(true);
+    onInputFocus();
   };
 
   return (
@@ -119,7 +126,6 @@ export const FloatingLabelInput = ({
       value={value}
       onChange={onChange}
       onFocus={handleFocus}
-      // onBlur={handleBlur}
       mt="md"
       autoComplete="nope"
     />
