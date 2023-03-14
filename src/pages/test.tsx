@@ -2,8 +2,8 @@ import { Carousel } from "@mantine/carousel";
 import { createStyles, getStylesRef } from "@mantine/core";
 
 import { type NextPage } from "next";
-import Confetti from "~/components/Confetti";
-import RefreshButton from "~/components/Refresh";
+import Confetti from "~/Components/Confetti";
+import RefreshButton from "~/Components/Refresh";
 
 const useStyles = createStyles(() => ({
   button: {
