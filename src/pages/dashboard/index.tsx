@@ -6,11 +6,11 @@ import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { api } from "~/utils/api";
 import type { RouterOutputs } from "~/utils/api";
 
-import WidgetLink from "~/Components/WidgetLink";
-import HabitCreation from "~/Components/HabitCreation/HabitCreation";
+import WidgetLink from "~/components/WidgetLink";
+import HabitCreation from "~/components/HabitCreation/HabitCreation";
 import { createStyles, Modal } from "@mantine/core";
 
-import HabitRow from "~/Components/HabitRow";
+import HabitRow from "~/components/HabitRow";
 import HabitDataContext from "~/context/HabitDataContext";
 
 type Habits = RouterOutputs["habit"]["getHabits"];
