@@ -14,4 +14,6 @@ interface HabitDataContext {
   handleDelete: (habitId: string) => void;
 }
 
-export const HabitDataContext = createContext<HabitDataContext | null>(null);
+const HabitDataContext = createContext<HabitDataContext | null>(null);
+
+export default HabitDataContext;

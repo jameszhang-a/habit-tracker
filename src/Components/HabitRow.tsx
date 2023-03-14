@@ -6,7 +6,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { createStyles, Menu, Modal } from "@mantine/core";
 
-import { HabitDataContext } from "~/pages/dashboard/HabitDataContext";
+import HabitDataContext from "~/context/HabitDataContext";
 import type { Habit } from "./Habit";
 import HabitCreation from "./HabitCreation/HabitCreation";
 
