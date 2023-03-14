@@ -53,7 +53,7 @@ const Page = () => {
       {/* header */}
       <div className="flex w-screen flex-row-reverse justify-between rounded-b-xl border-b bg-[#f4f5f6]/80 px-10 text-xl drop-shadow">
         <button
-          className="my-1 rounded bg-sky-500 px-3 py-1 text-sm font-semibold text-white no-underline transition hover:bg-sky-400"
+          className="my-1 rounded bg-gray-500 px-3 py-1 text-sm font-semibold text-white no-underline transition hover:bg-gray-600"
           onClick={sessionData ? () => void signOut() : () => void signIn()}
         >
           {sessionData ? "Sign out" : "Sign in"}
