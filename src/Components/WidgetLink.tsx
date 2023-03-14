@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CopyIcon } from "@radix-ui/react-icons";
+import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 
 const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
   const baseURL =
@@ -13,7 +13,7 @@ const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
   const url = `${baseURL}/${to}/${uid}`;
 
   return (
-    <div className="flex items-center justify-between border border-green-700">
+    <div className="flex items-center justify-between rounded border p-1 shadow">
       <div className="font-bold capitalize">{to}</div>
 
       <div className="flex flex-row items-center justify-between">
@@ -55,10 +55,10 @@ const CopyToClipboard = ({ url }: { url: string }) => {
 
   return (
     <button
-      className="drop-shadow-l h-fit rounded-lg bg-slate-700 p-2 shadow-lg shadow-orange-600/40 transition-all hover:border-slate-700 hover:bg-slate-600 hover:shadow-none hover:drop-shadow-none"
+      className="drop-shadow-l h-fit rounded-lg border border-slate-200 p-1 shadow shadow-orange-600/40 transition-all hover:shadow-inner hover:drop-shadow-none"
       onClick={() => void copyToClipboard()}
     >
-      <CopyIcon color="orange"></CopyIcon>
+      <ClipboardDocumentIcon className="w-5"></ClipboardDocumentIcon>
     </button>
   );
 };

@@ -136,7 +136,7 @@ const HabitCreation: React.FC<HabitCreationProps> = ({ onClose }) => {
         <div className="min-w-full gap-1 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
           <button
             type="submit"
-            className="inline-flex w-full justify-center rounded-md bg-indigo-400 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-indigo-300 sm:ml-3 sm:w-auto"
+            className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
           >
             create
           </button>
