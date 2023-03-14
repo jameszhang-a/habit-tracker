@@ -5,7 +5,7 @@ import Gradient from "./Gradient";
 
 import { default as c } from "classnames";
 
-type Habit = RouterOutputs["habit"]["getHabits"][number];
+export type Habit = RouterOutputs["habit"]["getHabits"][number];
 
 type Props = {
   habit: Habit;
