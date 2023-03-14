@@ -17,7 +17,9 @@ const habitAPI = api.habit;
 
 const Habit = ({ habit, date }: Props) => {
   const [showCheck, setShowCheck] = useState(false);
-  const [animate, setAnimate] = useState(false);
+  const [animateCheck, setAnimateCheck] = useState(false);
+  const [animateUncheck, setAnimateUncheck] = useState(false);
+
   const { current: inputId } = useRef(`habit-${habit.id}`);
 
   const { logHabit, loggedOnDate } = habitAPI;
@@ -34,7 +36,7 @@ const Habit = ({ habit, date }: Props) => {
   });
 
   const handleCheck = () => {
-    setAnimate(true);
+    setAnimateCheck(true);
     setShowCheck((prev) => !prev);
 
     // create a habit log for the day that it's checked
@@ -42,8 +44,29 @@ const Habit = ({ habit, date }: Props) => {
     habitLogCreation.mutate({ id: habit.id, date });
 
     setTimeout(() => {
-      setAnimate(false);
+      setAnimateCheck(false);
     }, 500);
+  };
+
+  const handleUnCheck = () => {
+    setAnimateUncheck(true);
+    setShowCheck((prev) => !prev);
+
+    // create a habit log for the day that it's checked
+    // if it's already checked, then uncheck it
+    habitLogCreation.mutate({ id: habit.id, date });
+
+    setTimeout(() => {
+      setAnimateUncheck(false);
+    }, 500);
+  };
+
+  const handleClick = () => {
+    if (showCheck) {
+      handleUnCheck();
+    } else {
+      handleCheck();
+    }
   };
 
   const hoverEffect =
@@ -57,7 +80,8 @@ const Habit = ({ habit, date }: Props) => {
       <div
         className={c(
           {
-            "rotate-180 scale-[20]": animate,
+            "rotate-[360deg] scale-[20]": animateCheck,
+            "-rotate-[360deg] scale-[0.2]": animateUncheck,
           },
           `transform text-4xl duration-[500ms] ease-in-out`
         )}
@@ -69,15 +93,21 @@ const Habit = ({ habit, date }: Props) => {
         <input
           id={inputId}
           type="checkbox"
-          onChange={() => handleCheck()}
+          onChange={handleClick}
           checked={showCheck}
           className="absolute hidden"
         />
         <label
           htmlFor={inputId}
-          className={`absolute h-8 w-8 cursor-pointer rounded-full ${
-            showCheck ? "bg-green-300 outline outline-green-200" : "bg-white"
-          }`}
+          className={c(
+            {
+              "animate-ping bg-green-300": habitLogCreation.isLoading,
+              "bg-green-300 outline outline-green-200":
+                !habitLogCreation.isLoading && showCheck,
+              "bg-white": !showCheck,
+            },
+            ` absolute h-8 w-8 cursor-pointer rounded-full`
+          )}
           style={{
             top: "50%",
             left: "50%",
