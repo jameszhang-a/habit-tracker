@@ -23,7 +23,7 @@ export const ChildDate: React.FC<ChildDateProps> = ({
   );
 
   const hoverClasses = `hover:-translate-y-1 ${
-    isActive ? "hover:bg-cyan-200" : "hover:bg-yellow-100"
+    isActive ? "hover:bg-cyan-300" : "hover:bg-cyan-100"
   } hover:text-gray-900 hover:shadow-lg`;
 
   return (
