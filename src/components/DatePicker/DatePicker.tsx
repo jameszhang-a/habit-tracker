@@ -1,19 +1,11 @@
-import type { Dispatch, SetStateAction } from "react";
 import { useMemo } from "react";
 import { ChildDate } from "./ChildDate";
 
 interface DatePickerProps {
   numDays: number;
-  activeDate: Date;
-  onDateChange: Dispatch<SetStateAction<Date>>;
-  children?: React.ReactNode;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({
-  numDays,
-  onDateChange,
-  activeDate,
-}) => {
+export const DatePicker: React.FC<DatePickerProps> = ({ numDays }) => {
   // get the previous x days from today as date objects
   const days = useMemo(
     () =>
@@ -28,12 +20,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   return (
     <div className="m-2 flex items-center justify-center">
       {days.map((d, i) => (
-        <ChildDate
-          key={i}
-          date={d}
-          onClick={onDateChange}
-          activeDate={activeDate}
-        />
+        <ChildDate key={i} date={d} />
       ))}
     </div>
   );

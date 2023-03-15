@@ -1,21 +1,15 @@
-import type { Dispatch, SetStateAction } from "react";
-import { useState } from "react";
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import { default as c } from "classnames";
+
+import { useTrackerContext } from "~/context/TrackerContext";
 
 interface ChildDateProps {
   date: Date;
-  onClick: Dispatch<SetStateAction<Date>>;
-  activeDate: Date;
-  children?: React.ReactNode;
 }
 
-export const ChildDate: React.FC<ChildDateProps> = ({
-  date,
-  onClick,
-  activeDate,
-}) => {
+export const ChildDate: React.FC<ChildDateProps> = ({ date }) => {
   const [hover, setHover] = useState(false);
+  const { activeDate, setActiveDate } = useTrackerContext();
 
   const isActive = useMemo(
     () => activeDate.toDateString() === date.toDateString(),
@@ -28,7 +22,7 @@ export const ChildDate: React.FC<ChildDateProps> = ({
 
   return (
     <div
-      onClick={() => onClick(date)}
+      onClick={() => setActiveDate(date)}
       className={c(
         {
           "bg-transparent p-4 text-white": !isActive,

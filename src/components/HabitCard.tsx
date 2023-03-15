@@ -4,61 +4,74 @@ import { api } from "~/utils/api";
 import Gradient from "./Gradient";
 
 import { default as c } from "classnames";
+import { useTrackerContext } from "~/context/TrackerContext";
 
 export type Habit = RouterOutputs["habit"]["getHabits"][number];
 
 type Props = {
   habit: Habit;
-  date: Date;
   handleDelete?: (id: string) => void;
 };
 
 const habitAPI = api.habit;
 
-const Habit = ({ habit, date }: Props) => {
+const HabitCard = ({ habit }: Props) => {
   const [showCheck, setShowCheck] = useState(false);
   const [animateCheck, setAnimateCheck] = useState(false);
   const [animateUncheck, setAnimateUncheck] = useState(false);
 
-  const { current: inputId } = useRef(`habit-${habit.id}`);
+  const { activeDate } = useTrackerContext();
 
   const { logHabit, loggedOnDate } = habitAPI;
-  const { data } = loggedOnDate.useQuery({ id: habit.id, date });
-
-  useEffect(() => {
-    setShowCheck(data ? true : false);
-  }, [data]);
+  const { data, isLoading, isSuccess, isFetched } = loggedOnDate.useQuery({
+    id: habit.id,
+    date: activeDate,
+  });
 
   const habitLogCreation = logHabit.useMutation({
     onError() {
       setShowCheck((prev) => !prev);
     },
+    onSuccess(data) {
+      setShowCheck(data.completed);
+      console.log("success", habit.name, data.completed);
+    },
   });
 
+  useEffect(() => {
+    console.log("completed changed", data?.completed);
+
+    if (data) {
+      setShowCheck(data.completed);
+    } else {
+      setShowCheck(false);
+    }
+  }, [isFetched, data, activeDate]);
+
   const handleCheck = () => {
-    setAnimateCheck(true);
-    setShowCheck((prev) => !prev);
+    // setAnimateCheck(true);
+    // setShowCheck((prev) => !prev);
 
     // create a habit log for the day that it's checked
     // if it's already checked, then uncheck it
-    habitLogCreation.mutate({ id: habit.id, date });
+    habitLogCreation.mutate({ id: habit.id, date: activeDate });
 
-    setTimeout(() => {
-      setAnimateCheck(false);
-    }, 500);
+    // setTimeout(() => {
+    //   setAnimateCheck(false);
+    // }, 500);
   };
 
   const handleUnCheck = () => {
-    setAnimateUncheck(true);
-    setShowCheck((prev) => !prev);
+    // setAnimateUncheck(true);
+    // setShowCheck((prev) => !prev);
 
     // create a habit log for the day that it's checked
     // if it's already checked, then uncheck it
-    habitLogCreation.mutate({ id: habit.id, date });
+    habitLogCreation.mutate({ id: habit.id, date: activeDate });
 
-    setTimeout(() => {
-      setAnimateUncheck(false);
-    }, 500);
+    // setTimeout(() => {
+    //   setAnimateUncheck(false);
+    // }, 500);
   };
 
   const handleClick = () => {
@@ -71,6 +84,8 @@ const Habit = ({ habit, date }: Props) => {
 
   const hoverEffect =
     "hover:scale-110 transition ease-in-out delay-50 duration-150";
+
+  const { current: inputId } = useRef(`habit-${habit.id}`);
 
   return (
     <div
@@ -124,4 +139,4 @@ const Habit = ({ habit, date }: Props) => {
   );
 };
 
-export default Habit;
+export default HabitCard;

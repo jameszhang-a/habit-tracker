@@ -7,7 +7,7 @@ import {
 import { createStyles, Menu, Modal } from "@mantine/core";
 
 import HabitDataContext from "~/context/HabitDataContext";
-import type { Habit } from "./Habit";
+import type { Habit } from "./HabitCard";
 import HabitCreation from "./HabitCreation/HabitCreation";
 
 interface HabitRowProps {
