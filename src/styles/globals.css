@@ -14,11 +14,11 @@
     }
 
     .btn-primary {
-        @apply rounded-lg border-2 border-b-4 border-indigo-700 bg-indigo-500 px-3 py-2 text-sm text-white font-semibold capitalize transition-colors duration-100 active:translate-y-0.5 active:border-b-2;
+        @apply rounded-lg border-2 border-b-4 border-indigo-700 bg-indigo-500 px-3 py-2 text-sm text-white font-semibold capitalize transition-all duration-100 hover:scale-105 active:translate-y-0.5 active:scale-95 active:border-b-2;
     }
 
     .btn-secondary {
-        @apply box-content rounded-lg border-2 border-b-4 border-gray-600 bg-transparent px-3 py-2 text-sm font-semibold capitalize transition-colors duration-100 active:translate-y-0.5 active:border-b-2;
+        @apply box-content rounded-lg border-2 border-b-4 border-gray-600 bg-transparent px-3 py-2 text-sm font-semibold capitalize transition-all duration-100 hover:scale-105 active:translate-y-0.5 active:scale-95 active:border-b-2;
     }
 }
 

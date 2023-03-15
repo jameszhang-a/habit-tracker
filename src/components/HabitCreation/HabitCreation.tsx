@@ -181,7 +181,8 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
           {edit ? (
             <button
               type="submit"
-              className="inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-violet-700 sm:ml-3 sm:w-auto"
+              // className="inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-violet-700 sm:ml-3 sm:w-auto"
+              className="btn-primary"
             >
               Save
             </button>
