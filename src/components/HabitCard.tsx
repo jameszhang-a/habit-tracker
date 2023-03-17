@@ -38,10 +38,18 @@ const HabitCard = ({ habit }: Props) => {
       console.log("success", habit.name, data.completed);
     },
     onMutate() {
-      setAnimateCheck(true);
+      if (showCheck) {
+        setAnimateUncheck(true);
+      } else {
+        setAnimateCheck(true);
+      }
     },
     onSettled() {
-      setAnimateCheck(false);
+      if (showCheck) {
+        setAnimateUncheck(false);
+      } else {
+        setAnimateCheck(false);
+      }
     },
   });
 

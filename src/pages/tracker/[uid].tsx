@@ -14,6 +14,9 @@ import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useWindowSize } from "~/hooks/useWindowSize";
 import { TrackerContextProvider } from "~/context/TrackerContext";
+import { useColorScheme } from "@mantine/hooks";
+import { default as c } from "classnames";
+import HeadWrapper from "~/components/HeadWrapper";
 
 type Habits = RouterOutputs["habit"]["getHabits"];
 
@@ -24,6 +27,7 @@ const Tracker: NextPage = () => {
   const [activeDate, setActiveDate] = useState<Date>(new Date());
   const [isHorizontal, setIsHorizontal] = useState(true);
   const { classes } = useStyles();
+  const colorScheme = useColorScheme();
 
   const exceedsCount = useMemo(() => habits.length > 3, [habits]);
 
@@ -72,40 +76,50 @@ const Tracker: NextPage = () => {
         ));
 
   const fullScreen = "flex h-screen w-screen items-center justify-center";
-  const widget = "w-fit h-fit";
+  const widget = "w-screen h-screen flex justify-center";
 
   return (
-    <div
-      className={`${widget} ${
-        !isHorizontal ? fullScreen : ""
-      } bg-gradient-to-br from-pink-300 to-blue-900`}
+    <HeadWrapper
+      title="Tracker Widget"
+      description="Custom habit tracker widget for Notion"
     >
-      {/* actual component */}
-      <TrackerContextProvider value={{ activeDate, setActiveDate }}>
-        <div className="relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 px-4 py-4 shadow-xl backdrop-blur sm:h-[250px] sm:w-[550px]">
-          <DatePicker numDays={7} />
-          <div className="w-[340px] max-w-[500px] sm:min-w-[500px]">
-            <Carousel
-              slideSize={`${
-                isHorizontal ? Math.max((1 / 3) * 100, 100 / slides.length) : 25
-              }%`}
-              align="start"
-              slidesToScroll={isHorizontal ? 3 : 4}
-              height={isHorizontal ? 150 : 500}
-              controlsOffset={"-30px"}
-              classNames={classes}
-              withIndicators={exceedsCount && isHorizontal}
-              withControls={exceedsCount}
-              draggable={exceedsCount}
-              orientation={isHorizontal ? "horizontal" : "vertical"}
-            >
-              {slides}
-            </Carousel>
+      <div
+        className={c({
+          [fullScreen]: !isHorizontal,
+          [widget]: isHorizontal,
+          "bg-[#ffffff]": colorScheme === "light",
+          "bg-[#191919]": colorScheme === "dark",
+        })}
+      >
+        {/* actual component */}
+        <TrackerContextProvider value={{ activeDate, setActiveDate }}>
+          <div className="relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 bg-gradient-to-br from-pink-300 to-blue-900 px-4 py-4 shadow-xl backdrop-blur sm:h-[250px] sm:w-[550px]">
+            <DatePicker numDays={7} />
+            <div className="w-[340px] max-w-[500px] sm:min-w-[500px]">
+              <Carousel
+                slideSize={`${
+                  isHorizontal
+                    ? Math.max((1 / 3) * 100, 100 / slides.length)
+                    : 25
+                }%`}
+                align="start"
+                slidesToScroll={isHorizontal ? 3 : 4}
+                height={isHorizontal ? 150 : 500}
+                controlsOffset={"-30px"}
+                classNames={classes}
+                withIndicators={exceedsCount && isHorizontal}
+                withControls={exceedsCount}
+                draggable={exceedsCount}
+                orientation={isHorizontal ? "horizontal" : "vertical"}
+              >
+                {slides}
+              </Carousel>
+            </div>
+            <Refresh />
           </div>
-          <Refresh />
-        </div>
-      </TrackerContextProvider>
-    </div>
+        </TrackerContextProvider>
+      </div>
+    </HeadWrapper>
   );
 };
 
