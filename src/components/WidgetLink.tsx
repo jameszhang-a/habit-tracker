@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
+import { Popover } from "@mantine/core";
 
 const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
   const baseURL =
@@ -54,11 +55,32 @@ const CopyToClipboard = ({ url }: { url: string }) => {
   };
 
   return (
-    <button
-      className="drop-shadow-l h-fit rounded-lg border border-slate-200 p-1 shadow shadow-orange-600/40 transition-all hover:shadow-inner hover:drop-shadow-none"
-      onClick={() => void copyToClipboard()}
+    <Popover
+      opened={copied}
+      width={50}
+      position="top"
+      withArrow
+      shadow="md"
+      transitionProps={{
+        transition: "pop",
+        timingFunction: "cubic-bezier(.34,1.56,.64,1)",
+      }}
     >
-      <ClipboardDocumentIcon className="w-5"></ClipboardDocumentIcon>
-    </button>
+      <Popover.Target>
+        <button
+          className="drop-shadow-l h-fit rounded-lg border border-slate-200 p-1 shadow shadow-orange-600/40 transition-all hover:shadow-inner hover:drop-shadow-none"
+          onClick={() => void copyToClipboard()}
+        >
+          <ClipboardDocumentIcon className="w-5" />
+        </button>
+      </Popover.Target>
+      <Popover.Dropdown
+        style={{
+          padding: 4,
+        }}
+      >
+        <div className="text-xs">copied!</div>
+      </Popover.Dropdown>
+    </Popover>
   );
 };
