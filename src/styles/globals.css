@@ -4,7 +4,7 @@
 
 @layer components {
     .animate-gradient-x {
-        animation: gradient-x 15s ease infinite;
+        animation: gradient-x 5s ease infinite;
         background-size: 400% 400%;
     }
 

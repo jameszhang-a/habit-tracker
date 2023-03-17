@@ -14,7 +14,8 @@ const HeadWrapper: React.FC<HeadWrapperProps> = ({
   return (
     <>
       <Head>
-        <title>{title || "Habit Genie"}</title>
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
           name="description"
           content={
@@ -23,6 +24,7 @@ const HeadWrapper: React.FC<HeadWrapperProps> = ({
           }
         />
         <link rel="icon" href="/favicon.ico" />
+        <title>{title || "Habit Genie"}</title>
       </Head>
 
       <main>{children}</main>

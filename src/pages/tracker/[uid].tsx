@@ -93,9 +93,9 @@ const Tracker: NextPage = () => {
       >
         {/* actual component */}
         <TrackerContextProvider value={{ activeDate, setActiveDate }}>
-          <div className="relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 bg-gradient-to-br from-pink-300 to-blue-900 px-4 py-4 shadow-xl backdrop-blur sm:h-[250px] sm:w-[550px]">
+          <div className="relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 bg-gradient-to-br from-pink-300 to-blue-900 px-4 py-4 shadow-xl backdrop-blur xs:h-[250px] xs:w-[550px]">
             <DatePicker numDays={7} />
-            <div className="w-[340px] max-w-[500px] sm:min-w-[500px]">
+            <div className="w-[340px] max-w-[500px] xs:min-w-[500px]">
               <Carousel
                 slideSize={`${
                   isHorizontal

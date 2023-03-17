@@ -57,7 +57,7 @@ const CopyToClipboard = ({ url }: { url: string }) => {
   return (
     <Popover
       opened={copied}
-      width={50}
+      width={55}
       position="top"
       withArrow
       shadow="md"
@@ -76,10 +76,10 @@ const CopyToClipboard = ({ url }: { url: string }) => {
       </Popover.Target>
       <Popover.Dropdown
         style={{
-          padding: 4,
+          padding: 2,
         }}
       >
-        <div className="text-xs">copied!</div>
+        <div className="w-[70px] text-xs">copied!</div>
       </Popover.Dropdown>
     </Popover>
   );

@@ -14,8 +14,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <MantineProvider
-        withGlobalStyles
-        withNormalizeCSS
+        // withGlobalStyles
+        // withNormalizeCSS
         emotionCache={styleCache}
       >
         <Component {...pageProps} />

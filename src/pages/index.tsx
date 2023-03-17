@@ -1,24 +1,16 @@
 import { type NextPage } from "next";
-import Head from "next/head";
+
 import Link from "next/link";
+import HeadWrapper from "~/components/HeadWrapper";
 
 const Home: NextPage = () => {
   return (
-    <>
-      <Head>
-        <title>Habit Genie</title>
-        <meta
-          name="description"
-          content="Build custom habit trackers as Notion embeds"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-indigo-400 to-cyan-400">
-        <div className="container flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
+    <HeadWrapper>
+      <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-indigo-400 to-cyan-400">
+        <div className="flex flex-col items-center justify-center gap-12 px-4 py-16 ">
+          <h1 className="sm:text-[5rem] text-5xl font-extrabold tracking-tight text-white">
             Habit{" "}
-            <span className="bg-gradient-to-r from-fuchsia-600 to-violet-600 bg-clip-text text-transparent">
+            <span className="animate-gradient-x bg-gradient-to-br from-fuchsia-400 to-violet-600 bg-clip-text text-transparent">
               Genie
             </span>
             🧞
@@ -29,12 +21,12 @@ const Home: NextPage = () => {
               href="/dashboard"
             >
               <h3 className="text-2xl font-bold">Dashboard →</h3>
-              <div className="text-lg">Example habit dashboard</div>
+              <div className="text-lg">Start tracking your habits</div>
             </Link>
           </div>
         </div>
-      </main>
-    </>
+      </div>
+    </HeadWrapper>
   );
 };
 

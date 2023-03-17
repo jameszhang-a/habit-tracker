@@ -4,9 +4,6 @@ const plugin = require("tailwindcss/plugin");
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
-    screens: {
-      sm: "450px",
-    },
     extend: {
       fontSize: {
         h1: "3rem",
@@ -18,9 +15,12 @@ module.exports = {
       backgroundSize: {
         huge: "400% 400%",
       },
+      screens: {
+        xs: "450px",
+      },
     },
     fontFamily: {
-      body: ["JetBrains Mono", "monospace"],
+      sans: ["JetBrains Mono", "monospace"],
     },
   },
   plugins: [
