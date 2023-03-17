@@ -5,6 +5,7 @@ import Gradient from "./Gradient";
 
 import { default as c } from "classnames";
 import { useTrackerContext } from "~/context/TrackerContext";
+import HabitLoading from "./HabitLoading";
 
 export type Habit = RouterOutputs["habit"]["getHabits"][number];
 
@@ -36,10 +37,16 @@ const HabitCard = ({ habit }: Props) => {
       setShowCheck(data.completed);
       console.log("success", habit.name, data.completed);
     },
+    onMutate() {
+      setAnimateCheck(true);
+    },
+    onSettled() {
+      setAnimateCheck(false);
+    },
   });
 
   useEffect(() => {
-    console.log("completed changed", data?.completed);
+    console.log("date changed", activeDate);
 
     if (data) {
       setShowCheck(data.completed);
@@ -48,44 +55,18 @@ const HabitCard = ({ habit }: Props) => {
     }
   }, [isFetched, data, activeDate]);
 
-  const handleCheck = () => {
-    // setAnimateCheck(true);
-    // setShowCheck((prev) => !prev);
-
-    // create a habit log for the day that it's checked
-    // if it's already checked, then uncheck it
-    habitLogCreation.mutate({ id: habit.id, date: activeDate });
-
-    // setTimeout(() => {
-    //   setAnimateCheck(false);
-    // }, 500);
-  };
-
-  const handleUnCheck = () => {
-    // setAnimateUncheck(true);
-    // setShowCheck((prev) => !prev);
-
-    // create a habit log for the day that it's checked
-    // if it's already checked, then uncheck it
-    habitLogCreation.mutate({ id: habit.id, date: activeDate });
-
-    // setTimeout(() => {
-    //   setAnimateUncheck(false);
-    // }, 500);
-  };
-
   const handleClick = () => {
-    if (showCheck) {
-      handleUnCheck();
-    } else {
-      handleCheck();
-    }
+    habitLogCreation.mutate({ id: habit.id, date: activeDate });
   };
 
   const hoverEffect =
     "hover:scale-110 transition ease-in-out delay-50 duration-150";
 
   const { current: inputId } = useRef(`habit-${habit.id}`);
+
+  if (isLoading) {
+    return <HabitLoading />;
+  }
 
   return (
     <div
@@ -116,7 +97,6 @@ const HabitCard = ({ habit }: Props) => {
           htmlFor={inputId}
           className={c(
             {
-              "animate-ping bg-green-300": habitLogCreation.isLoading,
               "bg-green-300 outline outline-green-200":
                 !habitLogCreation.isLoading && showCheck,
               "bg-white": !showCheck,

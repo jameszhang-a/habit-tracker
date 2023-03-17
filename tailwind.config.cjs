@@ -4,6 +4,9 @@ const plugin = require("tailwindcss/plugin");
 module.exports = {
   content: ["./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
+    screens: {
+      sm: "450px",
+    },
     extend: {
       fontSize: {
         h1: "3rem",
@@ -31,6 +34,15 @@ module.exports = {
         },
         ".animation-delay-150": {
           "animation-delay": "150ms",
+        },
+        ".animation-delay-250": {
+          "animation-delay": "250ms",
+        },
+        ".animation-delay-500": {
+          "animation-delay": "500ms",
+        },
+        ".animation-delay-1000": {
+          "animation-delay": "1000ms",
         },
       };
 

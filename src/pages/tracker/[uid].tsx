@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { type NextPage } from "next";
 import { useRouter } from "next/router";
 
@@ -25,10 +25,12 @@ const Tracker: NextPage = () => {
   const [isHorizontal, setIsHorizontal] = useState(true);
   const { classes } = useStyles();
 
+  const exceedsCount = useMemo(() => habits.length > 3, [habits]);
+
   const winSize = useWindowSize();
 
   useEffect(() => {
-    if (winSize.width < 540) {
+    if (winSize.width < 450) {
       setIsHorizontal(false);
     } else {
       setIsHorizontal(true);
@@ -69,21 +71,32 @@ const Tracker: NextPage = () => {
           </Carousel.Slide>
         ));
 
+  const fullScreen = "flex h-screen w-screen items-center justify-center";
+  const widget = "w-fit h-fit";
+
   return (
-    <div className="flex h-screen w-screen items-center justify-center bg-gradient-to-br from-pink-300 to-blue-900">
+    <div
+      className={`${widget} ${
+        !isHorizontal ? fullScreen : ""
+      } bg-gradient-to-br from-pink-300 to-blue-900`}
+    >
       {/* actual component */}
       <TrackerContextProvider value={{ activeDate, setActiveDate }}>
         <div className="relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 px-4 py-4 shadow-xl backdrop-blur sm:h-[250px] sm:w-[550px]">
-          <DatePicker numDays={5} />
-          <div className="min-w-[300px] max-w-[500px]">
+          <DatePicker numDays={7} />
+          <div className="w-[340px] max-w-[500px] sm:min-w-[500px]">
             <Carousel
-              slideSize={`${isHorizontal ? 33.333333 : 25}%`}
+              slideSize={`${
+                isHorizontal ? Math.max((1 / 3) * 100, 100 / slides.length) : 25
+              }%`}
               align="start"
               slidesToScroll={isHorizontal ? 3 : 4}
               height={isHorizontal ? 150 : 500}
               controlsOffset={"-30px"}
               classNames={classes}
-              withIndicators={habits.length > 3 && isHorizontal}
+              withIndicators={exceedsCount && isHorizontal}
+              withControls={exceedsCount}
+              draggable={exceedsCount}
               orientation={isHorizontal ? "horizontal" : "vertical"}
             >
               {slides}
