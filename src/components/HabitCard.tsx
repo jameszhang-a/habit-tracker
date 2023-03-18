@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import Gradient from "./Gradient";
 
 import { default as c } from "classnames";
 import { useTrackerContext } from "~/context/TrackerContext";
 import HabitLoading from "./HabitLoading";
-
-export type Habit = RouterOutputs["habit"]["getHabits"][number];
+import type { Habit } from "~/types";
 
 type Props = {
   habit: Habit;
@@ -24,7 +22,7 @@ const HabitCard = ({ habit }: Props) => {
   const { activeDate } = useTrackerContext();
 
   const { logHabit, loggedOnDate } = habitAPI;
-  const { data, isLoading, isSuccess, isFetched } = loggedOnDate.useQuery({
+  const { data, isLoading, isFetched } = loggedOnDate.useQuery({
     id: habit.id,
     date: activeDate,
   });
@@ -119,7 +117,7 @@ const HabitCard = ({ habit }: Props) => {
         />
       </div>
       <div
-        className={`col-span-3 self-center font-body text-xl leading-none tracking-tighter`}
+        className={`font-body col-span-3 self-center text-xl leading-none tracking-tighter`}
       >
         {habit.name}
       </div>

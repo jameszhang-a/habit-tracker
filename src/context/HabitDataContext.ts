@@ -1,7 +1,5 @@
 import { createContext } from "react";
-import type { RouterOutputs } from "~/utils/api";
-
-type Habits = RouterOutputs["habit"]["getHabits"];
+import type { Habits } from "~/types";
 
 interface HabitDataContext {
   habits: Habits;
