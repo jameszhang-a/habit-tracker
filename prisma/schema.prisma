@@ -81,5 +81,7 @@ model HabitLog {
     date      DateTime
     completed Boolean  @default(false)
 
+    weekKey String @default("")
+
     @@index([habitId])
 }

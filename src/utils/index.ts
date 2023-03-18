@@ -14,7 +14,10 @@ const emojiLength = (text: string) => {
   return x.length;
 };
 
-const weekFromDate = (date: Date) => {
+const weekFromDate = (
+  date: Date,
+  weekStart: "monday" | "sunday" = "monday"
+) => {
   const time = date.getTime();
 
   // Create a new Date object for the beginning of the year
@@ -28,10 +31,11 @@ const weekFromDate = (date: Date) => {
   // Convert the difference to days and add 1 to get the day number out of the year (starting at 1)
   const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
 
-  const dayOfYearOffset = startOfYear.getDay() - 1;
+  // Offset the day of the year by the day of the week of the first day of the year
+  const dayOfYearOffset =
+    startOfYear.getDay() - (weekStart === "monday" ? 1 : 0);
 
   return Math.ceil((dayOfYear + dayOfYearOffset) / 7);
 };
-console.log(weekFromDate(new Date()));
 
 export { formatDate, emojiLength, weekFromDate };
