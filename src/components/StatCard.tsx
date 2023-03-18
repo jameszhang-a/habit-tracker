@@ -8,19 +8,18 @@ interface StatCardProps {
 const statsAPI = api.stats;
 
 const StatCard: React.FC<StatCardProps> = ({ habit }) => {
-  const { getHabitCompletionCount, getGoalsMetCount, getCompletionRate } =
-    statsAPI;
+  const { getHabitCompletionCount, getCurrentStreak, getGoalsStats } = statsAPI;
   const completedCount = getHabitCompletionCount.useQuery({
     hid: habit.id,
   }).data;
-  const goalsMetCount = getGoalsMetCount.useQuery({
+
+  const goalsStats = getGoalsStats.useQuery({
     hid: habit.id,
     frequency: habit.frequency,
   }).data;
 
-  const completionRate = getCompletionRate.useQuery({
+  const habitStreak = getCurrentStreak.useQuery({
     hid: habit.id,
-    frequency: habit.frequency,
   }).data;
 
   return (
@@ -31,8 +30,12 @@ const StatCard: React.FC<StatCardProps> = ({ habit }) => {
       </div>
 
       <div>Completed: {completedCount}</div>
-      <div>Rate: {toPercentage(completionRate || 0)}</div>
-      <div>Badges: {goalsMetCount}</div>
+      <div>Rate: {toPercentage(goalsStats?.completionRate || 0)}</div>
+      <div>Badges: {goalsStats?.goalsMet}</div>
+      <div>
+        Curr Streak: {habitStreak?.streak}
+        {habitStreak?.onStreak ? "🔥" : ""}
+      </div>
     </div>
   );
 };

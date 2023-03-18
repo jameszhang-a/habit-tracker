@@ -19,12 +19,7 @@ export const statsRouter = createTRPCRouter({
       return habitCompletionCount;
     }),
 
-  /**
-   * For a given habit, return the ratio of weeks were the habit was completed its frequency number of times over the total number of weeks since the habit has been created
-   * @param hid - Habit ID
-   * @param frequency - Number of times the habit should be completed per week
-   */
-  getCompletionRate: publicProcedure
+  getGoalsStats: publicProcedure
     .input(z.object({ hid: z.string(), frequency: z.number() }))
     .query(async ({ ctx, input }) => {
       const { hid, frequency } = input;
@@ -44,15 +39,16 @@ export const statsRouter = createTRPCRouter({
       });
 
       if (!earliestLog) {
-        return 0;
+        return {
+          completionRate: 0,
+          goalsMet: 0,
+          totalWeeks: 0,
+        };
       }
 
       const startWeek = weekFromDate(earliestLog.date);
       const currentWeek = weekFromDate(new Date());
       const totalWeeks = currentWeek - startWeek + 1;
-      console.log("startWeek", startWeek);
-      console.log("currentWeek", currentWeek);
-      console.log("totalWeeks", totalWeeks);
 
       const logs = await ctx.prisma.habitLog.groupBy({
         by: ["weekKey"],
@@ -70,32 +66,47 @@ export const statsRouter = createTRPCRouter({
         }
       }
 
-      return count / totalWeeks;
+      return {
+        completionRate: count / totalWeeks,
+        goalsMet: count,
+        totalWeeks,
+      };
     }),
 
-  getGoalsMetCount: publicProcedure
-    .input(z.object({ hid: z.string(), frequency: z.number() }))
+  getCurrentStreak: publicProcedure
+    .input(z.object({ hid: z.string() }))
     .query(async ({ ctx, input }) => {
-      const { hid, frequency } = input;
+      const { hid } = input;
 
-      const logs = await ctx.prisma.habitLog.groupBy({
-        by: ["weekKey"],
-        where: { habitId: hid, completed: true },
-        _count: {
-          completed: true,
-        },
+      const logs = await ctx.prisma.habitLog.findMany({
+        where: { habitId: hid },
+        orderBy: { date: "desc" },
       });
 
       let count = 0;
+      let lastDate = new Date();
 
-      console.log("logs", logs);
+      for (const log of logs) {
+        const logDate = log.date;
+        logDate.setHours(0, 0, 0, 0);
 
-      for (const week of logs) {
-        if (week._count.completed >= frequency) {
-          count++;
+        if (lastDate.getTime() - logDate.getTime() > 86400000) {
+          break;
         }
+
+        if (log.completed) {
+          count++;
+        } else {
+          break;
+        }
+
+        lastDate = new Date(logDate);
       }
 
-      return count;
+      return {
+        onStreak: count > 0,
+        streak: count,
+        msg: count > 4 ? "You're on a roll!" : "You can do it!",
+      };
     }),
 });
