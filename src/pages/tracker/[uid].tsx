@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { type NextPage } from "next";
 import { useRouter } from "next/router";
 
 import { Carousel } from "@mantine/carousel";
 import { createStyles, getStylesRef } from "@mantine/core";
+import { useColorScheme } from "@mantine/hooks";
+import { default as c } from "classnames";
 
+import HeadWrapper from "~/components/HeadWrapper";
 import HabitCard from "~/components/HabitCard";
 import HabitLoading from "~/components/HabitLoading";
 import Refresh from "~/components/Refresh";
@@ -13,10 +15,9 @@ import { DatePicker } from "~/components/DatePicker";
 import { api } from "~/utils/api";
 import { useWindowSize } from "~/hooks/useWindowSize";
 import { TrackerContextProvider } from "~/context/TrackerContext";
-import { useColorScheme } from "@mantine/hooks";
-import { default as c } from "classnames";
-import HeadWrapper from "~/components/HeadWrapper";
+
 import type { Habits } from "~/types";
+import { type NextPage } from "next";
 
 const habitAPI = api.habit;
 
@@ -45,8 +46,6 @@ const Tracker: NextPage = () => {
   const { data: habitsData, isLoading } = habitAPI.getHabits.useQuery({
     uid,
   });
-
-  if (isLoading) console.log("loading");
 
   useEffect(() => {
     if (habitsData) {

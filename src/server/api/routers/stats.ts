@@ -15,4 +15,18 @@ export const statsRouter = createTRPCRouter({
 
       return habits;
     }),
+
+  /**
+   * For a given habit, return the number of times it has been completed
+   * @param hid - User ID
+   */
+  getHabitCompletionCount: protectedProcedure
+    .input(z.object({ hid: z.string() }))
+    .query(({ ctx, input }) => {
+      const habitCompletionCount = ctx.prisma.habitLog.count({
+        where: { habitId: input.hid, completed: true },
+      });
+
+      return habitCompletionCount;
+    }),
 });
