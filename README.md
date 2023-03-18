@@ -1,6 +1,9 @@
-# Habit Genie
+# Habit Genie 🧞
 
-Keep track of your habits and goals with a personalized [Notion](https://www.notion.so/) widget.
+
+![Custom widget](https://user-images.githubusercontent.com/83667312/226100966-45cbc541-1671-45d1-98ea-fc3320f42e4f.png)
+
+Keep track of your habits and goals with a custom [Notion](https://www.notion.so/) widget.
 
 ## TODO
 
@@ -14,27 +17,6 @@ Keep track of your habits and goals with a personalized [Notion](https://www.not
 - [x] see habit status for ALL past days
 - [x] when deleting habit, delete all habit logs
 - [x] Check habit status for today
-
-### calculating streaks
-
-#### Option 1
-
-- when creating a habit, set the streak to 0
-- when checking a habit, check if the last habit log is the day before
-  - if yes, increment the streak
-  - if no, set the streak to 1
-
-\* doesn't work if you go back and uncheck or check a habit from a previous day
-
-#### Option 2
-
-- do everything in the frontend
-- read all habit logs for the habit that are completed
-- calculate the current and longest streaks
-
-\* works even if you go back and change, just need to recalculate
-
-\* might be slow if you have a lot of habit logs, not sure if it's worth it to optimize at this point
 
 ---
 
