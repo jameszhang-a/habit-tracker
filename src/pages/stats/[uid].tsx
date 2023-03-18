@@ -32,10 +32,10 @@ const Stats: NextPage = () => {
       <div className="h-screen w-screen">
         <div>Stats page</div>
         <div>User id: {uid}</div>
-        <div className="container mx-auto h-[700px] rounded-xl border bg-violet-300">
+        <div className="container mx-auto rounded-xl border bg-violet-300">
           <div className="flex flex-col items-center justify-around gap-4 p-4">
             {habits.map((habit) => (
-              <StatCard key={habit.id} hid={habit.id} habitName={habit.name} />
+              <StatCard key={habit.id} habit={habit} />
             ))}
           </div>
         </div>

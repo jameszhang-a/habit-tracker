@@ -38,4 +38,11 @@ const weekFromDate = (
   return Math.ceil((dayOfYear + dayOfYearOffset) / 7);
 };
 
-export { formatDate, emojiLength, weekFromDate };
+const getWeekKey = (date: Date) => {
+  const year = date.getFullYear();
+  const week = weekFromDate(date);
+
+  return `${year}-${week}`;
+};
+
+export { formatDate, emojiLength, weekFromDate, getWeekKey };

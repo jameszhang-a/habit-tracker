@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { getWeekKey } from "~/utils";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 
@@ -128,6 +129,7 @@ export const habitRouter = createTRPCRouter({
             habitId: input.id,
             date: input.date,
             completed: true,
+            weekKey: getWeekKey(input.date),
           },
         });
       } else {
