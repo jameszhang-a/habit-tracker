@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useState, useEffect } from "react";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
@@ -83,7 +84,21 @@ const Page = () => {
           >
             {sessionData ? "Sign out" : "Sign in"}
           </button>
-          {sessionData && <span>Welcome {sessionData.user?.name}</span>}
+          {sessionData && (
+            <div className="flex gap-2">
+              Welcome{" "}
+              <span>
+                {sessionData.user?.name}{" "}
+                {sessionData.user?.image && (
+                  <img
+                    className="inline-block h-8 w-8 rounded-full ring-1 ring-white"
+                    src={sessionData.user?.image}
+                    alt="user avatar"
+                  />
+                )}
+              </span>
+            </div>
+          )}
         </div>
 
         {sessionData && (
