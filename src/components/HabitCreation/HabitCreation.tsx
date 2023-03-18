@@ -11,7 +11,7 @@ import { emojiLength } from "~/utils";
 import HabitDataContext from "~/context/HabitDataContext";
 
 import type { ChangeEvent } from "react";
-import type { Habit } from "../HabitCard";
+import type { Habit } from "~/types";
 import type { OS } from "@mantine/hooks";
 
 interface HabitCreationProps {
@@ -116,7 +116,7 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
 
   return (
     <div
-      className={`flex w-[500px] flex-col items-center rounded-lg bg-white font-body backdrop-blur`}
+      className={`font-body flex w-[500px] flex-col items-center rounded-lg bg-white backdrop-blur`}
     >
       {edit ? (
         <div className="mb-3 text-2xl">Editing: {habit?.name}</div>
