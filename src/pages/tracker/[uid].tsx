@@ -10,15 +10,13 @@ import HabitLoading from "~/components/HabitLoading";
 import Refresh from "~/components/Refresh";
 import { DatePicker } from "~/components/DatePicker";
 
-import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 import { useWindowSize } from "~/hooks/useWindowSize";
 import { TrackerContextProvider } from "~/context/TrackerContext";
 import { useColorScheme } from "@mantine/hooks";
 import { default as c } from "classnames";
 import HeadWrapper from "~/components/HeadWrapper";
-
-type Habits = RouterOutputs["habit"]["getHabits"];
+import type { Habits } from "~/types";
 
 const habitAPI = api.habit;
 

@@ -1,19 +1,17 @@
-import { useSession, signOut, signIn } from "next-auth/react";
 import { useState, useEffect } from "react";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
+import { createStyles, Modal } from "@mantine/core";
+import { useSession, signOut, signIn } from "next-auth/react";
 
 import { api } from "~/utils/api";
-import type { RouterOutputs } from "~/utils/api";
 
 import WidgetLink from "~/components/WidgetLink";
 import HabitCreation from "~/components/HabitCreation/HabitCreation";
-import { createStyles, Modal } from "@mantine/core";
-
 import HabitRow from "~/components/HabitRow";
 import HabitDataContext from "~/context/HabitDataContext";
 
-type Habits = RouterOutputs["habit"]["getHabits"];
+import type { Habits } from "~/types";
 
 const habitAPI = api.habit;
 
