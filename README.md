@@ -1,17 +1,14 @@
 # Habit Genie
 
-Keep track of your habits and goals with a personalized [Notion](https://www.notion.so/) widget. 
-
-
+Keep track of your habits and goals with a personalized [Notion](https://www.notion.so/) widget.
 
 ## TODO
 
-- [ ] calculate streak (different for each habit type)
-- [ ] separate habits into daily, weekly, monthly
-  - [ ] creation modal for habits
 - [ ] archive habits (move to archive page, keep data but doesn't show up in main page)
-- [ ] spaced habits (only show up on certain days/based on pattern)
 - [ ] Order habits
+- [x] calculate streak (different for each habit type)
+- [x] separate habits into daily, weekly, monthly
+  - [x] creation modal for habits
 - [x] generate unique endpoint for each user
 - [x] Check habit status for ALL past days
 - [x] see habit status for ALL past days
