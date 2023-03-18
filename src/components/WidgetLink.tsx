@@ -68,7 +68,7 @@ const CopyToClipboard = ({ url }: { url: string }) => {
     >
       <Popover.Target>
         <button
-          className="drop-shadow-l h-fit rounded-lg border border-slate-200 p-1 shadow shadow-orange-600/40 transition-all hover:shadow-inner hover:drop-shadow-none"
+          className="drop-shadow-l h-fit rounded-lg border border-slate-200 p-1 shadow shadow-orange-600/40 transition-all hover:scale-105 active:scale-100 active:shadow-inner active:drop-shadow-none"
           onClick={() => void copyToClipboard()}
         >
           <ClipboardDocumentIcon className="w-5" />

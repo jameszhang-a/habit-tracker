@@ -75,12 +75,12 @@ const Page = () => {
       value={{ handleDelete, handleHabitCreation, habits }}
     >
       {/* background */}
-      <div className="relative flex h-screen flex-col bg-[hsl(21,100%,87%)]">
+      <div className="relative flex h-screen flex-col bg-[hsl(269,95%,92%)]">
         {/* header */}
-        <div className="flex h-10 w-screen flex-row-reverse items-center justify-between rounded-b-xl border-b bg-[#f4f5f6]/80 px-10 text-xl drop-shadow">
+        <div className="flex h-12 w-screen flex-row-reverse items-center justify-between rounded-b-xl border-b bg-[#f4f5f6]/80 px-10 text-xl drop-shadow">
           <button
             // className="my-1 rounded bg-gray-500 px-3 py-1 text-sm font-semibold text-white no-underline transition hover:bg-gray-600"
-            className="btn-secondary"
+            className="btn-secondary py-2 px-2 text-xs"
             onClick={sessionData ? () => void signOut() : () => void signIn()}
           >
             {sessionData ? "Sign out" : "Sign in"}
@@ -89,8 +89,8 @@ const Page = () => {
         </div>
 
         {sessionData && (
-          <main className="container mx-auto flex grow flex-col items-center gap-4 pt-4">
-            <section className="flex w-[700px] flex-row rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 drop-shadow">
+          <main className="mx-auto flex grow flex-col items-center gap-4 pt-4">
+            <section className="container flex w-[700px] flex-row rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 drop-shadow">
               <h1 className="flex flex-1 items-center justify-center text-2xl font-bold">
                 Get your links!
               </h1>
