@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import HeadWrapper from "~/components/HeadWrapper";
 import StatCard from "~/components/StatCard";
+import WeeklyBarGraph from "~/components/WeeklyBarGraph";
 import type { Habits } from "~/types";
 import { api } from "~/utils/api";
 
@@ -33,11 +34,15 @@ const Stats: NextPage = () => {
         <div>Stats page</div>
         <div>User id: {uid}</div>
         <div className="container mx-auto rounded-xl border bg-violet-300">
-          <div className="flex flex-col items-center justify-around gap-4 p-4">
+          <div className="flex h-[500px] flex-col items-center gap-4 overflow-scroll p-4">
             {habits.map((habit) => (
               <StatCard key={habit.id} habit={habit} />
             ))}
           </div>
+        </div>
+
+        <div className="container mx-auto">
+          <WeeklyBarGraph habits={habits} />
         </div>
       </div>
     </HeadWrapper>

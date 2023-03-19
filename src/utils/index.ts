@@ -45,4 +45,22 @@ const getWeekKey = (date: Date) => {
   return `${year}-${week}`;
 };
 
-export { formatDate, emojiLength, weekFromDate, getWeekKey };
+const weekDay = (n: number, mode: "full" | "short" | "first") => {
+  const days = {
+    full: [
+      "sunday",
+      "monday",
+      "tuesday",
+      "wednesday",
+      "thursday",
+      "friday",
+      "saturday",
+    ],
+    short: ["sun", "mon", "tue", "wed", "thu", "fri", "sat"],
+    first: ["s", "m", "t", "w", "t", "f", "s"],
+  };
+
+  return days[mode][n];
+};
+
+export { formatDate, emojiLength, weekFromDate, getWeekKey, weekDay };

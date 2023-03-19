@@ -109,4 +109,34 @@ export const statsRouter = createTRPCRouter({
         msg: count > 4 ? "You're on a roll!" : "You can do it!",
       };
     }),
+
+  getWeeklyCompletion: publicProcedure
+    .input(z.object({ hid: z.string().array() }))
+    .query(async ({ ctx, input }) => {
+      const { hid } = input;
+
+      const res: { [key: string]: number[] } = {};
+
+      for (const h of hid) {
+        const logs = await ctx.prisma.habitLog.findMany({
+          where: { habitId: h, completed: true },
+          orderBy: { date: "desc" },
+          select: { date: true },
+        });
+
+        if (!logs) continue;
+
+        const data = Array<number>(7).fill(0);
+
+        for (const log of logs) {
+          const day = log.date.getDay();
+
+          data[day]++;
+        }
+
+        res[h] = data;
+      }
+
+      return res;
+    }),
 });
