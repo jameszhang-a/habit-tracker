@@ -107,7 +107,6 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
 
   const handleNameFocus = () => {
     setNameError("");
-    console.log("clear name error");
   };
 
   const handleEmojiFocus = () => {

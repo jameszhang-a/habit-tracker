@@ -33,7 +33,6 @@ const HabitCard = ({ habit }: Props) => {
     },
     onSuccess(data) {
       setShowCheck(data.completed);
-      console.log("success", habit.name, data.completed);
     },
     onMutate() {
       if (showCheck) {
@@ -52,8 +51,6 @@ const HabitCard = ({ habit }: Props) => {
   });
 
   useEffect(() => {
-    console.log("date changed", activeDate);
-
     if (data) {
       setShowCheck(data.completed);
     } else {
