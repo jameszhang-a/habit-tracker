@@ -25,6 +25,7 @@ export const habitRouter = createTRPCRouter({
     .query(({ ctx, input }) => {
       const habits = ctx.prisma.habit.findMany({
         where: { userId: input.uid },
+        orderBy: { order: "asc" },
       });
 
       return habits;

@@ -68,6 +68,7 @@ model Habit {
     frequency Int        @default(1)
     goal      Int        @default(1)
     HabitLog  HabitLog[]
+    order     Int        @default(0)
 
     @@index([userId])
 }
