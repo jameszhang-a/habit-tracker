@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Carousel } from "@mantine/carousel";
 import { createStyles, getStylesRef } from "@mantine/core";
 
@@ -35,6 +36,12 @@ const slides = [1, 2, 3, 4, 5].map((item) => (
 ));
 
 const Test: NextPage = () => {
+  const [winReady, setWinReady] = useState(false);
+
+  useEffect(() => {
+    setWinReady(true);
+  }, []);
+
   const { classes } = useStyles();
 
   return (
@@ -53,42 +60,7 @@ const Test: NextPage = () => {
 
       <div className="animate-gradient-x h-20 w-40 rounded border bg-gradient-full bg-huge"></div>
 
-      <div className="mx-auto w-3/4">
-        <HabitRows
-          data={[
-            {
-              position: 6,
-              mass: 12.011,
-              symbol: "C",
-              name: "Carbon",
-            },
-            {
-              position: 7,
-              mass: 14.007,
-              symbol: "N",
-              name: "Nitrogen",
-            },
-            {
-              position: 39,
-              mass: 88.906,
-              symbol: "Y",
-              name: "Yttrium",
-            },
-            {
-              position: 56,
-              mass: 137.33,
-              symbol: "Ba",
-              name: "Barium",
-            },
-            {
-              position: 58,
-              mass: 140.12,
-              symbol: "Ce",
-              name: "Cerium",
-            },
-          ]}
-        />
-      </div>
+      <div className="mx-auto w-3/4"></div>
     </div>
   );
 };

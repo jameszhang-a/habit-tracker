@@ -34,7 +34,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
   };
 
   return (
-    <div key={habit.id} className="flex justify-between pt-4">
+    <div key={habit.id} className="flex w-full justify-between py-2 px-2">
       <div className="flex gap-3">
         <div>{habit.emoji}</div>
         <div>{habit.name}</div>
@@ -89,6 +89,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
         transitionProps={{ transition: "pop" }}
         withCloseButton={false}
         classNames={classes}
+        centered
       >
         <div className="flex w-[250px] flex-col gap-4">
           <div className="text-center">

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { useState, useEffect } from "react";
+import dynamic from "next/dynamic";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { createStyles, Modal } from "@mantine/core";
@@ -12,6 +13,7 @@ import HabitCreation from "~/components/HabitCreation/HabitCreation";
 import HabitRow from "~/components/HabitRow";
 import { HabitDataContextProvider } from "~/context/HabitDataContext";
 import { useWindowSize } from "~/hooks/useWindowSize";
+const HabitRows = dynamic(() => import("~/components/HabitRows"));
 
 import type { Habits } from "~/types";
 
@@ -20,6 +22,11 @@ const habitAPI = api.habit;
 const Page = () => {
   const [habits, setHabits] = useState<Habits>([]);
   const [showCreation, setShowCreation] = useState(false);
+  const [winReady, setWinReady] = useState(false);
+
+  useEffect(() => {
+    setWinReady(true);
+  }, []);
 
   const [parent] = useAutoAnimate();
   const { data: sessionData } = useSession();
@@ -75,11 +82,10 @@ const Page = () => {
       value={{ handleDelete, handleHabitCreation, habits }}
     >
       {/* background */}
-      <div className="relative flex h-screen flex-col bg-[hsl(269,95%,92%)]">
+      <div className="flex h-screen flex-col bg-[hsl(269,95%,92%)]">
         {/* header */}
-        <div className="flex h-12 w-screen flex-row-reverse items-center justify-between rounded-b-xl border-b bg-[#f4f5f6]/80 px-10 text-xl drop-shadow">
+        <div className="flex h-12 w-screen flex-row-reverse items-center justify-between rounded-b-xl border-b bg-[#f4f5f6]/80 px-10 text-xl shadow">
           <button
-            // className="my-1 rounded bg-gray-500 px-3 py-1 text-sm font-semibold text-white no-underline transition hover:bg-gray-600"
             className="btn-secondary py-2 px-2 text-xs"
             onClick={sessionData ? () => void signOut() : () => void signIn()}
           >
@@ -104,7 +110,7 @@ const Page = () => {
 
         {sessionData && (
           <main className="mx-auto flex grow flex-col items-center gap-4 pt-4">
-            <section className="container flex w-[90vw] flex-col gap-2 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 drop-shadow sm:flex-row">
+            <section className="container flex w-[90vw] flex-col gap-2 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow sm:flex-row">
               <h1 className="flex flex-1 items-center justify-center border text-2xl font-bold text-slate-800">
                 Get your links!
               </h1>
@@ -115,7 +121,7 @@ const Page = () => {
               </div>
             </section>
 
-            <section className="container relative mx-auto mb-10 flex h-full w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 drop-shadow">
+            <section className="container relative mb-10 flex h-full w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow">
               <div className="w-full text-center">
                 <h1 className="text-2xl font-bold text-slate-800">
                   Your Habits
@@ -123,7 +129,7 @@ const Page = () => {
                     className="btn-primary absolute top-4 right-4 text-white max-sm:h-8 max-sm:w-8 max-sm:p-1"
                     onClick={() => setShowCreation((old) => !old)}
                   >
-                    {winSize.width > 450 ? "create new" : "+"}
+                    {winSize.width >= 640 ? "create new" : "+"}
                   </button>
                 </h1>
               </div>
@@ -143,6 +149,8 @@ const Page = () => {
                   <div className="text-center text-slate-700">
                     Start by making a habit!
                   </div>
+                ) : winReady ? (
+                  <HabitRows />
                 ) : (
                   habits?.map((hData) => (
                     <HabitRow key={hData.id} habit={hData} />

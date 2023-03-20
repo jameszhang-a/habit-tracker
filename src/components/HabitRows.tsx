@@ -1,71 +1,31 @@
-import { createStyles, rem, Text } from "@mantine/core";
+import { createStyles, rem } from "@mantine/core";
 import { useListState } from "@mantine/hooks";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
+import { useHabitDataContext } from "~/context/HabitDataContext";
+import HabitRow from "./HabitRow";
+import { default as c } from "classnames";
 
-const useStyles = createStyles((theme) => ({
-  item: {
-    display: "flex",
-    alignItems: "center",
-    borderRadius: theme.radius.md,
-    border: `${rem(1)} solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[2]
-    }`,
-    padding: `${theme.spacing.sm} ${theme.spacing.xl}`,
-    paddingLeft: `calc(${theme.spacing.xl} - ${theme.spacing.md})`, // to offset drag handle
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.white,
-    marginBottom: theme.spacing.sm,
-  },
+const HabitRows = () => {
+  const { habits } = useHabitDataContext();
+  const [state, handlers] = useListState(habits);
 
-  itemDragging: {
-    boxShadow: theme.shadows.sm,
-  },
-
-  symbol: {
-    fontSize: rem(30),
-    fontWeight: 700,
-    width: rem(60),
-  },
-
-  dragHandle: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    height: "100%",
-    color:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[1]
-        : theme.colors.gray[6],
-    paddingLeft: theme.spacing.md,
-    paddingRight: theme.spacing.md,
-  },
-}));
-
-interface DndListHandleProps {
-  data: {
-    position: number;
-    mass: number;
-    symbol: string;
-    name: string;
-  }[];
-}
-
-const HabitRows = ({ data }: DndListHandleProps) => {
-  const { classes, cx } = useStyles();
-  const [state, handlers] = useListState(data);
-
-  const items = state.map((item, index) => (
-    <Draggable key={item.symbol} index={index} draggableId={item.symbol}>
+  const items = state.map((habit, index) => (
+    <Draggable key={habit.id} index={index} draggableId={habit.id}>
       {(provided, snapshot) => (
         <div
-          className={cx(classes.item, {
-            [classes.itemDragging]: snapshot.isDragging,
-          })}
+          className={c(
+            {
+              ["shadow"]: snapshot.isDragging,
+            },
+            "mb-2 flex items-center rounded-lg border border-gray-200 bg-white"
+          )}
           ref={provided.innerRef}
           {...provided.draggableProps}
-          {...provided.dragHandleProps}
         >
-          <div className={classes.dragHandle}>
+          <div
+            className="pr-4 pl-2 text-gray-500"
+            {...provided.dragHandleProps}
+          >
             <svg
               width="15"
               height="15"
@@ -81,13 +41,7 @@ const HabitRows = ({ data }: DndListHandleProps) => {
               />
             </svg>
           </div>
-          <Text className={classes.symbol}>{item.symbol}</Text>
-          <div>
-            <Text>{item.name}</Text>
-            <Text color="dimmed" size="sm">
-              Position: {item.position} • Mass: {item.mass}
-            </Text>
-          </div>
+          <HabitRow habit={habit} />
         </div>
       )}
     </Draggable>
