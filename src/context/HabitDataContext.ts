@@ -1,4 +1,5 @@
-import { createContext } from "react";
+import { createSafeContext } from "@mantine/utils";
+
 import type { Habits } from "~/types";
 
 interface HabitDataContext {
@@ -12,6 +13,5 @@ interface HabitDataContext {
   handleDelete: (habitId: string) => void;
 }
 
-const HabitDataContext = createContext<HabitDataContext | null>(null);
-
-export default HabitDataContext;
+export const [HabitDataContextProvider, useHabitDataContext] =
+  createSafeContext<HabitDataContext>("HabitDataContext is not provided");

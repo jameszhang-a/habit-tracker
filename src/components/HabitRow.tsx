@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useState } from "react";
 import {
   EllipsisHorizontalIcon,
   Cog6ToothIcon,
@@ -6,9 +6,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { createStyles, Menu, Modal } from "@mantine/core";
 
-import HabitDataContext from "~/context/HabitDataContext";
-import type { Habit } from "~/types";
+import { useHabitDataContext } from "~/context/HabitDataContext";
 import HabitCreation from "./HabitCreation/HabitCreation";
+
+import type { Habit } from "~/types";
 
 interface HabitRowProps {
   children?: React.ReactNode;
@@ -17,12 +18,19 @@ interface HabitRowProps {
 
 const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
   const [showModal, setShowModal] = useState(false);
-  const ctx = useContext(HabitDataContext);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  const ctx = useHabitDataContext();
 
   const { classes } = useStyles();
 
   const handleModalClose = () => {
     setShowModal(false);
+  };
+
+  const handleConfirmDelete = (id: string) => {
+    ctx.handleDelete(id);
+    setShowDeleteModal(false);
   };
 
   return (
@@ -51,7 +59,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
           <Menu.Item
             color="red"
             icon={<TrashIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
-            onClick={() => ctx?.handleDelete(habit.id)}
+            onClick={() => setShowDeleteModal(true)}
           >
             Delete
           </Menu.Item>
@@ -72,6 +80,43 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
         classNames={classes}
       >
         <HabitCreation onClose={handleModalClose} edit habit={habit} />
+      </Modal>
+
+      <Modal
+        opened={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        size={"auto"}
+        transitionProps={{ transition: "pop" }}
+        withCloseButton={false}
+        classNames={classes}
+      >
+        <div className="flex w-[250px] flex-col gap-4">
+          <div className="text-center">
+            you sure?? This action{" "}
+            <span className="font-bold underline underline-offset-2">
+              cannot
+            </span>{" "}
+            be undone, and you will lose{" "}
+            <span className="font-bold underline underline-offset-2">all</span>{" "}
+            data associated with this habit.
+          </div>
+          <div className="flex justify-around">
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => setShowDeleteModal(false)}
+            >
+              cancel
+            </button>
+            <button
+              type="submit"
+              className="btn-danger"
+              onClick={() => handleConfirmDelete(habit.id)}
+            >
+              delete
+            </button>
+          </div>
+        </div>
       </Modal>
     </div>
   );

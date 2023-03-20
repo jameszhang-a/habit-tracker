@@ -1,4 +1,4 @@
-import { useState, useRef, useContext } from "react";
+import { useState, useRef } from "react";
 
 import { Popover, Button, Tooltip } from "@mantine/core";
 import { useOs } from "@mantine/hooks";
@@ -8,7 +8,7 @@ import type { FloatingInputProps } from "./FloatingInput";
 import { FloatingLabelInput } from "./FloatingInput";
 import { FrequencyPicker } from "./FrequencyPicker";
 import { emojiLength } from "~/utils";
-import HabitDataContext from "~/context/HabitDataContext";
+import { useHabitDataContext } from "~/context/HabitDataContext";
 
 import type { ChangeEvent } from "react";
 import type { Habit } from "~/types";
@@ -43,7 +43,7 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
   const [nameError, setNameError] = useState("");
   const [emojiError, setEmojiError] = useState("");
 
-  const ctx = useContext(HabitDataContext);
+  const ctx = useHabitDataContext();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -69,7 +69,7 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
     });
 
     if (parsed.success) {
-      ctx?.handleHabitCreation({
+      ctx.handleHabitCreation({
         ...parsed.data,
         habitId: habit ? habit.id : "1",
       });

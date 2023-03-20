@@ -10,7 +10,7 @@ import { api } from "~/utils/api";
 import WidgetLink from "~/components/WidgetLink";
 import HabitCreation from "~/components/HabitCreation/HabitCreation";
 import HabitRow from "~/components/HabitRow";
-import HabitDataContext from "~/context/HabitDataContext";
+import { HabitDataContextProvider } from "~/context/HabitDataContext";
 import { useWindowSize } from "~/hooks/useWindowSize";
 
 import type { Habits } from "~/types";
@@ -71,7 +71,7 @@ const Page = () => {
   };
 
   return (
-    <HabitDataContext.Provider
+    <HabitDataContextProvider
       value={{ handleDelete, handleHabitCreation, habits }}
     >
       {/* background */}
@@ -169,7 +169,7 @@ const Page = () => {
           </main>
         )}
       </div>
-    </HabitDataContext.Provider>
+    </HabitDataContextProvider>
   );
 };
 
