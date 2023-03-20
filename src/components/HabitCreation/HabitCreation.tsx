@@ -115,12 +115,15 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
 
   return (
     <div
-      className={`font-body flex w-[500px] flex-col items-center rounded-lg bg-white backdrop-blur`}
+      className={`font-body flex w-[80vw] flex-col items-center overflow-clip rounded-lg bg-white backdrop-blur sm:w-[500px]`}
     >
       {edit ? (
-        <div className="mb-3 text-2xl">Editing: {habit?.name}</div>
+        <div className="mb-4 text-3xl">
+          Editing:{" "}
+          <span className="underline underline-offset-4">{habit?.name}</span>
+        </div>
       ) : (
-        <div className="text-h1">Create a Habit!</div>
+        <div className="mb-4 text-3xl">Create a Habit!</div>
       )}
       <form
         className="flex w-full flex-col items-center justify-center gap-6"
@@ -176,28 +179,19 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
           />
         </div>
 
-        <div className="min-w-full gap-2 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+        <div className="flex min-w-full flex-row-reverse gap-2 px-4 py-3 sm:px-6">
           {edit ? (
-            <button
-              type="submit"
-              // className="inline-flex w-full justify-center rounded-md bg-violet-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-violet-700 sm:ml-3 sm:w-auto"
-              className="btn-primary"
-            >
-              Save
+            <button type="submit" className="btn-primary">
+              save
             </button>
           ) : (
-            <button
-              type="submit"
-              // className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold capitalize text-white shadow-sm hover:bg-indigo-500 sm:ml-3 sm:w-auto"
-              className="btn-primary"
-            >
+            <button type="submit" className="btn-primary">
               done
             </button>
           )}
           <button
             type="button"
             onClick={() => onClose(false)}
-            // className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold capitalize text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
             className="btn-secondary"
           >
             cancel
@@ -221,6 +215,10 @@ const tipMessage = (os: OS) => {
   }
 };
 
+const isMobile = (os: OS) => {
+  return os === "ios" || os === "android";
+};
+
 const EmojiPicker: React.FC<FloatingInputProps> = ({
   value,
   placeholder,
@@ -234,6 +232,8 @@ const EmojiPicker: React.FC<FloatingInputProps> = ({
 
   const ref = useRef<HTMLButtonElement>(null);
   const os = useOs();
+
+  console.log(os);
 
   const handleFocus = () => {
     onInputFocus();
@@ -254,37 +254,39 @@ const EmojiPicker: React.FC<FloatingInputProps> = ({
         onBlur={onBlur}
       />
 
-      <Popover width={200} position="bottom" withArrow shadow="md">
-        <Popover.Target>
-          <Button
-            ref={ref}
-            compact
-            styles={() => ({
-              root: {
-                position: "absolute",
-                bottom: "0",
-                left: "110%",
-                borderRadius: "10px",
-                backgroundImage:
-                  "linear-gradient(to right, #fbc2eb 0%, #a6c1ee 100%)",
-                transition: "all 0.3s ease",
-                display: showTooltip ? "block" : "none",
-              },
-            })}
-          >
-            pssst..
-          </Button>
-        </Popover.Target>
+      {!isMobile(os) && (
+        <Popover width={200} position="bottom" withArrow shadow="md">
+          <Popover.Target>
+            <Button
+              ref={ref}
+              compact
+              styles={() => ({
+                root: {
+                  position: "absolute",
+                  bottom: "0",
+                  left: "110%",
+                  borderRadius: "10px",
+                  backgroundImage:
+                    "linear-gradient(to right, #fbc2eb 0%, #a6c1ee 100%)",
+                  transition: "all 0.3s ease",
+                  display: showTooltip ? "block" : "none",
+                },
+              })}
+            >
+              pssst..
+            </Button>
+          </Popover.Target>
 
-        <Popover.Dropdown>
-          <div className="text-xs font-bold leading-6">
-            open emoji picker with{" "}
-            <div className="w-fit rounded-lg border-b-2 border-blue-400 bg-blue-200 px-1">
-              {tipMessage(os)}
+          <Popover.Dropdown>
+            <div className="text-xs font-bold leading-6">
+              open emoji picker with{" "}
+              <div className="w-fit rounded-lg border-b-2 border-blue-400 bg-blue-200 px-1">
+                {tipMessage(os)}
+              </div>
             </div>
-          </div>
-        </Popover.Dropdown>
-      </Popover>
+          </Popover.Dropdown>
+        </Popover>
+      )}
     </div>
   );
 };

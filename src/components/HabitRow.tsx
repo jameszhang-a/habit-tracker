@@ -42,7 +42,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
         <Menu.Dropdown>
           <Menu.Label>{habit.name}</Menu.Label>
           <Menu.Item
-            icon={<Cog6ToothIcon className="h-5 w-5" />}
+            icon={<Cog6ToothIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
             onClick={() => setShowModal(true)}
           >
             Edit
@@ -50,7 +50,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
 
           <Menu.Item
             color="red"
-            icon={<TrashIcon className="h-5 w-5" />}
+            icon={<TrashIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
             onClick={() => ctx?.handleDelete(habit.id)}
           >
             Delete

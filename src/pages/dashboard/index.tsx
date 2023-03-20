@@ -11,6 +11,7 @@ import WidgetLink from "~/components/WidgetLink";
 import HabitCreation from "~/components/HabitCreation/HabitCreation";
 import HabitRow from "~/components/HabitRow";
 import HabitDataContext from "~/context/HabitDataContext";
+import { useWindowSize } from "~/hooks/useWindowSize";
 
 import type { Habits } from "~/types";
 
@@ -21,9 +22,9 @@ const Page = () => {
   const [showCreation, setShowCreation] = useState(false);
 
   const [parent] = useAutoAnimate();
-
   const { data: sessionData } = useSession();
   const { classes } = useStyles();
+  const winSize = useWindowSize();
 
   const { getHabits, deleteHabit, createEditHabit } = habitAPI;
 
@@ -91,7 +92,7 @@ const Page = () => {
                 {sessionData.user?.name}{" "}
                 {sessionData.user?.image && (
                   <img
-                    className="inline-block h-8 w-8 rounded-full ring-1 ring-white"
+                    className="inline-block h-8 w-8 rounded-full ring-2 ring-[hsl(269,95%,92%)]"
                     src={sessionData.user?.image}
                     alt="user avatar"
                   />
@@ -103,8 +104,8 @@ const Page = () => {
 
         {sessionData && (
           <main className="mx-auto flex grow flex-col items-center gap-4 pt-4">
-            <section className="container flex w-[700px] flex-row rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 drop-shadow">
-              <h1 className="flex flex-1 items-center justify-center text-2xl font-bold">
+            <section className="container flex w-[90vw] flex-col gap-2 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 drop-shadow sm:flex-row">
+              <h1 className="flex flex-1 items-center justify-center border text-2xl font-bold text-slate-800">
                 Get your links!
               </h1>
 
@@ -114,22 +115,22 @@ const Page = () => {
               </div>
             </section>
 
-            <section className="container mx-auto mb-10 flex h-full w-[700px] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 drop-shadow">
-              <div className="relative w-full text-center">
+            <section className="container relative mx-auto mb-10 flex h-full w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 drop-shadow">
+              <div className="w-full text-center">
                 <h1 className="text-2xl font-bold text-slate-800">
                   Your Habits
                   <button
-                    className="btn-primary absolute right-[5px] top-0 text-white"
+                    className="btn-primary absolute top-4 right-4 text-white max-sm:h-8 max-sm:w-8 max-sm:p-1"
                     onClick={() => setShowCreation((old) => !old)}
                   >
-                    create new
+                    {winSize.width > 450 ? "create new" : "+"}
                   </button>
                 </h1>
               </div>
 
               <div
                 ref={parent}
-                className="flex w-2/3 flex-col divide-y divide-slate-400/25"
+                className="flex w-5/6 flex-col divide-y divide-slate-400/25 sm:w-2/3"
               >
                 {isLoading ? (
                   <div className="flex text-xl font-semibold tracking-wide">
