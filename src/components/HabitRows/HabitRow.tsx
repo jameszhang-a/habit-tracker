@@ -4,8 +4,9 @@ import {
   Cog6ToothIcon,
   TrashIcon,
   ArchiveBoxIcon,
+  QuestionMarkCircleIcon,
 } from "@heroicons/react/24/outline";
-import { createStyles, Menu, Modal } from "@mantine/core";
+import { createStyles, Menu, Modal, Tooltip } from "@mantine/core";
 
 import { useHabitDataContext } from "~/context/HabitDataContext";
 import HabitCreation from "../HabitCreation/HabitCreation";
@@ -46,7 +47,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
 
       <Menu
         shadow="md"
-        width={125}
+        width={175}
         withArrow
         transitionProps={{ transition: "pop" }}
         styles={{
@@ -73,6 +74,18 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
           <Menu.Item
             icon={<ArchiveBoxIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
             onClick={() => ctx.handleArchive(habit.id)}
+            rightSection={
+              <Tooltip
+                label="You will still keep all of the log data if you wish to unarchive it later."
+                position="bottom"
+                withArrow
+                multiline
+                width={175}
+                color="gray"
+              >
+                <QuestionMarkCircleIcon className="h-4 w-4 stroke-2 text-gray-600" />
+              </Tooltip>
+            }
           >
             Archive
           </Menu.Item>
