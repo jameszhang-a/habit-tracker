@@ -82,7 +82,7 @@ const HabitCard = ({ habit }: Props) => {
             "rotate-[360deg] scale-[20]": animateCheck,
             "-rotate-[360deg] scale-[0.2]": animateUncheck,
           },
-          `transform text-4xl duration-[500ms] ease-in-out`
+          `transform cursor-default text-4xl duration-[500ms] ease-in-out`
         )}
       >
         {habit.emoji}
@@ -114,7 +114,7 @@ const HabitCard = ({ habit }: Props) => {
         />
       </div>
       <div
-        className={`font-body col-span-3 self-center text-xl leading-none tracking-tighter`}
+        className={`font-body col-span-3 cursor-default self-center text-xl leading-none tracking-tighter`}
       >
         {habit.name}
       </div>
