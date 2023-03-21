@@ -89,7 +89,7 @@ export const FloatingLabelInput: React.FC<FloatingInputProps> = ({
 
   const { classes } = useStyles({
     floating: float || value.trim().length !== 0 || focused,
-    carrot: emoji && value.length > 0,
+    carrot: emoji,
     emoji,
   });
 

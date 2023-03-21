@@ -13,7 +13,6 @@
   "dependencies": {
     "@emotion/react": "^11.10.6",
     "@emotion/server": "^11.10.0",
-    "@formkit/auto-animate": "^1.0.0-beta.6",
     "@heroicons/react": "^2.0.16",
     "@mantine/carousel": "^6.0.0",
     "@mantine/core": "^6.0.0",

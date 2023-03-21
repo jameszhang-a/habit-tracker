@@ -2,14 +2,12 @@
 import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
-import { useAutoAnimate } from "@formkit/auto-animate/react";
 import { Loader, Modal } from "@mantine/core";
 import { useSession, signOut, signIn } from "next-auth/react";
 
 import { api } from "~/utils/api";
 import WidgetLink from "~/components/WidgetLink";
 import HabitCreation from "~/components/HabitCreation/HabitCreation";
-import HabitRow from "~/components/HabitRows/HabitRow";
 import { HabitDataContextProvider } from "~/context/HabitDataContext";
 import { useWindowSize } from "~/hooks/useWindowSize";
 
@@ -30,7 +28,6 @@ const Page = () => {
     setWinReady(true);
   }, []);
 
-  const [parent] = useAutoAnimate();
   const { data: sessionData } = useSession();
   const winSize = useWindowSize();
 
@@ -103,7 +100,6 @@ const Page = () => {
   const { mutate: archiveMutate, isLoading: archiveLoading } =
     toggleArchiveHabit.useMutation({
       onSuccess: (data) => {
-        console.log(data);
         if (data.archived) {
           // move habit from habits to archivedHabits
           setHabits((oldHabits) =>
@@ -114,9 +110,7 @@ const Page = () => {
           );
         } else {
           // remove habit from archivedHabits and add it to habits in order
-          setArchivedHabits((oldHabits) =>
-            oldHabits.filter((habit) => habit.id !== data.id)
-          );
+
           setHabits((oldHabits) =>
             [...oldHabits, data].sort((a, b) => a.order - b.order)
           );
@@ -125,12 +119,19 @@ const Page = () => {
     });
 
   const handleArchive = (hid: string) => {
-    setShowArchived(false);
+    if (archivedHabits?.length === 1) setShowArchived(false);
+    setArchivedHabits((oldHabits) =>
+      oldHabits.filter((habit) => habit.id !== hid)
+    );
     archiveMutate({ hid });
   };
 
   const showLoading =
-    habitsLoading || editLoading || deleteLoading || archiveLoading;
+    habitsLoading ||
+    editLoading ||
+    deleteLoading ||
+    archiveLoading ||
+    archiveHabitsLoading;
 
   return (
     <HabitDataContextProvider
@@ -144,7 +145,7 @@ const Page = () => {
       }}
     >
       {/* background */}
-      <div className="flex h-screen flex-col bg-[hsl(269,95%,92%)]">
+      <div className="flex min-h-screen flex-col bg-[hsl(269,95%,92%)]">
         {/* header */}
         <div className="flex h-12 w-screen flex-row-reverse items-center justify-between rounded-b-xl border-b bg-[#f4f5f6]/80 px-10 text-xl shadow">
           <button
@@ -172,6 +173,7 @@ const Page = () => {
 
         {sessionData && (
           <main className="mx-auto flex grow flex-col items-center gap-4 pt-4">
+            {/* Links */}
             <section className="container flex w-[90vw] flex-col gap-2 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow sm:flex-row">
               <h1 className="flex flex-1 items-center justify-center text-2xl font-bold text-slate-800">
                 Get your links!
@@ -183,7 +185,12 @@ const Page = () => {
               </div>
             </section>
 
-            <section className="container relative flex min-h-[50vh] w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow">
+            {/* Habits section */}
+            <section
+              className={`container relative mb-4 flex w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 ${
+                showLoading ? "pb-12" : "pb-[100px]"
+              } shadow`}
+            >
               <h1 className="text-2xl font-bold text-slate-800">Your Habits</h1>
               <button
                 className="btn-primary absolute top-4 right-4 text-white max-sm:h-8 max-sm:w-8 max-sm:p-1"
@@ -191,10 +198,7 @@ const Page = () => {
               >
                 {winSize.width >= 640 ? "create new" : "+"}
               </button>
-              <div
-                ref={parent}
-                className="flex w-5/6 flex-col divide-y divide-slate-400/25 sm:w-2/3"
-              >
+              <div className="flex w-5/6 flex-col divide-y divide-slate-400/25 sm:w-2/3">
                 {winReady && !showLoading && habits.length === 0 ? (
                   <div className="text-center text-slate-700">
                     Start by making a habit!
@@ -217,7 +221,6 @@ const Page = () => {
                 </button>
               )}
             </section>
-
             <Modal
               opened={showCreation}
               onClose={() => setShowCreation(false)}
@@ -233,7 +236,6 @@ const Page = () => {
             >
               <HabitCreation onClose={() => setShowCreation(false)} />
             </Modal>
-
             <Modal
               opened={showArchived}
               onClose={() => setShowArchived(false)}
