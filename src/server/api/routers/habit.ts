@@ -1,20 +1,7 @@
 import { z } from "zod";
-import { getWeekKey } from "~/utils";
+import { getWeekKey, getDateInterval } from "~/utils";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
-
-const getDateInterval = (currDate?: Date) => {
-  const now = currDate ? new Date(currDate) : new Date();
-
-  const dayStart = new Date(now);
-  dayStart.setHours(0, 0, 0, 0);
-
-  const dayEnd = new Date(now);
-  dayEnd.setHours(0, 0, 0, 0);
-  dayEnd.setDate(dayEnd.getDate() + 1);
-
-  return { dayStart, dayEnd };
-};
 
 export const habitRouter = createTRPCRouter({
   /**
@@ -232,8 +219,7 @@ export const habitRouter = createTRPCRouter({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      // order of habits is determined from the order of the array
-      // determined from the frontend
+      // order of habits is determined from the order of the array sent from the frontend
       const { habits } = input;
 
       const res = await Promise.all(
@@ -244,8 +230,6 @@ export const habitRouter = createTRPCRouter({
           });
         })
       );
-
-      console.log(res);
 
       return res;
     }),

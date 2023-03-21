@@ -63,4 +63,24 @@ const weekDay = (n: number, mode: "full" | "short" | "first") => {
   return days[mode][n];
 };
 
-export { formatDate, emojiLength, weekFromDate, getWeekKey, weekDay };
+const getDateInterval = (currDate?: Date) => {
+  const now = currDate ? new Date(currDate) : new Date();
+
+  const dayStart = new Date(now);
+  dayStart.setHours(0, 0, 0, 0);
+
+  const dayEnd = new Date(now);
+  dayEnd.setHours(0, 0, 0, 0);
+  dayEnd.setDate(dayEnd.getDate() + 1);
+
+  return { dayStart, dayEnd };
+};
+
+export {
+  formatDate,
+  emojiLength,
+  weekFromDate,
+  getWeekKey,
+  weekDay,
+  getDateInterval,
+};

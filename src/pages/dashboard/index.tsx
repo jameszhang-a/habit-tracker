@@ -110,7 +110,6 @@ const Page = () => {
           );
         } else {
           // remove habit from archivedHabits and add it to habits in order
-
           setHabits((oldHabits) =>
             [...oldHabits, data].sort((a, b) => a.order - b.order)
           );
@@ -119,7 +118,11 @@ const Page = () => {
     });
 
   const handleArchive = (hid: string) => {
+    // close popup after the last habit is unarchived
     if (archivedHabits?.length === 1) setShowArchived(false);
+
+    // instant update the state here instead of waiting for the mutation to finish
+    // reason is better UX, the user will see the habit disappear from the archived list immediately
     setArchivedHabits((oldHabits) =>
       oldHabits.filter((habit) => habit.id !== hid)
     );
@@ -221,6 +224,8 @@ const Page = () => {
                 </button>
               )}
             </section>
+
+            {/* Creation Modal */}
             <Modal
               opened={showCreation}
               onClose={() => setShowCreation(false)}
@@ -236,6 +241,8 @@ const Page = () => {
             >
               <HabitCreation onClose={() => setShowCreation(false)} />
             </Modal>
+
+            {/* Archive Modal, displaying list of all archived habits */}
             <Modal
               opened={showArchived}
               onClose={() => setShowArchived(false)}
