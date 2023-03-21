@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { Modal } from "@mantine/core";
+import { Loader, Modal } from "@mantine/core";
 import { useSession, signOut, signIn } from "next-auth/react";
 
 import { api } from "~/utils/api";
@@ -21,7 +21,9 @@ const habitAPI = api.habit;
 
 const Page = () => {
   const [habits, setHabits] = useState<Habits>([]);
+  const [archivedHabits, setArchivedHabits] = useState<Habits>([]);
   const [showCreation, setShowCreation] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
   const [winReady, setWinReady] = useState(false);
 
   useEffect(() => {
@@ -32,38 +34,54 @@ const Page = () => {
   const { data: sessionData } = useSession();
   const winSize = useWindowSize();
 
-  const { getHabits, deleteHabit, createEditHabit, reorderHabits } = habitAPI;
+  const {
+    getHabits,
+    deleteHabit,
+    createEditHabit,
+    reorderHabits,
+    toggleArchiveHabit,
+    getArchivedHabits,
+  } = habitAPI;
 
-  const { data: habitsData, isLoading } = getHabits.useQuery({
+  const { data: habitsData, isLoading: habitsLoading } = getHabits.useQuery({
     uid: sessionData?.user.id,
   });
 
-  const editHabit = createEditHabit.useMutation({
-    onSuccess: (data) => {
-      // if habit exists, replace it, otherwise add it
-      const habitIndex = habits.findIndex((habit) => habit.id === data.id);
-      if (habitIndex !== -1) {
-        setHabits((oldHabits) => {
-          const newHabits = [...oldHabits];
-          newHabits[habitIndex] = data;
-          return newHabits;
-        });
-      } else {
-        setHabits((oldHabits) => [...oldHabits, data]);
-      }
-    },
-  });
+  const { data: archivedHabitsData, isLoading: archiveHabitsLoading } =
+    getArchivedHabits.useQuery({
+      uid: sessionData?.user.id,
+    });
+
+  const { mutate: editHabitMutate, isLoading: editLoading } =
+    createEditHabit.useMutation({
+      onSuccess: (data) => {
+        // if habit exists, replace it, otherwise add it
+        const habitIndex = habits.findIndex((habit) => habit.id === data.id);
+        if (habitIndex !== -1) {
+          setHabits((oldHabits) => {
+            const newHabits = [...oldHabits];
+            newHabits[habitIndex] = data;
+            return newHabits;
+          });
+        } else {
+          setHabits((oldHabits) => [...oldHabits, data]);
+        }
+      },
+    });
 
   useEffect(() => {
     if (habitsData) {
       setHabits(habitsData);
     }
-  }, [habitsData]);
+    if (archivedHabitsData) {
+      setArchivedHabits(archivedHabitsData);
+    }
+  }, [habitsData, archivedHabitsData]);
 
-  const habitDeletion = deleteHabit.useMutation();
-
+  const { mutate: habitDeletionMutate, isLoading: deleteLoading } =
+    deleteHabit.useMutation();
   const handleDelete = (id: string) => {
-    habitDeletion.mutate({ id });
+    habitDeletionMutate({ id });
     setHabits((oldHabits) => oldHabits.filter((habit) => habit.id !== id));
   };
 
@@ -73,24 +91,56 @@ const Page = () => {
     frequency: number;
     habitId: string;
   }) => {
-    editHabit.mutate({ ...data });
+    editHabitMutate({ ...data });
   };
 
   const reorder = reorderHabits.useMutation();
-
   const handleReorderHabits = (newHabits: Habits) => {
     reorder.mutate({ habits: newHabits });
     setHabits(newHabits);
   };
 
+  const { mutate: archiveMutate, isLoading: archiveLoading } =
+    toggleArchiveHabit.useMutation({
+      onSuccess: (data) => {
+        console.log(data);
+        if (data.archived) {
+          // move habit from habits to archivedHabits
+          setHabits((oldHabits) =>
+            oldHabits.filter((habit) => habit.id !== data.id)
+          );
+          setArchivedHabits((oldHabits) =>
+            [...oldHabits, data].sort((a, b) => a.order - b.order)
+          );
+        } else {
+          // remove habit from archivedHabits and add it to habits in order
+          setArchivedHabits((oldHabits) =>
+            oldHabits.filter((habit) => habit.id !== data.id)
+          );
+          setHabits((oldHabits) =>
+            [...oldHabits, data].sort((a, b) => a.order - b.order)
+          );
+        }
+      },
+    });
+
+  const handleArchive = (hid: string) => {
+    setShowArchived(false);
+    archiveMutate({ hid });
+  };
+
+  const showLoading =
+    habitsLoading || editLoading || deleteLoading || archiveLoading;
+
   return (
     <HabitDataContextProvider
       value={{
-        handleDelete,
-        handleHabitCreation,
         habits,
         setHabits,
+        handleDelete,
+        handleHabitCreation,
         handleReorderHabits,
+        handleArchive,
       }}
     >
       {/* background */}
@@ -133,42 +183,39 @@ const Page = () => {
               </div>
             </section>
 
-            <section className="container relative mb-10 flex h-full w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow">
-              <div className="w-full text-center">
-                <h1 className="text-2xl font-bold text-slate-800">
-                  Your Habits
-                  <button
-                    className="btn-primary absolute top-4 right-4 text-white max-sm:h-8 max-sm:w-8 max-sm:p-1"
-                    onClick={() => setShowCreation((old) => !old)}
-                  >
-                    {winSize.width >= 640 ? "create new" : "+"}
-                  </button>
-                </h1>
-              </div>
-
+            <section className="container relative flex min-h-[50vh] w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow">
+              <h1 className="text-2xl font-bold text-slate-800">Your Habits</h1>
+              <button
+                className="btn-primary absolute top-4 right-4 text-white max-sm:h-8 max-sm:w-8 max-sm:p-1"
+                onClick={() => setShowCreation((old) => !old)}
+              >
+                {winSize.width >= 640 ? "create new" : "+"}
+              </button>
               <div
                 ref={parent}
                 className="flex w-5/6 flex-col divide-y divide-slate-400/25 sm:w-2/3"
               >
-                {isLoading ? (
-                  <div className="flex text-xl font-semibold tracking-wide">
-                    loading
-                    <div className="animate-bounce animation-delay-50">.</div>
-                    <div className="animate-bounce animation-delay-100">.</div>
-                    <div className="animate-bounce animation-delay-150">.</div>
-                  </div>
-                ) : habits.length === 0 ? (
+                {winReady && !showLoading && habits.length === 0 ? (
                   <div className="text-center text-slate-700">
                     Start by making a habit!
                   </div>
-                ) : winReady ? (
-                  <HabitRows />
                 ) : (
-                  habits?.map((hData) => (
-                    <HabitRow key={hData.id} habit={hData} />
-                  ))
+                  <HabitRows />
                 )}
               </div>
+
+              {showLoading && (
+                <Loader color="indigo" variant="bars" size={"md"} />
+              )}
+
+              {archivedHabits.length > 0 && (
+                <button
+                  onClick={() => setShowArchived(true)}
+                  className="absolute bottom-2 left-4 cursor-pointer text-sm text-gray-800/50 hover:underline"
+                >
+                  Archived
+                </button>
+              )}
             </section>
 
             <Modal
@@ -185,6 +232,43 @@ const Page = () => {
               styles={{ content: { borderRadius: 20 } }}
             >
               <HabitCreation onClose={() => setShowCreation(false)} />
+            </Modal>
+
+            <Modal
+              opened={showArchived}
+              onClose={() => setShowArchived(false)}
+              size={"auto"}
+              overlayProps={{
+                color: "rgb(148 163 184)",
+                opacity: 0.55,
+                blur: 3,
+              }}
+              transitionProps={{ transition: "slide-up" }}
+              withCloseButton={false}
+              styles={{ content: { borderRadius: 20 } }}
+            >
+              <div className="font-body flex w-[80vw] flex-col items-center overflow-clip rounded-lg bg-white backdrop-blur sm:w-[300px]">
+                <h1 className="mb-4 text-2xl">Archived Habits</h1>
+
+                <div className="flex w-full flex-col gap-2">
+                  {archivedHabits.map((habit) => (
+                    <div
+                      key={habit.id}
+                      className="flex w-full flex-col gap-2 rounded-lg bg-[hsl(269,95%,92%)]/80 p-4"
+                    >
+                      <div className="flex flex-row items-center justify-between">
+                        <h2 className="text-lg font-semibold">{habit.name}</h2>
+                        <button
+                          onClick={() => handleArchive(habit.id)}
+                          className="rounded border border-gray-600 px-3 py-2 text-sm hover:bg-indigo-700 hover:text-white"
+                        >
+                          {winSize.width >= 640 ? "unarchive" : "+"}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </Modal>
           </main>
         )}

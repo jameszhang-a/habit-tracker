@@ -69,6 +69,7 @@ model Habit {
     goal      Int        @default(1)
     HabitLog  HabitLog[]
     order     Int        @default(0)
+    archived  Boolean    @default(false)
 
     @@index([userId])
 }

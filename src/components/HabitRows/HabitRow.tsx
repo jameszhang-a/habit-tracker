@@ -3,6 +3,7 @@ import {
   EllipsisHorizontalIcon,
   Cog6ToothIcon,
   TrashIcon,
+  ArchiveBoxIcon,
 } from "@heroicons/react/24/outline";
 import { createStyles, Menu, Modal } from "@mantine/core";
 
@@ -43,7 +44,17 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
         <div>{habit.name}</div>
       </div>
 
-      <Menu shadow="md" width={125}>
+      <Menu
+        shadow="md"
+        width={125}
+        withArrow
+        transitionProps={{ transition: "pop" }}
+        styles={{
+          item: {
+            padding: "0.2rem 1rem",
+          },
+        }}
+      >
         <Menu.Target>
           <div>
             <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l text-gray-500 hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" />
@@ -58,6 +69,15 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
           >
             Edit
           </Menu.Item>
+
+          <Menu.Item
+            icon={<ArchiveBoxIcon className="h-4 w-4 sm:h-5 sm:w-5" />}
+            onClick={() => ctx.handleArchive(habit.id)}
+          >
+            Archive
+          </Menu.Item>
+
+          <Menu.Divider />
 
           <Menu.Item
             color="red"

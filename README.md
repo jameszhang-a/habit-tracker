@@ -7,8 +7,8 @@ Keep track of your habits and goals with a custom [Notion](https://www.notion.so
 
 ## TODO
 
-- [ ] archive habits (move to archive page, keep data but doesn't show up in main page)
-- [ ] Order habits
+- [x] archive habits (move to archive page, keep data but doesn't show up in main page)
+- [x] Order habits
 - [x] calculate streak (different for each habit type)
 - [x] separate habits into daily, weekly, monthly
   - [x] creation modal for habits

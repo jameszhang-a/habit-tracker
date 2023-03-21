@@ -24,8 +24,40 @@ export const habitRouter = createTRPCRouter({
     .input(z.object({ uid: z.string().optional() }))
     .query(({ ctx, input }) => {
       const habits = ctx.prisma.habit.findMany({
-        where: { userId: input.uid },
+        where: { userId: input.uid, archived: false },
+        select: {
+          id: true,
+          name: true,
+          emoji: true,
+          frequency: true,
+          archived: true,
+          order: true,
+          userId: true,
+        },
         orderBy: { order: "asc" },
+      });
+
+      return habits;
+    }),
+
+  /**
+   * Returns all archived habits for the current user
+   */
+  getArchivedHabits: publicProcedure
+    .input(z.object({ uid: z.string().optional() }))
+    .query(({ ctx, input }) => {
+      const habits = ctx.prisma.habit.findMany({
+        where: { userId: input.uid, archived: true },
+        select: {
+          id: true,
+          name: true,
+          emoji: true,
+          frequency: true,
+          archived: true,
+          order: true,
+          userId: true,
+        },
+        orderBy: { updatedAt: "asc" },
       });
 
       return habits;
@@ -189,14 +221,12 @@ export const habitRouter = createTRPCRouter({
         habits: z.array(
           z.object({
             id: z.string(),
-            createdAt: z.date(),
-            updatedAt: z.date(),
+            userId: z.string(),
             name: z.string(),
             emoji: z.string(),
-            userId: z.string(),
             frequency: z.number(),
-            goal: z.number(),
             order: z.number(),
+            archived: z.boolean(),
           })
         ),
       })
@@ -218,6 +248,23 @@ export const habitRouter = createTRPCRouter({
       console.log(res);
 
       return res;
+    }),
+
+  toggleArchiveHabit: protectedProcedure
+    .input(z.object({ hid: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const habit = await ctx.prisma.habit.findUnique({
+        where: { id: input.hid },
+      });
+
+      if (!habit) {
+        throw new Error("Habit not found");
+      }
+
+      return await ctx.prisma.habit.update({
+        where: { id: input.hid },
+        data: { archived: !habit.archived },
+      });
     }),
 
   /**

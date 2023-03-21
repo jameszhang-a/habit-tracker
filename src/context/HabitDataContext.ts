@@ -13,6 +13,7 @@ interface HabitDataContext {
   }) => void;
   handleDelete: (habitId: string) => void;
   handleReorderHabits: (newOrder: Habits) => void;
+  handleArchive: (habitId: string) => void;
 }
 
 export const [HabitDataContextProvider, useHabitDataContext] =
