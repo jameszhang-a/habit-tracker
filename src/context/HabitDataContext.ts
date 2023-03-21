@@ -4,6 +4,7 @@ import type { Habits } from "~/types";
 
 interface HabitDataContext {
   habits: Habits;
+  setHabits: (habits: Habits) => void;
   handleHabitCreation: (params: {
     name: string;
     emoji: string;
@@ -11,6 +12,7 @@ interface HabitDataContext {
     habitId: string;
   }) => void;
   handleDelete: (habitId: string) => void;
+  handleReorderHabits: (newOrder: Habits) => void;
 }
 
 export const [HabitDataContextProvider, useHabitDataContext] =

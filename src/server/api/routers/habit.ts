@@ -183,6 +183,43 @@ export const habitRouter = createTRPCRouter({
       return habitLogs;
     }),
 
+  reorderHabits: protectedProcedure
+    .input(
+      z.object({
+        habits: z.array(
+          z.object({
+            id: z.string(),
+            createdAt: z.date(),
+            updatedAt: z.date(),
+            name: z.string(),
+            emoji: z.string(),
+            userId: z.string(),
+            frequency: z.number(),
+            goal: z.number(),
+            order: z.number(),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      // order of habits is determined from the order of the array
+      // determined from the frontend
+      const { habits } = input;
+
+      const res = await Promise.all(
+        habits.map(async (habit, index) => {
+          return await ctx.prisma.habit.update({
+            where: { id: habit.id },
+            data: { order: index },
+          });
+        })
+      );
+
+      console.log(res);
+
+      return res;
+    }),
+
   /**
    * Nukes all habit logs for the current user
    */

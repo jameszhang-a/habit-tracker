@@ -5,7 +5,7 @@ import { createStyles, getStylesRef } from "@mantine/core";
 import { type NextPage } from "next";
 
 import dynamic from "next/dynamic";
-const HabitRows = dynamic(() => import("../components/HabitRows"));
+const HabitRows = dynamic(() => import("../components/HabitRows/HabitRows"));
 
 const useStyles = createStyles(() => ({
   button: {

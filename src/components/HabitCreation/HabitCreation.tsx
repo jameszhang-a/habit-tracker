@@ -233,8 +233,6 @@ const EmojiPicker: React.FC<FloatingInputProps> = ({
   const ref = useRef<HTMLButtonElement>(null);
   const os = useOs();
 
-  console.log(os);
-
   const handleFocus = () => {
     onInputFocus();
     setShowTooltip(true);

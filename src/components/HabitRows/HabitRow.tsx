@@ -7,7 +7,7 @@ import {
 import { createStyles, Menu, Modal } from "@mantine/core";
 
 import { useHabitDataContext } from "~/context/HabitDataContext";
-import HabitCreation from "./HabitCreation/HabitCreation";
+import HabitCreation from "../HabitCreation/HabitCreation";
 
 import type { Habit } from "~/types";
 
@@ -34,7 +34,10 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
   };
 
   return (
-    <div key={habit.id} className="flex w-full justify-between py-2 px-2">
+    <div
+      key={habit.id}
+      className="flex w-full justify-between py-3 px-2 text-lg"
+    >
       <div className="flex gap-3">
         <div>{habit.emoji}</div>
         <div>{habit.name}</div>
@@ -43,7 +46,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
       <Menu shadow="md" width={125}>
         <Menu.Target>
           <div>
-            <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" />
+            <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l text-gray-500 hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" />
           </div>
         </Menu.Target>
 
@@ -66,6 +69,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
         </Menu.Dropdown>
       </Menu>
 
+      {/* Edit Modal */}
       <Modal
         opened={showModal}
         onClose={() => setShowModal(false)}
@@ -82,6 +86,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
         <HabitCreation onClose={handleModalClose} edit habit={habit} />
       </Modal>
 
+      {/* Deletion Modal */}
       <Modal
         opened={showDeleteModal}
         onClose={() => setShowDeleteModal(false)}

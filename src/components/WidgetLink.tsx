@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+
 import { ClipboardDocumentIcon } from "@heroicons/react/24/outline";
 import { Popover } from "@mantine/core";
 
@@ -14,7 +15,7 @@ const WidgetLink = ({ to, uid }: { to: string; uid: string }) => {
   const url = `${baseURL}/${to}/${uid}`;
 
   return (
-    <div className="flex items-center justify-between rounded border p-1 shadow">
+    <div className="flex items-center justify-between rounded border p-1 shadow-sm">
       <div className="capitalize">{to}</div>
 
       <div className="flex flex-row items-center justify-between">

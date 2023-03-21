@@ -1,15 +1,13 @@
-import { createStyles, rem } from "@mantine/core";
-import { useListState } from "@mantine/hooks";
+import type { DropResult } from "react-beautiful-dnd";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import { useHabitDataContext } from "~/context/HabitDataContext";
 import HabitRow from "./HabitRow";
 import { default as c } from "classnames";
 
 const HabitRows = () => {
-  const { habits } = useHabitDataContext();
-  const [state, handlers] = useListState(habits);
+  const { habits, handleReorderHabits } = useHabitDataContext();
 
-  const items = state.map((habit, index) => (
+  const items = habits.map((habit, index) => (
     <Draggable key={habit.id} index={index} draggableId={habit.id}>
       {(provided, snapshot) => (
         <div
@@ -47,13 +45,22 @@ const HabitRows = () => {
     </Draggable>
   ));
 
+  const handleOnDragEnd = ({ destination, source }: DropResult) => {
+    if (!destination || !source || destination.index === source.index) {
+      return;
+    }
+
+    // create new order of habits
+    const newHabits = [...habits];
+    const [removed] = newHabits.splice(source.index, 1);
+    if (!removed) return;
+    newHabits.splice(destination.index, 0, removed);
+
+    handleReorderHabits(newHabits);
+  };
+
   return (
-    <DragDropContext
-      onDragEnd={({ destination, source }) =>
-        handlers.reorder({ from: source.index, to: destination?.index || 0 })
-      }
-      onDragStart={() => console.log("drag start")}
-    >
+    <DragDropContext onDragEnd={handleOnDragEnd}>
       <Droppable droppableId="dnd-list" direction="vertical">
         {(provided) => (
           <div {...provided.droppableProps} ref={provided.innerRef}>

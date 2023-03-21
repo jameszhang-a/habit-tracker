@@ -3,19 +3,19 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 
 import { useAutoAnimate } from "@formkit/auto-animate/react";
-import { createStyles, Modal } from "@mantine/core";
+import { Modal } from "@mantine/core";
 import { useSession, signOut, signIn } from "next-auth/react";
 
 import { api } from "~/utils/api";
-
 import WidgetLink from "~/components/WidgetLink";
 import HabitCreation from "~/components/HabitCreation/HabitCreation";
-import HabitRow from "~/components/HabitRow";
+import HabitRow from "~/components/HabitRows/HabitRow";
 import { HabitDataContextProvider } from "~/context/HabitDataContext";
 import { useWindowSize } from "~/hooks/useWindowSize";
-const HabitRows = dynamic(() => import("~/components/HabitRows"));
 
 import type { Habits } from "~/types";
+
+const HabitRows = dynamic(() => import("~/components/HabitRows/HabitRows"));
 
 const habitAPI = api.habit;
 
@@ -30,10 +30,9 @@ const Page = () => {
 
   const [parent] = useAutoAnimate();
   const { data: sessionData } = useSession();
-  const { classes } = useStyles();
   const winSize = useWindowSize();
 
-  const { getHabits, deleteHabit, createEditHabit } = habitAPI;
+  const { getHabits, deleteHabit, createEditHabit, reorderHabits } = habitAPI;
 
   const { data: habitsData, isLoading } = getHabits.useQuery({
     uid: sessionData?.user.id,
@@ -77,9 +76,22 @@ const Page = () => {
     editHabit.mutate({ ...data });
   };
 
+  const reorder = reorderHabits.useMutation();
+
+  const handleReorderHabits = (newHabits: Habits) => {
+    reorder.mutate({ habits: newHabits });
+    setHabits(newHabits);
+  };
+
   return (
     <HabitDataContextProvider
-      value={{ handleDelete, handleHabitCreation, habits }}
+      value={{
+        handleDelete,
+        handleHabitCreation,
+        habits,
+        setHabits,
+        handleReorderHabits,
+      }}
     >
       {/* background */}
       <div className="flex h-screen flex-col bg-[hsl(269,95%,92%)]">
@@ -111,7 +123,7 @@ const Page = () => {
         {sessionData && (
           <main className="mx-auto flex grow flex-col items-center gap-4 pt-4">
             <section className="container flex w-[90vw] flex-col gap-2 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow sm:flex-row">
-              <h1 className="flex flex-1 items-center justify-center border text-2xl font-bold text-slate-800">
+              <h1 className="flex flex-1 items-center justify-center text-2xl font-bold text-slate-800">
                 Get your links!
               </h1>
 
@@ -168,9 +180,9 @@ const Page = () => {
                 opacity: 0.55,
                 blur: 3,
               }}
-              transitionProps={{ transition: "rotate-right" }}
+              transitionProps={{ transition: "slide-left" }}
               withCloseButton={false}
-              classNames={classes}
+              styles={{ content: { borderRadius: 20 } }}
             >
               <HabitCreation onClose={() => setShowCreation(false)} />
             </Modal>
@@ -182,9 +194,3 @@ const Page = () => {
 };
 
 export default Page;
-
-const useStyles = createStyles(() => ({
-  content: {
-    borderRadius: 20,
-  },
-}));
