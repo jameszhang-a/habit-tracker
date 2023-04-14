@@ -28,7 +28,11 @@ const Page = () => {
     setWinReady(true);
   }, []);
 
-  const { data: sessionData } = useSession();
+  const { data: sessionData, status } = useSession();
+  const isLoggedIn = status === "authenticated";
+  const isLoggedOut = status === "unauthenticated";
+  const authLoading = status === "loading";
+
   const winSize = useWindowSize();
 
   const {
@@ -153,10 +157,17 @@ const Page = () => {
         <div className="flex h-12 w-screen flex-row-reverse items-center justify-between rounded-b-xl border-b bg-[#f4f5f6]/80 px-10 text-xl shadow">
           <button
             className="btn-secondary py-2 px-2 text-xs"
-            onClick={sessionData ? () => void signOut() : () => void signIn()}
+            onClick={
+              isLoggedIn
+                ? () => void signOut()
+                : isLoggedOut
+                ? () => void signIn()
+                : () => void {}
+            }
           >
-            {sessionData ? "Sign out" : "Sign in"}
+            {isLoggedIn ? "Sign Out" : isLoggedOut ? "Sign In" : "Loading"}
           </button>
+
           {sessionData && (
             <div className="flex gap-2">
               Welcome{" "}
@@ -174,112 +185,122 @@ const Page = () => {
           )}
         </div>
 
-        {sessionData && (
-          <main className="mx-auto flex grow flex-col items-center gap-4 pt-4">
-            {/* Links */}
-            <section className="container flex w-[90vw] flex-col gap-2 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow sm:flex-row">
-              <h1 className="flex flex-1 items-center justify-center text-2xl font-bold text-slate-800">
-                Get your links!
-              </h1>
+        {authLoading ? (
+          <div className="flex h-screen w-screen items-center justify-center">
+            <Loader color="indigo" variant="bars" size={"md"} />
+          </div>
+        ) : (
+          sessionData && (
+            <main className="mx-auto flex grow flex-col items-center gap-4 pt-4">
+              {/* Links */}
+              <section className="container flex w-[90vw] flex-col gap-2 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow sm:flex-row">
+                <h1 className="flex flex-1 items-center justify-center text-2xl font-bold text-slate-800">
+                  Get your links!
+                </h1>
 
-              <div className="flex flex-1 flex-col gap-2">
-                <WidgetLink to="tracker" uid={sessionData.user.id} />
-                <WidgetLink to="stats" uid={sessionData.user.id} />
-              </div>
-            </section>
-
-            {/* Habits section */}
-            <section
-              className={`container relative mb-4 flex w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 ${
-                showLoading ? "pb-12" : "pb-[100px]"
-              } shadow`}
-            >
-              <h1 className="text-2xl font-bold text-slate-800">Your Habits</h1>
-              <button
-                className="btn-primary absolute top-4 right-4 text-white max-sm:h-8 max-sm:w-8 max-sm:p-1"
-                onClick={() => setShowCreation((old) => !old)}
-              >
-                {winSize.width >= 640 ? "create new" : "+"}
-              </button>
-              <div className="flex w-5/6 flex-col divide-y divide-slate-400/25 sm:w-2/3">
-                {winReady && !showLoading && habits.length === 0 ? (
-                  <div className="text-center text-slate-700">
-                    Start by making a habit!
-                  </div>
-                ) : (
-                  <HabitRows />
-                )}
-              </div>
-
-              {showLoading && (
-                <Loader color="indigo" variant="bars" size={"md"} />
-              )}
-
-              {archivedHabits.length > 0 && (
-                <button
-                  onClick={() => setShowArchived(true)}
-                  className="absolute bottom-2 left-4 cursor-pointer text-sm text-gray-800/50 hover:underline"
-                >
-                  Archived
-                </button>
-              )}
-            </section>
-
-            {/* Creation Modal */}
-            <Modal
-              opened={showCreation}
-              onClose={() => setShowCreation(false)}
-              size={"auto"}
-              overlayProps={{
-                color: "rgb(148 163 184)",
-                opacity: 0.55,
-                blur: 3,
-              }}
-              transitionProps={{ transition: "slide-left" }}
-              withCloseButton={false}
-              styles={{ content: { borderRadius: 20 } }}
-            >
-              <HabitCreation onClose={() => setShowCreation(false)} />
-            </Modal>
-
-            {/* Archive Modal, displaying list of all archived habits */}
-            <Modal
-              opened={showArchived}
-              onClose={() => setShowArchived(false)}
-              size={"auto"}
-              overlayProps={{
-                color: "rgb(148 163 184)",
-                opacity: 0.55,
-                blur: 3,
-              }}
-              transitionProps={{ transition: "slide-up" }}
-              withCloseButton={false}
-              styles={{ content: { borderRadius: 20 } }}
-            >
-              <div className="font-body flex w-[80vw] flex-col items-center overflow-clip rounded-lg bg-white backdrop-blur sm:w-[300px]">
-                <h1 className="mb-4 text-2xl">Archived Habits</h1>
-
-                <div className="flex w-full flex-col gap-2">
-                  {archivedHabits.map((habit) => (
-                    <div
-                      key={habit.id}
-                      className="flex w-full flex-col gap-2 rounded-lg bg-[hsl(269,95%,92%)]/80 p-4"
-                    >
-                      <div className="flex flex-row items-center justify-between">
-                        <h2 className="text-lg font-semibold">{habit.name}</h2>
-                        <button
-                          onClick={() => handleArchive(habit.id)}
-                          className="rounded border border-gray-600 px-3 py-2 text-sm hover:bg-indigo-700 hover:text-white"
-                        >
-                          {winSize.width >= 640 ? "unarchive" : "+"}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
+                <div className="flex flex-1 flex-col gap-2">
+                  <WidgetLink to="tracker" uid={sessionData.user.id} />
+                  <WidgetLink to="stats" uid={sessionData.user.id} />
                 </div>
-              </div>
-            </Modal>
-          </main>
+              </section>
+
+              {/* Habits section */}
+              <section
+                className={`container relative mb-4 flex w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 ${
+                  showLoading ? "pb-12" : "pb-[100px]"
+                } shadow`}
+              >
+                <h1 className="text-2xl font-bold text-slate-800">
+                  Your Habits
+                </h1>
+                <button
+                  className="btn-primary absolute top-4 right-4 text-white max-sm:h-8 max-sm:w-8 max-sm:p-1"
+                  onClick={() => setShowCreation((old) => !old)}
+                >
+                  {winSize.width >= 640 ? "create new" : "+"}
+                </button>
+                <div className="flex w-5/6 flex-col divide-y divide-slate-400/25 sm:w-2/3">
+                  {winReady && !showLoading && habits.length === 0 ? (
+                    <div className="text-center text-slate-700">
+                      Start by making a habit!
+                    </div>
+                  ) : (
+                    <HabitRows />
+                  )}
+                </div>
+
+                {showLoading && (
+                  <Loader color="indigo" variant="bars" size={"md"} />
+                )}
+
+                {archivedHabits.length > 0 && (
+                  <button
+                    onClick={() => setShowArchived(true)}
+                    className="absolute bottom-2 left-4 cursor-pointer text-sm text-gray-800/50 hover:underline"
+                  >
+                    Archived
+                  </button>
+                )}
+              </section>
+
+              {/* Creation Modal */}
+              <Modal
+                opened={showCreation}
+                onClose={() => setShowCreation(false)}
+                size={"auto"}
+                overlayProps={{
+                  color: "rgb(148 163 184)",
+                  opacity: 0.55,
+                  blur: 3,
+                }}
+                transitionProps={{ transition: "slide-left" }}
+                withCloseButton={false}
+                styles={{ content: { borderRadius: 20 } }}
+              >
+                <HabitCreation onClose={() => setShowCreation(false)} />
+              </Modal>
+
+              {/* Archive Modal, displaying list of all archived habits */}
+              <Modal
+                opened={showArchived}
+                onClose={() => setShowArchived(false)}
+                size={"auto"}
+                overlayProps={{
+                  color: "rgb(148 163 184)",
+                  opacity: 0.55,
+                  blur: 3,
+                }}
+                transitionProps={{ transition: "slide-up" }}
+                withCloseButton={false}
+                styles={{ content: { borderRadius: 20 } }}
+              >
+                <div className="font-body flex w-[80vw] flex-col items-center overflow-clip rounded-lg bg-white backdrop-blur sm:w-[300px]">
+                  <h1 className="mb-4 text-2xl">Archived Habits</h1>
+
+                  <div className="flex w-full flex-col gap-2">
+                    {archivedHabits.map((habit) => (
+                      <div
+                        key={habit.id}
+                        className="flex w-full flex-col gap-2 rounded-lg bg-[hsl(269,95%,92%)]/80 p-4"
+                      >
+                        <div className="flex flex-row items-center justify-between">
+                          <h2 className="text-lg font-semibold">
+                            {habit.name}
+                          </h2>
+                          <button
+                            onClick={() => handleArchive(habit.id)}
+                            className="rounded border border-gray-600 px-3 py-2 text-sm hover:bg-indigo-700 hover:text-white"
+                          >
+                            {winSize.width >= 640 ? "unarchive" : "+"}
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </Modal>
+            </main>
+          )
         )}
       </div>
     </HabitDataContextProvider>
