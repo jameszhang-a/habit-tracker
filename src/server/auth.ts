@@ -6,7 +6,6 @@ import {
 } from "next-auth";
 import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
-import Providers from "next-auth/providers";
 
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { env } from "~/env.mjs";
@@ -59,25 +58,6 @@ export const authOptions: NextAuthOptions = {
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     }),
-    // {
-    //   id: "notion",
-    //   name: "Notion",
-    //   type: "oauth",
-    //   version: "2.0",
-
-    //   accessTokenUrl: "https://api.notion.com/v1/oauth/token",
-    //   profileUrl: "https://api.notion.com/v1/users/me",
-    //   profile() {
-    //     return {
-    //       id: "hi",
-    //       name: "hi",
-    //       email: "hi",
-    //       image: null,
-    //     };
-    //   },
-    //   clientId: process.env.NOTION_CLIENT_ID,
-    //   clientSecret: process.env.NOTION_CLIENT_SECRET,
-    // },
   ],
 };
 
