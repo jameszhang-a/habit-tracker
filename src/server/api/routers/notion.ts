@@ -1,32 +1,66 @@
 import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
+import { env } from "~/env.mjs";
+
+interface User {
+  object: string;
+  id: string;
+  name: string;
+  avatar_url: string;
+  type: string;
+  person: object;
+}
+
+interface TokenData {
+  access_token: string;
+  token_type: string;
+  bot_id: string;
+  workspace_name: string;
+  workspace_icon: string;
+  workspace_id: string;
+  owner: {
+    type: string;
+    user: User;
+  };
+  duplicated_template_id: string | null;
+}
 
 export const notionRouter = createTRPCRouter({
-  /**
-   * For a given habit, return the number of times it has been completed
-   * @param hid - User ID
-   */
-  getDB: protectedProcedure
-    .input(z.object({ code: z.string() }))
+  notionAuth: protectedProcedure
+    .input(z.object({ tempCode: z.string() }))
     .query(async ({ input }) => {
-      const { code } = input;
+      const { tempCode } = input;
 
-      const res = await fetch("https://api.notion.com/v1/oauth/auth", {
+      const clientId = env.NOTION_CLIENT_ID;
+      const clientSecret = env.NOTION_CLIENT_SECRET;
+      const redirectUri = env.NOTION_REDIRECT_URI;
+
+      const encoded = Buffer.from(`${clientId}:${clientSecret}`).toString(
+        "base64"
+      );
+
+      const response = await fetch("https://api.notion.com/v1/oauth/token", {
         method: "POST",
         headers: {
+          Accept: "application/json",
           "Content-Type": "application/json",
-          "Notion-Version": "2021-05-13",
+          Authorization: `Basic ${encoded}`,
         },
         body: JSON.stringify({
           grant_type: "authorization_code",
-          code: code,
-          redirect_uri:
-            "https://www.notion.so/Notion-Auth-Redirect-Page-9f1e1e1e1e1e4e1e1e1e1e1e1e1e1e1e",
-          client_id: "e0b9c9f0-1b1f-4b1f-9c9f-0e1b1f4b1f9c",
+          code: tempCode,
+          redirect_uri: redirectUri,
         }),
       });
 
-      return "hi";
+      const responseData = (await response.json()) as TokenData;
+      console.log("responseData", responseData);
+
+      if (!response.ok) {
+        throw new Error("Error fetching token");
+      }
+
+      return responseData;
     }),
 });

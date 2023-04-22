@@ -24,6 +24,9 @@ const server = z.object({
   DISCORD_CLIENT_SECRET: z.string(),
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
+  NOTION_CLIENT_ID: z.string(),
+  NOTION_CLIENT_SECRET: z.string(),
+  NOTION_REDIRECT_URI: z.string(),
 });
 
 /**
@@ -51,6 +54,9 @@ const processEnv = {
   GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
+  NOTION_CLIENT_ID: process.env.NOTION_CLIENT_ID,
+  NOTION_CLIENT_SECRET: process.env.NOTION_CLIENT_SECRET,
+  NOTION_REDIRECT_URI: process.env.NOTION_REDIRECT_URI,
 };
 
 // Don't touch the part below
