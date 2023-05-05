@@ -38,7 +38,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
   return (
     <div
       key={habit.id}
-      className="flex w-full justify-between py-3 px-2 text-lg"
+      className="flex w-full justify-between px-2 py-3 text-lg"
     >
       <div className="flex gap-3">
         <div>{habit.emoji}</div>
@@ -76,7 +76,7 @@ const HabitRow: React.FC<HabitRowProps> = ({ habit }) => {
             onClick={() => ctx.handleArchive(habit.id)}
             rightSection={
               <Tooltip
-                label="You will still keep all of the log data if you wish to unarchive it later."
+                label="You will still retain all of the data if you wish to unarchive it later."
                 position="bottom"
                 withArrow
                 multiline
