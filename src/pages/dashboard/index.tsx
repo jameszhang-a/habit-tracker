@@ -156,7 +156,7 @@ const Page = () => {
         {/* header */}
         <div className="flex h-12 w-screen flex-row-reverse items-center justify-between rounded-b-xl border-b bg-[#f4f5f6]/80 px-10 text-xl shadow">
           <button
-            className="btn-secondary py-2 px-2 text-xs"
+            className="btn-secondary px-2 py-2 text-xs"
             onClick={
               isLoggedIn
                 ? () => void signOut()
@@ -214,7 +214,7 @@ const Page = () => {
                   Your Habits
                 </h1>
                 <button
-                  className="btn-primary absolute top-4 right-4 text-white max-sm:h-8 max-sm:w-8 max-sm:p-1"
+                  className="btn-primary absolute right-4 top-4 text-white max-sm:h-8 max-sm:w-8 max-sm:p-1"
                   onClick={() => setShowCreation((old) => !old)}
                 >
                   {winSize.width >= 640 ? "create new" : "+"}
