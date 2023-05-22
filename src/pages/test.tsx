@@ -4,8 +4,7 @@ import { createStyles, getStylesRef } from "@mantine/core";
 
 import { type NextPage } from "next";
 
-import dynamic from "next/dynamic";
-const HabitRows = dynamic(() => import("../components/HabitRows/HabitRows"));
+import { api } from "~/utils/api";
 
 const useStyles = createStyles(() => ({
   button: {
@@ -37,6 +36,8 @@ const slides = [1, 2, 3, 4, 5].map((item) => (
 
 const Test: NextPage = () => {
   const [winReady, setWinReady] = useState(false);
+
+  const { data, error, isLoading } = api.notion.getDB.useQuery();
 
   useEffect(() => {
     setWinReady(true);
