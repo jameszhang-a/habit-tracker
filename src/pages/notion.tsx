@@ -30,7 +30,7 @@ const NotionPage = () => {
   );
 
   const { data: dbData } = api.notion.getDB.useQuery(undefined, {
-    enabled: userConnected,
+    enabled: !!userConnected,
   });
 
   console.log("userConnected", userConnected);
