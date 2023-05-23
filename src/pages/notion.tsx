@@ -33,6 +33,7 @@ const NotionPage = () => {
     enabled: userConnected,
   });
 
+  console.log("userConnected", userConnected);
   console.log("dbData", dbData);
 
   useEffect(() => {
