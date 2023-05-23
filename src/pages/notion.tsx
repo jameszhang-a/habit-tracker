@@ -5,6 +5,7 @@ import type { NotionAuthRes } from "~/types";
 import { Loader } from "@mantine/core";
 import Image from "next/image";
 import { useLocalStorage } from "@mantine/hooks";
+import { env } from "~/env.mjs";
 
 const DB = "e8d2aa68171641a0b104d7b7594a5622";
 
@@ -55,11 +56,7 @@ const NotionPage = () => {
     );
 
   if (value === undefined || value === null)
-    return (
-      <a href="https://api.notion.com/v1/oauth/authorize?client_id=3b01cf04-2bb6-4cb0-a5e8-af7844264cfb&response_type=code&owner=user&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fnotion">
-        Connect to Notion
-      </a>
-    );
+    return <a href={env.NEXT_PUBLIC_NOTION_AUTH_URL}>Connect to Notion</a>;
   console.log("value", value);
 
   console.log("data", data);
