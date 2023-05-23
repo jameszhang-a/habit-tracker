@@ -2,34 +2,17 @@ import { z } from "zod";
 
 import { createTRPCRouter, protectedProcedure } from "../trpc";
 import { env } from "~/env.mjs";
+import type { NotionAuthRes } from "~/types";
 
-interface User {
-  object: string;
-  id: string;
-  name: string;
-  avatar_url: string;
-  type: string;
-  person: object;
-}
-
-interface TokenData {
-  access_token: string;
-  token_type: string;
-  bot_id: string;
-  workspace_name: string;
-  workspace_icon: string;
-  workspace_id: string;
-  owner: {
-    type: string;
-    user: User;
-  };
-  duplicated_template_id: string | null;
-}
+import { Client } from "@notionhq/client";
+import type { DatabaseObjectResponse } from "@notionhq/client/build/src/api-endpoints";
 
 export const notionRouter = createTRPCRouter({
   notionAuth: protectedProcedure
     .input(z.object({ tempCode: z.string() }))
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
+      console.log("Beginning Notion Auth");
+
       const { tempCode } = input;
 
       const clientId = env.NOTION_CLIENT_ID;
@@ -54,13 +37,69 @@ export const notionRouter = createTRPCRouter({
         }),
       });
 
-      const responseData = (await response.json()) as TokenData;
+      const responseData = (await response.json()) as NotionAuthRes;
       console.log("responseData", responseData);
 
       if (!response.ok) {
         throw new Error("Error fetching token");
       }
 
+      const accessToken = responseData.access_token;
+      console.log("accessToken", accessToken);
+
+      await ctx.prisma.user.update({
+        where: { id: ctx.session.user.id },
+        data: { notionToken: accessToken },
+      });
+
       return responseData;
     }),
+
+  getDB: protectedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: { notionToken: true },
+    });
+
+    if (!user || !user.notionToken) {
+      throw new Error("User not found");
+    }
+
+    const accessToken = user.notionToken;
+
+    console.log("user: ", user);
+    console.log("accessToken: ", accessToken);
+
+    const notion = new Client({
+      auth: accessToken,
+    });
+
+    const res = await notion.search({
+      filter: {
+        value: "database",
+        property: "object",
+      },
+      sort: {
+        direction: "descending",
+        timestamp: "last_edited_time",
+      },
+    });
+
+    const allDB = res.results;
+
+    return allDB as DatabaseObjectResponse[];
+  }),
+
+  getNotionAuthStatus: protectedProcedure.query(async ({ ctx }) => {
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: ctx.session.user.id },
+      select: { notionToken: true },
+    });
+
+    if (!user || !user.notionToken) {
+      return false;
+    }
+
+    return true;
+  }),
 });

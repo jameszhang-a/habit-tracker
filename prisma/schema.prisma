@@ -46,6 +46,8 @@ model User {
     accounts      Account[]
     sessions      Session[]
     Habit         Habit[]
+
+    notionToken String?
 }
 
 model VerificationToken {
