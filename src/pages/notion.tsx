@@ -68,7 +68,7 @@ const NotionPage = () => {
     }
   }, [dbData]);
 
-  const { data: rowData, refetch } = api.notion.getDBRows.useQuery(
+  const { data: rowData, refetch } = api.notion.populateDB.useQuery(
     { dbIds: selection },
     { enabled: false }
   );

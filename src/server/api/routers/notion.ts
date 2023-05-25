@@ -114,7 +114,7 @@ export const notionRouter = createTRPCRouter({
     }));
   }),
 
-  getDBRows: protectedProcedure
+  populateDB: protectedProcedure
     .input(z.object({ dbIds: z.array(z.string()) }))
     .query(async ({ input, ctx }) => {
       const { dbIds } = input;
@@ -130,6 +130,9 @@ export const notionRouter = createTRPCRouter({
         throw new Error("User not found");
       }
 
+      const habitsAddedID = new Set<string>();
+      const habitsAddedName = new Set<string>();
+
       const notion = new Client({ auth: accessToken });
 
       const dbRows = await Promise.all(
@@ -142,7 +145,45 @@ export const notionRouter = createTRPCRouter({
             throw new Error("Error fetching database");
           }
 
-          return { dbId, data: dbRes.results };
+          // begin populating actual database
+          const notionDB = dbRes.results as PageObjectResponse[];
+
+          // for each row of the Notion database
+          for (const entry of notionDB) {
+            // console.log("entry: ", entry);
+
+            // for each property/habit in the row
+            for (const property in entry.properties) {
+              console.log("property: ", property);
+
+              // for the day property convert into date for the Habit Log
+              if (property === "day") {
+                // do stuff
+              } else {
+                const sanitizedName = property.replace(/\s/g, "").toLowerCase();
+                if (sanitizedName in habitsAddedName) {
+                  continue;
+                }
+
+                habitsAddedName.add(sanitizedName);
+
+                const habitData = {
+                  name: property,
+                  userId: ctx.session.user.id,
+                  emoji: "📓",
+                  frequency: 1,
+                };
+
+                const habit = await ctx.prisma.habit.create({
+                  data: habitData,
+                });
+
+                console.log("habit created: ", habit);
+              }
+            }
+
+            return { dbId, data: dbRes.results };
+          }
         })
       );
       console.log("dbRows: ", dbRows);
@@ -150,11 +191,11 @@ export const notionRouter = createTRPCRouter({
       return dbRows;
     }),
 
-  populateDB: protectedProcedure
-    .input(z.object({ dbIds: z.array(z.string()) }))
-    .mutation(async ({ input, ctx }) => {
-      const { dbIds } = input;
-    }),
+  // populateDB: protectedProcedure
+  //   .input(z.object({ dbIds: z.array(z.string()) }))
+  //   .mutation(async ({ input, ctx }) => {
+  //     const { dbIds } = input;
+  //   }),
 
   getNotionAuthStatus: protectedProcedure.query(async ({ ctx }) => {
     const user = await ctx.prisma.user.findUnique({
