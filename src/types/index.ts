@@ -27,4 +27,13 @@ type User = {
   };
 };
 
-export type { Habit, Habits, NotionAuthRes };
+type TableRow = {
+  id: string;
+  icon?: string;
+  name?: string;
+  properties: number;
+  habits?: string[];
+  edited: Date;
+};
+
+export type { Habit, Habits, NotionAuthRes, TableRow };
