@@ -5,7 +5,10 @@ import { env } from "~/env.mjs";
 import type { NotionAuthRes } from "~/types";
 
 import { Client } from "@notionhq/client";
-import type { DatabaseObjectResponse } from "@notionhq/client/build/src/api-endpoints";
+import type {
+  DatabaseObjectResponse,
+  PageObjectResponse,
+} from "@notionhq/client/build/src/api-endpoints";
 
 export const notionRouter = createTRPCRouter({
   notionAuth: protectedProcedure
@@ -74,21 +77,84 @@ export const notionRouter = createTRPCRouter({
       auth: accessToken,
     });
 
-    const res = await notion.search({
-      filter: {
-        value: "database",
-        property: "object",
-      },
-      sort: {
-        direction: "descending",
-        timestamp: "last_edited_time",
-      },
-    });
+    const res = (
+      await notion.search({
+        filter: {
+          value: "database",
+          property: "object",
+        },
+        sort: {
+          direction: "descending",
+          timestamp: "last_edited_time",
+        },
+      })
+    ).results as DatabaseObjectResponse[];
 
-    const allDB = res.results;
+    if (!res) {
+      throw new Error("Error fetching databases");
+    }
 
-    return allDB as DatabaseObjectResponse[];
+    // res.map((db) => ({
+    //   id: db.id,
+    //   icon: db.icon && db.icon.type === "emoji" ? db.icon.emoji : undefined,
+    //   name: db.title[0]?.plain_text,
+    //   properties: Object.keys(db.properties).length,
+    //   edited: new Date(db.last_edited_time),
+    // }));
+
+    return res.map((db) => ({
+      id: db.id,
+      icon:
+        db.icon && db.icon.type === "emoji"
+          ? db.icon.emoji.toString()
+          : undefined,
+      name: db.title[0]?.plain_text,
+      properties: Object.keys(db.properties).length,
+      edited: new Date(db.last_edited_time),
+    }));
   }),
+
+  getDBRows: protectedProcedure
+    .input(z.object({ dbIds: z.array(z.string()) }))
+    .query(async ({ input, ctx }) => {
+      const { dbIds } = input;
+
+      const accessToken = (
+        await ctx.prisma.user.findUnique({
+          where: { id: ctx.session.user.id },
+          select: { notionToken: true },
+        })
+      )?.notionToken;
+
+      if (!accessToken) {
+        throw new Error("User not found");
+      }
+
+      const notion = new Client({ auth: accessToken });
+
+      const dbRows = await Promise.all(
+        dbIds.map(async (dbId) => {
+          const dbRes = await notion.databases.query({
+            database_id: dbId,
+          });
+
+          if (!dbRes) {
+            throw new Error("Error fetching database");
+          }
+
+          return { dbId, data: dbRes.results };
+        })
+      );
+      console.log("dbRows: ", dbRows);
+
+      return dbRows;
+    }),
+
+  populateDB: protectedProcedure
+    .input(z.object({ dbIds: z.array(z.string()) }))
+    .mutation(async ({ input, ctx }) => {
+      const { dbIds } = input;
+    }),
 
   getNotionAuthStatus: protectedProcedure.query(async ({ ctx }) => {
     const user = await ctx.prisma.user.findUnique({
@@ -99,6 +165,15 @@ export const notionRouter = createTRPCRouter({
     if (!user || !user.notionToken) {
       return false;
     }
+
+    return true;
+  }),
+
+  logOut: protectedProcedure.mutation(async ({ ctx }) => {
+    await ctx.prisma.user.update({
+      where: { id: ctx.session.user.id },
+      data: { notionToken: null },
+    });
 
     return true;
   }),
