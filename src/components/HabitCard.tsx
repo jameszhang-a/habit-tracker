@@ -89,7 +89,7 @@ const HabitCard = ({ habit }: Props) => {
   return (
     <div className="border border-red-400">
       <Modal
-        opened={true}
+        opened={false}
         onClose={() => setShowOptionsModal(false)}
         size={"auto"}
         transitionProps={{ transition: "pop" }}
@@ -122,7 +122,7 @@ const HabitCard = ({ habit }: Props) => {
       </Modal>
 
       <Modal
-        opened={true}
+        opened={false}
         onClose={() => setShowOptionsModal(false)}
         size={"auto"}
         transitionProps={{ transition: "pop" }}
