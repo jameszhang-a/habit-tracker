@@ -209,8 +209,6 @@ export const notionRouter = createTRPCRouter({
 
             // after creating the habit or if habit exists, create the habit log for that day
             const logDate = new Date(date.year, date.month, date.day);
-            // console.log("date object", date);
-            // console.log("logDate: ", logDate);
 
             const habitLogData = {
               habitId: habitsAdded.get(sanitizedName) as string,
@@ -226,13 +224,16 @@ export const notionRouter = createTRPCRouter({
             });
 
             // console.log("log created: ", log);
+            logged.push([log.habitId, log.date]);
           }
-
-          logged.push({ dbId, data: dbRes.results });
         }
       }
+      const res = {
+        habitsAdded: Array.from(habitsAdded.values()),
+        loggedEntries: logged,
+      };
 
-      return logged;
+      return res;
     }),
 
   getNotionAuthStatus: protectedProcedure.query(async ({ ctx }) => {

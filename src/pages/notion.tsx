@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
-import { Loader } from "@mantine/core";
+import { Loader, Modal } from "@mantine/core";
 import {
   createStyles,
   Table,
@@ -68,7 +68,12 @@ const NotionPage = () => {
     }
   }, [dbData]);
 
-  const { data: rowData, refetch } = api.notion.populateDB.useQuery(
+  const {
+    refetch: importDB,
+    data: importRes,
+    isFetching: importFetching,
+    isSuccess: importSuccess,
+  } = api.notion.populateDB.useQuery(
     {
       dbIds: selection.map((id) => {
         const match = dbList.find((db) => db.id === id);
@@ -85,9 +90,8 @@ const NotionPage = () => {
     { enabled: false }
   );
 
-  if (rowData && rowData.length > 0) {
-    console.log("rowData", rowData);
-    // console.log("stringified", JSON.stringify(rowData[0]?.data[0]));
+  if (importRes) {
+    console.log("importRes", importRes);
   }
 
   const notionLogOut = api.notion.logOut.useMutation();
@@ -132,13 +136,15 @@ const NotionPage = () => {
           </Group>
         </td>
         <td>{item.properties}</td>
+        <td>{formatDate(item.created)}</td>
         <td>{formatDate(item.edited)}</td>
       </tr>
     );
   });
 
   const handleDBSelect = async () => {
-    await refetch();
+    if (!selection.length) return;
+    await importDB();
   };
 
   if (!!notionAuthCode && authLoading) {
@@ -159,10 +165,11 @@ const NotionPage = () => {
         <p>Logged In!</p>
         <button onClick={() => void handleLogOut()}>log out</button>
       </div>
-      <div>
+
+      <div className="flex flex-col items-center">
         {/* this stuff not working rn */}
         {authData?.owner && (
-          <div className="container flex flex-row items-center gap-2">
+          <div className="container mx-auto flex flex-row items-center gap-2">
             <div className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
               <Image
                 className="h-auto max-w-none"
@@ -187,7 +194,7 @@ const NotionPage = () => {
           ) : (
             <div>
               <ScrollArea>
-                <Table miw={800} verticalSpacing="sm">
+                <Table miw={600} verticalSpacing="sm">
                   <thead>
                     <tr>
                       <th style={{ width: rem(40) }}>
@@ -203,6 +210,7 @@ const NotionPage = () => {
                       </th>
                       <th>DB Name</th>
                       <th># habits</th>
+                      <th>Created</th>
                       <th>Last Edited</th>
                     </tr>
                   </thead>
@@ -210,14 +218,61 @@ const NotionPage = () => {
                 </Table>
               </ScrollArea>
               <button
-                className="btn-primary m-4"
+                className="btn-primary m-4 h-[42px] disabled:opacity-50"
+                disabled={importFetching}
                 onClick={() => void handleDBSelect()}
               >
-                Connect
+                {importFetching ? (
+                  <Loader color="white" variant="bars" size={"xs"} />
+                ) : (
+                  "Import"
+                )}
               </button>
             </div>
           )}
         </div>
+
+        <Modal
+          opened={importSuccess}
+          onClose={() => console.log("close")}
+          size={"auto"}
+          transitionProps={{ transition: "pop" }}
+          withCloseButton={false}
+          classNames={classes}
+          centered
+        >
+          <div className="flex h-[185px] flex-col gap-4">
+            <div className="flex w-full max-w-xs flex-col items-center justify-center">
+              <p className="mx-[-1rem] mb-1 px-[1rem] text-center transition-colors hover:bg-blue-200">
+                Success!
+              </p>
+              <p className="w-[18rem]">
+                You have imported{" "}
+                <span className="font-bold">{`${String(
+                  importRes?.habitsAdded.length
+                )}`}</span>{" "}
+                habits and{" "}
+                <span className="font-bold">{`${String(
+                  importRes?.loggedEntries.length
+                )}`}</span>{" "}
+                records.
+              </p>
+              <div className="m-1" />
+              <p className="w-[18rem]">
+                Continue to Dashboard to customize the habits.
+              </p>
+            </div>
+            <div className="flex justify-around">
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => void router.push("/dashboard")}
+              >
+                Continue
+              </button>
+            </div>
+          </div>
+        </Modal>
       </div>
     </div>
   );
@@ -227,6 +282,9 @@ export default NotionPage;
 
 const useStyles = createStyles(() => ({
   rowSelected: {
-    backgroundColor: "skyblue",
+    backgroundColor: "#BFB8E3",
+  },
+  content: {
+    borderRadius: 15,
   },
 }));
