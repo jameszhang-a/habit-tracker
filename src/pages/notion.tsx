@@ -69,7 +69,19 @@ const NotionPage = () => {
   }, [dbData]);
 
   const { data: rowData, refetch } = api.notion.populateDB.useQuery(
-    { dbIds: selection },
+    {
+      dbIds: selection.map((id) => {
+        const match = dbList.find((db) => db.id === id);
+        const dbName = match?.name;
+        const year = match?.created.getFullYear();
+
+        return {
+          dbId: id,
+          dbName: dbName ? dbName : "no name",
+          year: year ? year : 2023,
+        };
+      }),
+    },
     { enabled: false }
   );
 

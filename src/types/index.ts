@@ -34,6 +34,7 @@ type TableRow = {
   properties: number;
   habits?: string[];
   edited: Date;
+  created: Date;
 };
 
 export type { Habit, Habits, NotionAuthRes, TableRow };

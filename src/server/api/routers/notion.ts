@@ -1,14 +1,20 @@
-import { z } from "zod";
-
-import { createTRPCRouter, protectedProcedure } from "../trpc";
-import { env } from "~/env.mjs";
-import type { NotionAuthRes } from "~/types";
-
 import { Client } from "@notionhq/client";
 import type {
   DatabaseObjectResponse,
   PageObjectResponse,
 } from "@notionhq/client/build/src/api-endpoints";
+import { z } from "zod";
+
+import { env } from "~/env.mjs";
+import { createTRPCRouter, protectedProcedure } from "../trpc";
+import type { NotionAuthRes } from "~/types";
+import { getWeekKey } from "~/utils";
+
+type HabitLogDate = {
+  year: number;
+  month: number;
+  day?: number;
+};
 
 export const notionRouter = createTRPCRouter({
   notionAuth: protectedProcedure
@@ -109,13 +115,20 @@ export const notionRouter = createTRPCRouter({
           ? db.icon.emoji.toString()
           : undefined,
       name: db.title[0]?.plain_text,
-      properties: Object.keys(db.properties).length,
+      properties: Object.keys(db.properties).length - 1,
       edited: new Date(db.last_edited_time),
+      created: new Date(db.created_time),
     }));
   }),
 
   populateDB: protectedProcedure
-    .input(z.object({ dbIds: z.array(z.string()) }))
+    .input(
+      z.object({
+        dbIds: z.array(
+          z.object({ dbName: z.string(), dbId: z.string(), year: z.number() })
+        ),
+      })
+    )
     .query(async ({ input, ctx }) => {
       const { dbIds } = input;
 
@@ -130,72 +143,97 @@ export const notionRouter = createTRPCRouter({
         throw new Error("User not found");
       }
 
-      const habitsAddedID = new Set<string>();
-      const habitsAddedName = new Set<string>();
+      const habitsAdded = new Map<string, string>();
 
       const notion = new Client({ auth: accessToken });
 
-      const dbRows = await Promise.all(
-        dbIds.map(async (dbId) => {
-          const dbRes = await notion.databases.query({
-            database_id: dbId,
-          });
+      // const dbRows = dbIds.map(async ({ dbName, dbId, year }) => {
+      const logged = [];
+      for (const { dbName, dbId, year } of dbIds) {
+        // console.log("processing notion db: ", dbName, dbId);
+        const month = new Date(`${dbName} 1, ${year}`).getMonth();
+        // console.log("month: ", month);
 
-          if (!dbRes) {
-            throw new Error("Error fetching database");
+        const dbRes = await notion.databases.query({
+          database_id: dbId,
+        });
+
+        if (!dbRes) {
+          throw new Error("Error fetching database");
+        }
+
+        // begin populating actual database
+        const notionDB = dbRes.results as PageObjectResponse[];
+
+        // for each row of the Notion database
+        for (const entry of notionDB) {
+          // get the day and date of the row
+          const date: HabitLogDate = {
+            year,
+            month,
+          };
+
+          const title = entry.properties["day"];
+          if (title?.type === "title") {
+            const day = title.title[0]?.plain_text;
+            date.day = parseInt(day ? day : "0");
           }
 
-          // begin populating actual database
-          const notionDB = dbRes.results as PageObjectResponse[];
+          // for each property/habit in the row
+          for (const property in entry.properties) {
+            // console.log("property: ", property);
+            const value = entry.properties[property];
+            const sanitizedName = property.replace(/\s/g, "").toLowerCase();
 
-          // for each row of the Notion database
-          for (const entry of notionDB) {
-            // console.log("entry: ", entry);
+            if (value?.type !== "checkbox") continue;
 
-            // for each property/habit in the row
-            for (const property in entry.properties) {
-              console.log("property: ", property);
+            if (!habitsAdded.has(sanitizedName)) {
+              // console.log("current set: ", habitsAdded);
+              // console.log("new habit found: ", sanitizedName);
 
-              // for the day property convert into date for the Habit Log
-              if (property === "day") {
-                // do stuff
-              } else {
-                const sanitizedName = property.replace(/\s/g, "").toLowerCase();
-                if (sanitizedName in habitsAddedName) {
-                  continue;
-                }
+              const habitData = {
+                name: property,
+                userId: ctx.session.user.id,
+                emoji: "📓",
+                frequency: 1,
+              };
 
-                habitsAddedName.add(sanitizedName);
+              const habit = await ctx.prisma.habit.create({
+                data: habitData,
+              });
+              // console.log("habit created: ", habit);
 
-                const habitData = {
-                  name: property,
-                  userId: ctx.session.user.id,
-                  emoji: "📓",
-                  frequency: 1,
-                };
-
-                const habit = await ctx.prisma.habit.create({
-                  data: habitData,
-                });
-
-                console.log("habit created: ", habit);
-              }
+              habitsAdded.set(sanitizedName, habit.id);
+              // console.log("habitsAdded: ", habitsAdded);
             }
 
-            return { dbId, data: dbRes.results };
+            // after creating the habit or if habit exists, create the habit log for that day
+            const logDate = new Date(date.year, date.month, date.day);
+            // console.log("date object", date);
+            // console.log("logDate: ", logDate);
+
+            const habitLogData = {
+              habitId: habitsAdded.get(sanitizedName) as string,
+              date: logDate,
+              completed: value.checkbox,
+              weekKey: getWeekKey(logDate),
+            };
+
+            // console.log("habitLogData: ", habitLogData);
+
+            const log = await ctx.prisma.habitLog.create({
+              data: habitLogData,
+            });
+
+            // console.log("log created: ", log);
           }
-        })
-      );
-      console.log("dbRows: ", dbRows);
 
-      return dbRows;
+          logged.push({ dbId, data: dbRes.results });
+        }
+      }
+
+      return logged;
     }),
-
-  // populateDB: protectedProcedure
-  //   .input(z.object({ dbIds: z.array(z.string()) }))
-  //   .mutation(async ({ input, ctx }) => {
-  //     const { dbIds } = input;
-  //   }),
 
   getNotionAuthStatus: protectedProcedure.query(async ({ ctx }) => {
     const user = await ctx.prisma.user.findUnique({

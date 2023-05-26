@@ -255,7 +255,9 @@ export const habitRouter = createTRPCRouter({
    * Nukes all habit logs for the current user
    */
   loggedDataNuke: protectedProcedure.mutation(({ ctx }) => {
-    const habitLogs = ctx.prisma.habitLog.deleteMany({});
+    const habitLogs = ctx.prisma.habitLog.deleteMany({
+      where: { createdAt: { gte: new Date("2023-05-25") } },
+    });
 
     return habitLogs;
   }),
