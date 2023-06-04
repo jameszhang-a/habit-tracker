@@ -253,7 +253,7 @@ const NotionPage = () => {
                 )}`}</span>{" "}
                 habits and{" "}
                 <span className="font-bold">{`${String(
-                  importRes?.loggedEntries.length
+                  importRes?.loggedEntries
                 )}`}</span>{" "}
                 records.
               </p>

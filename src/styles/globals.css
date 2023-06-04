@@ -21,6 +21,10 @@
         @apply box-content rounded-lg border-2 border-b-4 border-gray-600 bg-transparent px-3 py-2 text-sm font-semibold capitalize transition-all duration-100 shadow-md hover:shadow-lg hover:scale-[1.03] active:shadow-md active:translate-y-0.5 active:scale-[0.97] active:border-b-2;
     }
 
+    .btn {
+        @apply box-content rounded-lg border-2 border-b-4 border-gray-600 bg-transparent px-3 py-2 text-sm font-semibold capitalize transition-all duration-100 shadow-md hover: shadow-lg active:shadow-md active:translate-y-0.5 active:border-b-2;
+    }
+
     .btn-danger {
         @apply rounded-lg border-2 border-b-4 border-red-700 bg-red-500 px-3 py-2 text-sm text-white font-semibold capitalize transition-all duration-100 shadow-md hover:shadow-lg hover:scale-[1.03] active:shadow-md active:translate-y-0.5 active:scale-[0.97] active:border-b-2;
     }

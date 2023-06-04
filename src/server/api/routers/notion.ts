@@ -147,7 +147,6 @@ export const notionRouter = createTRPCRouter({
 
       const notion = new Client({ auth: accessToken });
 
-      // const dbRows = dbIds.map(async ({ dbName, dbId, year }) => {
       const logged = [];
       for (const { dbName, dbId, year } of dbIds) {
         // console.log("processing notion db: ", dbName, dbId);
@@ -165,7 +164,7 @@ export const notionRouter = createTRPCRouter({
         // begin populating actual database
         const notionDB = dbRes.results as PageObjectResponse[];
 
-        // for each row of the Notion database
+        // for each row/month of the Notion database
         for (const entry of notionDB) {
           // get the day and date of the row
           const date: HabitLogDate = {
@@ -173,9 +172,18 @@ export const notionRouter = createTRPCRouter({
             month,
           };
 
-          const title = entry.properties["day"];
+          // console.log("entry: ", entry);
+
+          const title = entry.properties["Day"]
+            ? entry.properties["Day"]
+            : entry.properties["day"];
+          // console.log("title: ", title);
+
           if (title?.type === "title") {
             const day = title.title[0]?.plain_text;
+            // console.log("day: ", day);
+            // console.log("passed day: ", parseInt(day ? day : "0"));
+
             date.day = parseInt(day ? day : "0");
           }
 
@@ -209,6 +217,15 @@ export const notionRouter = createTRPCRouter({
 
             // after creating the habit or if habit exists, create the habit log for that day
             const logDate = new Date(date.year, date.month, date.day);
+            // console.log("logDate: ", logDate);
+            // console.log(
+            //   "date year: ",
+            //   date.year,
+            //   "  date month: ",
+            //   date.month,
+            //   "  date day: ",
+            //   date.day
+            // );
 
             const habitLogData = {
               habitId: habitsAdded.get(sanitizedName) as string,
@@ -219,18 +236,28 @@ export const notionRouter = createTRPCRouter({
 
             // console.log("habitLogData: ", habitLogData);
 
-            const log = await ctx.prisma.habitLog.create({
-              data: habitLogData,
-            });
-
             // console.log("log created: ", log);
-            logged.push([log.habitId, log.date]);
+            logged.push(habitLogData);
+            console.log(
+              "Inserting log for: ",
+              habitLogData.habitId,
+              " on ",
+              habitLogData.date,
+              " with weekKey: ",
+              habitLogData.weekKey
+            );
           }
         }
       }
+      const log = await ctx.prisma.habitLog.createMany({
+        data: logged,
+      });
+
+      console.log("total logs added: ", log.count);
+
       const res = {
         habitsAdded: Array.from(habitsAdded.values()),
-        loggedEntries: logged,
+        loggedEntries: log.count,
       };
 
       return res;

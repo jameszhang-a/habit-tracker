@@ -87,7 +87,7 @@ const HabitCard = ({ habit }: Props) => {
   }
 
   return (
-    <div className="border border-red-400">
+    <div>
       <Modal
         opened={false}
         onClose={() => setShowOptionsModal(false)}
@@ -101,18 +101,18 @@ const HabitCard = ({ habit }: Props) => {
         }}
       >
         <div className="flex flex-col gap-4">
-          <div className="w-full text-center">
-            <div className="mx-[-1rem] px-[1rem] transition-colors hover:bg-blue-200">
+          <div className="flex w-full flex-col gap-1 text-center">
+            <div className="mx-[-1rem] px-[1rem] py-1 transition-colors hover:bg-blue-200">
               Calendar Edit
             </div>
-            <div className="mx-[-1rem] px-[1rem] transition-colors hover:bg-violet-200">
+            <div className="mx-[-1rem] px-[1rem] py-1 transition-colors hover:bg-violet-200">
               Options
             </div>
           </div>
           <div className="flex justify-around">
             <button
               type="button"
-              className="rounded border-2 border-violet-300 px-1"
+              className="btn-secondary"
               onClick={() => setShowOptionsModal(false)}
             >
               cancel
