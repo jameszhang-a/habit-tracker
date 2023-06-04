@@ -148,84 +148,64 @@ export const notionRouter = createTRPCRouter({
       const notion = new Client({ auth: accessToken });
 
       const logged = [];
+
+      // for each month/database
       for (const { dbName, dbId, year } of dbIds) {
-        // console.log("processing notion db: ", dbName, dbId);
         const month = new Date(`${dbName} 1, ${year}`).getMonth();
-        // console.log("month: ", month);
 
         const dbRes = await notion.databases.query({
           database_id: dbId,
         });
 
-        if (!dbRes) {
-          throw new Error("Error fetching database");
-        }
+        if (!dbRes) throw new Error("Error fetching database");
 
         // begin populating actual database
         const notionDB = dbRes.results as PageObjectResponse[];
 
-        // for each row/month of the Notion database
-        for (const entry of notionDB) {
-          // get the day and date of the row
-          const date: HabitLogDate = {
-            year,
-            month,
+        // get the first row and use it to get the properties to create the habits
+        const firstRow = notionDB[0];
+
+        if (!firstRow) throw new Error("Error fetching first row");
+
+        const properties = firstRow.properties;
+        for (const habitName in properties) {
+          const value = properties[habitName];
+          const sanitizedName = habitName.replace(/\s/g, "").toLowerCase();
+          if (value?.type !== "checkbox" || habitsAdded.has(sanitizedName))
+            continue;
+
+          const habitData = {
+            name: habitName,
+            userId: ctx.session.user.id,
+            emoji: "📓",
+            frequency: 1,
           };
 
-          // console.log("entry: ", entry);
+          const habit = await ctx.prisma.habit.create({ data: habitData });
+          console.log("habit created: ", habit);
+          habitsAdded.set(sanitizedName, habit.id);
+        }
 
-          const title = entry.properties["Day"]
-            ? entry.properties["Day"]
-            : entry.properties["day"];
-          // console.log("title: ", title);
+        // for each row of the Notion database
+        for (const { properties: row } of notionDB) {
+          // get the day and date of the row
+          const date: HabitLogDate = { year, month };
 
-          if (title?.type === "title") {
-            const day = title.title[0]?.plain_text;
-            // console.log("day: ", day);
-            // console.log("passed day: ", parseInt(day ? day : "0"));
+          const dayValue = row["Day"] ?? row["day"];
 
-            date.day = parseInt(day ? day : "0");
+          if (dayValue?.type === "title") {
+            const day = dayValue.title[0]?.plain_text;
+            date.day = parseInt(day ?? "0");
           }
 
-          // for each property/habit in the row
-          for (const property in entry.properties) {
-            // console.log("property: ", property);
-            const value = entry.properties[property];
-            const sanitizedName = property.replace(/\s/g, "").toLowerCase();
+          const logDate = new Date(date.year, date.month, date.day);
 
+          // for each property/habit in the row
+          for (const property in row) {
+            const value = row[property];
             if (value?.type !== "checkbox") continue;
 
-            if (!habitsAdded.has(sanitizedName)) {
-              // console.log("current set: ", habitsAdded);
-              // console.log("new habit found: ", sanitizedName);
-
-              const habitData = {
-                name: property,
-                userId: ctx.session.user.id,
-                emoji: "📓",
-                frequency: 1,
-              };
-
-              const habit = await ctx.prisma.habit.create({
-                data: habitData,
-              });
-              // console.log("habit created: ", habit);
-
-              habitsAdded.set(sanitizedName, habit.id);
-              // console.log("habitsAdded: ", habitsAdded);
-            }
-
-            // after creating the habit or if habit exists, create the habit log for that day
-            const logDate = new Date(date.year, date.month, date.day);
-            // console.log("logDate: ", logDate);
-            // console.log(
-            //   "date year: ",
-            //   date.year,
-            //   "  date month: ",
-            //   date.month,
-            //   "  date day: ",
-            //   date.day
-            // );
+            const sanitizedName = property.replace(/\s/g, "").toLowerCase();
 
             const habitLogData = {
               habitId: habitsAdded.get(sanitizedName) as string,
@@ -234,21 +214,12 @@ export const notionRouter = createTRPCRouter({
               weekKey: getWeekKey(logDate),
             };
 
-            // console.log("habitLogData: ", habitLogData);
-
-            // console.log("log created: ", log);
             logged.push(habitLogData);
-            console.log(
-              "Inserting log for: ",
-              habitLogData.habitId,
-              " on ",
-              habitLogData.date,
-              " with weekKey: ",
-              habitLogData.weekKey
-            );
           }
         }
       }
+
+      // add all of the logs to database
       const log = await ctx.prisma.habitLog.createMany({
         data: logged,
       });
