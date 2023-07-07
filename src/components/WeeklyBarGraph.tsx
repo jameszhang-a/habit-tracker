@@ -9,6 +9,9 @@ interface WeeklyBarGraphProps {
 
 const statsAPI = api.stats;
 
+const maxWidth = 500;
+const maxWidthPerHabit = 250;
+
 const WeeklyBarGraph: React.FC<WeeklyBarGraphProps> = ({ habits }) => {
   const { data: weeklyCompletion } = statsAPI.getWeeklyCompletion.useQuery({
     hid: habits.map((habit) => habit.id),
@@ -25,15 +28,10 @@ const WeeklyBarGraph: React.FC<WeeklyBarGraphProps> = ({ habits }) => {
     }, Array<number>(7).fill(0));
   }, [weeklyCompletion]);
 
-  const maxWidth = 500;
-  const maxWidthPerHabit = 250;
-
-  const minCnt = Math.min(...totalStats);
   const maxCnt = Math.max(...totalStats);
 
-  const scale = maxWidth / maxCnt;
-  const scalePerHabit = maxWidthPerHabit / maxCnt;
-  console.log(minCnt, maxCnt);
+  const scale = useMemo(() => maxWidth / maxCnt, [maxCnt]);
+  const scalePerHabit = useMemo(() => maxWidthPerHabit / maxCnt, [maxCnt]);
 
   return (
     <div>
