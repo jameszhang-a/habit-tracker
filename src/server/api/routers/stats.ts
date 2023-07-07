@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { weekFromDate } from "~/utils";
+import { totalWeeksBetween } from "~/utils";
 
 import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
 
@@ -32,8 +32,9 @@ export const statsRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Habit not found" });
       }
 
+      // get the earliest completed date
       const earliestLog = await ctx.prisma.habitLog.findFirst({
-        where: { habitId: hid },
+        where: { habitId: hid, completed: true },
         orderBy: { date: "asc" },
         select: { date: true },
       });
@@ -46,9 +47,9 @@ export const statsRouter = createTRPCRouter({
         };
       }
 
-      const startWeek = weekFromDate(earliestLog.date);
-      const currentWeek = weekFromDate(new Date());
-      const totalWeeks = currentWeek - startWeek + 1;
+      const startDate = earliestLog.date;
+      const currDate = new Date();
+      const totalWeeks = totalWeeksBetween(startDate, currDate) + 1;
 
       const logs = await ctx.prisma.habitLog.groupBy({
         by: ["weekKey"],

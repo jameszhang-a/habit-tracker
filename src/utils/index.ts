@@ -14,35 +14,21 @@ const emojiLength = (text: string) => {
   return x.length;
 };
 
-const weekFromDate = (
-  date: Date,
-  weekStart: "monday" | "sunday" = "monday"
-) => {
-  const time = date.getTime();
+const millisecondsPerWeek = 7 * 24 * 60 * 60 * 1000;
 
-  // Create a new Date object for the beginning of the year
-  const startOfYear = new Date(time);
-  startOfYear.setMonth(0, 1);
-  startOfYear.setHours(0, 0, 0, 0);
+const totalWeeksBetween = (startDate: Date, currDate: Date) => {
+  // Get day of the week as number (0-6), with 0 as Sunday and 1 as Monday
+  const dayOfWeek = startDate.getDay();
 
-  // Calculate the difference between the input date and the beginning of the year in milliseconds
-  const diff = time - startOfYear.getTime();
+  // Calculate the number of days since the last Monday
+  const daysSinceLastMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
 
-  // Convert the difference to days and add 1 to get the day number out of the year (starting at 1)
-  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
+  // "Round down" startDate to the last Monday
+  startDate.setDate(startDate.getDate() - daysSinceLastMonday);
 
-  // Offset the day of the year by the day of the week of the first day of the year
-  const dayOfYearOffset =
-    startOfYear.getDay() - (weekStart === "monday" ? 1 : 0);
-
-  return Math.ceil((dayOfYear + dayOfYearOffset) / 7);
-};
-
-const getWeekKey = (date: Date) => {
-  const year = date.getFullYear();
-  const week = weekFromDate(date);
-
-  return `${year}-${week}`;
+  return Math.floor(
+    (currDate.getTime() - startDate.getTime()) / millisecondsPerWeek
+  );
 };
 
 const weekDay = (n: number, mode: "full" | "short" | "first") => {
@@ -76,11 +62,4 @@ const getDateInterval = (currDate?: Date) => {
   return { dayStart, dayEnd };
 };
 
-export {
-  formatDate,
-  emojiLength,
-  weekFromDate,
-  getWeekKey,
-  weekDay,
-  getDateInterval,
-};
+export { formatDate, emojiLength, weekDay, getDateInterval, totalWeeksBetween };
