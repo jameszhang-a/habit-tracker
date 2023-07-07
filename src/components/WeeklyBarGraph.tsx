@@ -25,6 +25,16 @@ const WeeklyBarGraph: React.FC<WeeklyBarGraphProps> = ({ habits }) => {
     }, Array<number>(7).fill(0));
   }, [weeklyCompletion]);
 
+  const maxWidth = 500;
+  const maxWidthPerHabit = 250;
+
+  const minCnt = Math.min(...totalStats);
+  const maxCnt = Math.max(...totalStats);
+
+  const scale = maxWidth / maxCnt;
+  const scalePerHabit = maxWidthPerHabit / maxCnt;
+  console.log(minCnt, maxCnt);
+
   return (
     <div>
       <div>Daily activity:</div>
@@ -35,7 +45,7 @@ const WeeklyBarGraph: React.FC<WeeklyBarGraphProps> = ({ habits }) => {
             <span
               className="bg-red-100"
               style={{
-                width: `${cnt * 20}px`,
+                width: `${cnt * scale}px`,
 
                 display: "inline-block",
               }}
@@ -61,7 +71,7 @@ const WeeklyBarGraph: React.FC<WeeklyBarGraphProps> = ({ habits }) => {
                       <span
                         className="bg-red-100"
                         style={{
-                          width: `${cnt * 20}px`,
+                          width: `${cnt * scalePerHabit}px`,
 
                           display: "inline-block",
                         }}
