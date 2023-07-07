@@ -20,7 +20,11 @@ const TrackerBackground: React.FC<TrackerBackgroundProps> = ({
         </div>
       );
     case "sky":
-      return <div className={`${defaultClass} bg-white`}>{children}</div>;
+      return (
+        <div className={`${defaultClass} border-2 border-sky-500 bg-sky-200`}>
+          {children}
+        </div>
+      );
     default:
       return (
         <div className={`${defaultClass} from-pink-300 to-blue-900`}>
