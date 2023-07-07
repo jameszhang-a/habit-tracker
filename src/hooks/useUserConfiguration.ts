@@ -6,11 +6,19 @@ const userAPI = api.user;
 
 type UserConfiguration = RouterOutputs["user"]["getConfiguration"];
 
-const useUserConfiguration = () => {
+type UserConfigurationHookProps = {
+  uid: string;
+};
+
+const useUserConfiguration = ({ uid }: UserConfigurationHookProps) => {
   const [userConfiguration, setUserConfiguration] =
     useState<UserConfiguration>();
 
-  const { data } = userAPI.getConfiguration.useQuery();
+  const { data } = userAPI.getConfiguration.useQuery(
+    { uid },
+    { enabled: !!uid }
+  );
+
   useEffect(() => {
     if (data) {
       setUserConfiguration(data);

@@ -33,8 +33,6 @@ const Tracker: NextPage = () => {
   const [isHorizontal, setIsHorizontal] = useState(true);
 
   const { classes } = useStyles();
-  const colorScheme = useColorScheme();
-  const { theme, lightTheme } = useUserConfiguration();
 
   const exceedsCount = useMemo(() => habits.length > 3, [habits]);
 
@@ -51,6 +49,9 @@ const Tracker: NextPage = () => {
   const router = useRouter();
   const uid = router.query.uid as string;
 
+  const { theme, lightTheme } = useUserConfiguration({ uid });
+  // const theme = "default";
+  // const lightTheme = "light";
   const { data: habitsData, isLoading } = habitAPI.getHabits.useQuery({
     uid,
   });
@@ -76,7 +77,7 @@ const Tracker: NextPage = () => {
             key={habit.id}
             className="relative grid items-center justify-center"
           >
-            <HabitCard key={habit.id} habit={habit} />
+            <HabitCard key={habit.id} habit={habit} theme={theme} />
           </Carousel.Slide>
         ));
 
@@ -96,7 +97,7 @@ const Tracker: NextPage = () => {
         {/* actual component */}
         <TrackerContextProvider value={{ activeDate, setActiveDate }}>
           <TrackerBackground theme={theme}>
-            <DatePicker numDays={7} />
+            <DatePicker numDays={7} theme={theme} />
             <div className="w-[340px] max-w-[500px] xs:min-w-[500px]">
               <Carousel
                 slideSize={`${

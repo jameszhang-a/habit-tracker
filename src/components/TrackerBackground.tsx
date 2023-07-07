@@ -4,14 +4,12 @@ interface TrackerBackgroundProps {
 }
 
 const defaultClass =
-  "relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 bg-gradient-to-br px-4 py-4 shadow-xl backdrop-blur xs:h-[250px] xs:w-[550px]";
+  "relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 bg-gradient-to-br px-4 py-4 shadow backdrop-blur xs:h-[250px] xs:w-[550px]";
 
 const TrackerBackground: React.FC<TrackerBackgroundProps> = ({
   theme,
   children,
 }) => {
-  console.log("background");
-
   switch (theme) {
     case "white":
       return (
@@ -21,7 +19,9 @@ const TrackerBackground: React.FC<TrackerBackgroundProps> = ({
       );
     case "sky":
       return (
-        <div className={`${defaultClass} border-2 border-sky-500 bg-sky-200`}>
+        <div
+          className={`${defaultClass} border-2 border-white from-sky-100 to-blue-200`}
+        >
           {children}
         </div>
       );

@@ -3,9 +3,10 @@ import { ChildDate } from "./ChildDate";
 
 interface DatePickerProps {
   numDays: number;
+  theme: string;
 }
 
-export const DatePicker: React.FC<DatePickerProps> = ({ numDays }) => {
+export const DatePicker: React.FC<DatePickerProps> = ({ numDays, theme }) => {
   // get the previous x days from today as date objects
   const days = useMemo(
     () =>
@@ -20,7 +21,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({ numDays }) => {
   return (
     <div className="m-2 flex items-center justify-center">
       {days.map((d, i) => (
-        <ChildDate key={i} date={d} />
+        <ChildDate key={i} date={d} theme={theme} />
       ))}
     </div>
   );

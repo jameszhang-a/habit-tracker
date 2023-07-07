@@ -10,23 +10,21 @@ import type { Habit } from "~/types";
 import { createStyles, Menu, Modal, Tooltip } from "@mantine/core";
 
 import { DatePicker } from "@mantine/dates";
-import useUserConfiguration from "~/hooks/useUserConfiguration";
 
 type Props = {
   habit: Habit;
   handleDelete?: (id: string) => void;
+  theme: string;
 };
 
 const habitAPI = api.habit;
 
-const HabitCard = ({ habit }: Props) => {
+const HabitCard = ({ habit, theme }: Props) => {
   const [showCheck, setShowCheck] = useState(false);
   const [animateCheck, setAnimateCheck] = useState(false);
   const [animateUncheck, setAnimateUncheck] = useState(false);
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [value, setValue] = useState<Date[]>([]);
-
-  const { theme } = useUserConfiguration();
 
   const { activeDate } = useTrackerContext();
 
@@ -74,7 +72,7 @@ const HabitCard = ({ habit }: Props) => {
   };
 
   const hoverEffect =
-    "hover:scale-105 transition ease-in-out delay-50 duration-100";
+    "hover:scale-105 transition ease-in-out delay-50 duration-150";
 
   const { current: inputId } = useRef(`habit-${habit.id}`);
 
@@ -157,7 +155,8 @@ const HabitCard = ({ habit }: Props) => {
         className={c(
           {
             [hoverEffect]: true,
-            "bg-gradient-to-br from-blue-400 to-sky-300 ": theme === "sky",
+            "border-2 border-white bg-gradient-to-br from-blue-400 to-sky-300":
+              theme === "sky",
           },
           `grid h-[100px] min-w-[150px] max-w-[150px] transform grid-cols-3 overflow-hidden rounded-2xl border border-gray-100/20 p-3 pl-4 shadow-sm`
         )}
