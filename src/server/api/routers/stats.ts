@@ -86,22 +86,35 @@ export const statsRouter = createTRPCRouter({
 
       let count = 0;
       let lastDate = new Date();
+      lastDate.setHours(0, 0, 0, 0); // Set the current date to midnight.
 
       for (const log of logs) {
-        const logDate = log.date;
+        const logDate = new Date(log.date);
         logDate.setHours(0, 0, 0, 0);
 
-        if (lastDate.getTime() - logDate.getTime() > 86400000) {
+        const diffInDays = Math.floor(
+          (lastDate.getTime() - logDate.getTime()) / 86400000
+        );
+
+        // Stop if we encounter a day where the habit was not completed and it's not today.
+        if (!log.completed && diffInDays !== 0) {
           break;
         }
 
-        if (log.completed) {
+        // Stop if the difference between two dates is more than 1 day (ignoring today).
+        if (diffInDays > 1) {
+          break;
+        }
+
+        // Only increment the count if the habit was completed, or if the habit was not completed today while the streak continued up until yesterday.
+        if (
+          log.completed ||
+          (diffInDays === 0 && !log.completed && count > 0)
+        ) {
           count++;
-        } else {
-          break;
         }
 
-        lastDate = new Date(logDate);
+        lastDate = logDate;
       }
 
       return {
