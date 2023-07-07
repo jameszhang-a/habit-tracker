@@ -9,4 +9,5 @@
     "[css]": {
         "editor.formatOnSave": false
     },
+    "workbench.colorTheme": "One Dark Pro",
 }

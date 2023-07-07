@@ -39,13 +39,17 @@ model Session {
 
 model User {
     id            String    @id @default(cuid()) // clegntvpo00003v055qnjrwxv
-    name          String?
-    email         String?   @unique
+    name          String
+    email         String    @unique
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
     Habit         Habit[]
+
+    // configurations
+    theme      String @default("default")
+    lightTheme String @default("dark")
 
     notionToken String?
 }

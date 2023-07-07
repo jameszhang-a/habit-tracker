@@ -18,15 +18,23 @@ import { TrackerContextProvider } from "~/context/TrackerContext";
 
 import type { Habits } from "~/types";
 import { type NextPage } from "next";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import useUserConfiguration from "~/hooks/useUserConfiguration";
+import TrackerBackground from "~/components/TrackerBackground";
 
 const habitAPI = api.habit;
+
+const fullScreen = "flex h-screen w-screen items-center justify-center";
+const widget = "flex w-screen h-screen justify-center";
 
 const Tracker: NextPage = () => {
   const [habits, setHabits] = useState<Habits>([]);
   const [activeDate, setActiveDate] = useState<Date>(new Date());
   const [isHorizontal, setIsHorizontal] = useState(true);
+
   const { classes } = useStyles();
   const colorScheme = useColorScheme();
+  const { theme, lightTheme } = useUserConfiguration();
 
   const exceedsCount = useMemo(() => habits.length > 3, [habits]);
 
@@ -72,9 +80,6 @@ const Tracker: NextPage = () => {
           </Carousel.Slide>
         ));
 
-  const fullScreen = "flex h-screen w-screen items-center justify-center";
-  const widget = "w-screen h-screen flex justify-center";
-
   return (
     <HeadWrapper
       title="Tracker Widget"
@@ -84,13 +89,13 @@ const Tracker: NextPage = () => {
         className={c({
           [fullScreen]: !isHorizontal,
           [widget]: isHorizontal,
-          "bg-[#ffffff]": colorScheme === "light",
-          "bg-[#191919]": colorScheme === "dark",
+          "bg-[#ffffff]": lightTheme === "light",
+          "bg-[#191919]": lightTheme === "dark",
         })}
       >
         {/* actual component */}
         <TrackerContextProvider value={{ activeDate, setActiveDate }}>
-          <div className="relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 bg-gradient-to-br from-pink-300 to-blue-900 px-4 py-4 shadow-xl backdrop-blur xs:h-[250px] xs:w-[550px]">
+          <TrackerBackground theme={theme}>
             <DatePicker numDays={7} />
             <div className="w-[340px] max-w-[500px] xs:min-w-[500px]">
               <Carousel
@@ -113,7 +118,8 @@ const Tracker: NextPage = () => {
               </Carousel>
             </div>
             <Refresh />
-          </div>
+            <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l text-gray-500 hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" />
+          </TrackerBackground>
         </TrackerContextProvider>
       </div>
     </HeadWrapper>
