@@ -3,7 +3,6 @@ import { useRouter } from "next/router";
 
 import { Carousel } from "@mantine/carousel";
 import { createStyles, getStylesRef } from "@mantine/core";
-import { useColorScheme } from "@mantine/hooks";
 import { default as c } from "classnames";
 
 import HeadWrapper from "~/components/HeadWrapper";
@@ -24,13 +23,10 @@ import TrackerBackground from "~/components/TrackerBackground";
 
 const habitAPI = api.habit;
 
-const fullScreen = "flex h-screen w-screen items-center justify-center";
-const widget = "flex w-screen h-screen justify-center";
-
 const Tracker: NextPage = () => {
   const [habits, setHabits] = useState<Habits>([]);
   const [activeDate, setActiveDate] = useState<Date>(new Date());
-  const [isHorizontal, setIsHorizontal] = useState(true);
+  const [isBigWidget, setIsBigWidget] = useState(true);
 
   const { classes } = useStyles();
 
@@ -39,10 +35,10 @@ const Tracker: NextPage = () => {
   const winSize = useWindowSize();
 
   useEffect(() => {
-    if (winSize.width < 450) {
-      setIsHorizontal(false);
+    if (winSize.width < 500) {
+      setIsBigWidget(false);
     } else {
-      setIsHorizontal(true);
+      setIsBigWidget(true);
     }
   }, [winSize]);
 
@@ -51,7 +47,7 @@ const Tracker: NextPage = () => {
 
   const { theme, lightTheme } = useUserConfiguration({ uid });
   // const theme = "default";
-  // const lightTheme = "light";
+  // const lightTheme = "dark";
   const { data: habitsData, isLoading } = habitAPI.getHabits.useQuery({
     uid,
   });
@@ -62,24 +58,27 @@ const Tracker: NextPage = () => {
     }
   }, [habitsData]);
 
-  const slides =
-    !habitsData || isLoading
-      ? Array.from({ length: 3 }, (_, i) => (
-          <Carousel.Slide
-            key={i}
-            className="relative grid items-center justify-center"
-          >
-            <HabitLoading />
-          </Carousel.Slide>
-        ))
-      : habits.map((habit) => (
-          <Carousel.Slide
-            key={habit.id}
-            className="relative grid items-center justify-center"
-          >
-            <HabitCard key={habit.id} habit={habit} theme={theme} />
-          </Carousel.Slide>
-        ));
+  const slides = useMemo(
+    () =>
+      !habitsData || isLoading
+        ? Array.from({ length: 4 }, (_, i) => (
+            <Carousel.Slide
+              key={i}
+              className="relative grid items-center justify-center"
+            >
+              <HabitLoading />
+            </Carousel.Slide>
+          ))
+        : habits.map((habit) => (
+            <Carousel.Slide
+              key={habit.id}
+              className="relative grid items-center justify-center"
+            >
+              <HabitCard key={habit.id} habit={habit} theme={theme} />
+            </Carousel.Slide>
+          )),
+    [habitsData, isLoading, habits, theme]
+  );
 
   return (
     <HeadWrapper
@@ -87,39 +86,34 @@ const Tracker: NextPage = () => {
       description="Custom habit tracker widget for Notion"
     >
       <div
-        className={c({
-          [fullScreen]: !isHorizontal,
-          [widget]: isHorizontal,
-          "bg-[#ffffff]": lightTheme === "light",
-          "bg-[#191919]": lightTheme === "dark",
-        })}
+        className={c(
+          {
+            "bg-[#ffffff]": lightTheme === "light",
+            "bg-[#191919]": lightTheme === "dark",
+          },
+          "flex h-screen w-screen justify-center"
+        )}
       >
         {/* actual component */}
         <TrackerContextProvider value={{ activeDate, setActiveDate }}>
           <TrackerBackground theme={theme}>
             <DatePicker numDays={7} theme={theme} />
-            <div className="w-[340px] max-w-[500px] xs:min-w-[500px]">
-              <Carousel
-                slideSize={`${
-                  isHorizontal
-                    ? Math.max((1 / 3) * 100, 100 / slides.length)
-                    : 25
-                }%`}
-                align="start"
-                slidesToScroll={isHorizontal ? 3 : 4}
-                height={isHorizontal ? 150 : 500}
-                controlsOffset={"-30px"}
-                classNames={classes}
-                withIndicators={exceedsCount && isHorizontal}
-                withControls={exceedsCount}
-                draggable={exceedsCount}
-                orientation={isHorizontal ? "horizontal" : "vertical"}
-              >
-                {slides}
-              </Carousel>
-            </div>
+            <Carousel
+              w={isBigWidget ? 515 : 320}
+              slideSize={`${isBigWidget ? 33.333 : 50}%`}
+              align="start"
+              slidesToScroll={isBigWidget ? 3 : 2}
+              height={150}
+              controlsOffset={"-30px"}
+              classNames={classes}
+              withIndicators={exceedsCount && isBigWidget}
+              withControls={exceedsCount}
+              draggable={exceedsCount}
+            >
+              {slides}
+            </Carousel>
             <Refresh />
-            <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l text-gray-500 hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" />
+            {/* <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l text-gray-500 hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" /> */}
           </TrackerBackground>
         </TrackerContextProvider>
       </div>
@@ -131,8 +125,8 @@ export default Tracker;
 
 const useStyles = createStyles(() => ({
   controls: {
-    left: "-17px",
-    right: "-17px",
+    left: "-15px",
+    right: "-15px",
   },
 
   control: {

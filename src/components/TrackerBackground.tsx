@@ -4,7 +4,7 @@ interface TrackerBackgroundProps {
 }
 
 const defaultClass =
-  "relative flex flex-col items-center justify-center rounded-3xl border border-gray-200 bg-gradient-to-br px-4 py-4 shadow backdrop-blur xs:h-[250px] xs:w-[550px]";
+  "relative flex flex-col items-center justify-center rounded-2xl border border-gray-200 bg-gradient-to-br px-4 py-4 shadow backdrop-blur max-h-[300px]";
 
 const TrackerBackground: React.FC<TrackerBackgroundProps> = ({
   theme,
