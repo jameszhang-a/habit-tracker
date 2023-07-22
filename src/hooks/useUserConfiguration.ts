@@ -1,18 +1,28 @@
+import { useLocalStorage } from "@mantine/hooks";
 import { useEffect, useState } from "react";
 import type { RouterOutputs } from "~/utils/api";
 import { api } from "~/utils/api";
 
 const userAPI = api.user;
 
-type UserConfiguration = RouterOutputs["user"]["getConfiguration"];
+type UserConfiguration = NonNullable<RouterOutputs["user"]["getConfiguration"]>;
 
 type UserConfigurationHookProps = {
   uid: string;
 };
 
 const useUserConfiguration = ({ uid }: UserConfigurationHookProps) => {
-  const [userConfiguration, setUserConfiguration] =
-    useState<UserConfiguration>();
+  const [colorScheme, setColorScheme] = useLocalStorage({
+    key: "user-theme",
+    defaultValue: {
+      theme: "sky",
+      lightTheme: "light",
+    },
+  });
+
+  const [userConfiguration, setUserConfiguration] = useState<UserConfiguration>(
+    { ...colorScheme, id: "", name: "" }
+  );
 
   const { data } = userAPI.getConfiguration.useQuery(
     { uid },
@@ -22,15 +32,10 @@ const useUserConfiguration = ({ uid }: UserConfigurationHookProps) => {
   useEffect(() => {
     if (data) {
       setUserConfiguration(data);
+      setColorScheme(data);
+      console.log("data is", data);
     }
-  }, [data]);
-
-  if (!userConfiguration) {
-    return {
-      theme: "dark",
-      lightTheme: "light",
-    };
-  }
+  }, [data, setColorScheme]);
 
   return userConfiguration;
 };
