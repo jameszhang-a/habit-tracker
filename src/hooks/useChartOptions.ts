@@ -27,7 +27,15 @@ export const useChartOptions = ({ type, habits, data }: ChartOptionsType) => {
     }));
 
     const options = {
-      color: ["#80FFA5", "#00DDFF", "#37A2FF", "#FF0087", "#FFBF00"],
+      color: [
+        "#80FFA5",
+        "#00DDFF",
+        "#37A2FF",
+        "#FF0087",
+        "#FFBF00",
+        "#f56ec5",
+        "#9f4ad4",
+      ],
       // title: {
       //   text: "Gradient Stacked Area Chart",
       // },
