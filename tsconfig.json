@@ -9,6 +9,7 @@
     "allowJs": true,
     "checkJs": true,
     "skipLibCheck": true,
+    "ignoreDeprecations": "5.0",
     "strict": true,
     "forceConsistentCasingInFileNames": false,
     "noEmit": true,

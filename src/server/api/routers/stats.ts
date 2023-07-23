@@ -143,7 +143,8 @@ export const statsRouter = createTRPCRouter({
         const data = Array<number>(7).fill(0);
 
         for (const log of logs) {
-          const day = log.date.getDay();
+          // Get the day of the week (0-6) where 0 is monday and 6 is sunday.
+          const day = (log.date.getDay() + 6) % 7;
 
           data[day]++;
         }
