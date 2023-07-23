@@ -2,14 +2,14 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import { totalWeeksBetween } from "~/utils";
 
-import { createTRPCRouter, publicProcedure, protectedProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const statsRouter = createTRPCRouter({
   /**
    * For a given habit, return the number of times it has been completed
    * @param hid - User ID
    */
-  getHabitCompletionCount: protectedProcedure
+  getHabitCompletionCount: publicProcedure
     .input(z.object({ hid: z.string() }))
     .query(({ ctx, input }) => {
       const habitCompletionCount = ctx.prisma.habitLog.count({
@@ -143,7 +143,8 @@ export const statsRouter = createTRPCRouter({
         const data = Array<number>(7).fill(0);
 
         for (const log of logs) {
-          const day = log.date.getDay();
+          // Get the day of the week (0-6) where 0 is monday and 6 is sunday.
+          const day = (log.date.getDay() + 6) % 7;
 
           data[day]++;
         }
