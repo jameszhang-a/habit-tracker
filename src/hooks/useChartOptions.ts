@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { scramble } from "~/utils";
 
 type ChartOptionsType = {
   type: "weeklyCompletion";
@@ -27,18 +28,14 @@ export const useChartOptions = ({ type, habits, data }: ChartOptionsType) => {
     }));
 
     const options = {
-      color: [
-        "#80FFA5",
-        "#00DDFF",
-        "#37A2FF",
-        "#FF0087",
-        "#FFBF00",
-        "#f56ec5",
-        "#9f4ad4",
-      ],
-      // title: {
-      //   text: "Gradient Stacked Area Chart",
-      // },
+      color: scramble([
+        "#f6dbb2",
+        "#b1e7d9",
+        "#f0b1b1",
+        "#bfdff6",
+        "#dbbbd3",
+        "#a4bde8",
+      ]),
       tooltip: {
         trigger: "axis",
         axisPointer: {

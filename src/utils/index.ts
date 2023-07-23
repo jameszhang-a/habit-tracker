@@ -93,6 +93,26 @@ const getDateInterval = (currDate?: Date) => {
   return { dayStart, dayEnd };
 };
 
+const scramble = <T>(array: T[]) => {
+  let currentIndex = array.length,
+    temporaryValue: T,
+    randomIndex: number;
+
+  // While there remain elements to shuffle...
+  while (currentIndex !== 0) {
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex] as T;
+    array[currentIndex] = array[randomIndex] as T;
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+};
+
 export {
   formatDate,
   emojiLength,
@@ -101,4 +121,5 @@ export {
   totalWeeksBetween,
   getWeekKey,
   weekFromDate,
+  scramble,
 };
