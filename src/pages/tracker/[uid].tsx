@@ -21,6 +21,8 @@ import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import useUserConfiguration from "~/hooks/useUserConfiguration";
 import TrackerBackground from "~/components/TrackerBackground";
 
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
 const habitAPI = api.habit;
 
 const Tracker: NextPage = () => {
@@ -85,6 +87,7 @@ const Tracker: NextPage = () => {
       title="Tracker Widget"
       description="Custom habit tracker widget for Notion"
     >
+      <ReactQueryDevtools />
       <div
         className={c(
           {
@@ -113,6 +116,7 @@ const Tracker: NextPage = () => {
               {slides}
             </Carousel>
             <Refresh />
+
             {/* <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l text-gray-500 hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" /> */}
           </TrackerBackground>
         </TrackerContextProvider>

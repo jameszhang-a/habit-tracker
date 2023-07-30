@@ -1,5 +1,3 @@
-import Gradient from "./Gradient";
-
 const HabitLoading = () => {
   const hoverEffect =
     "hover:scale-110 transition ease-in-out delay-50 duration-150";

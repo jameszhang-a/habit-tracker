@@ -50,7 +50,7 @@ const DateButton = ({
         <div
           onClick={() => setActiveDate(date)}
           className={c(
-            "mx-1 flex h-10 w-7 cursor-pointer flex-col items-center justify-center rounded-lg border border-white py-5 text-sm font-semibold leading-normal transition-all ease-in-out",
+            "mx-1 flex h-10 w-7 cursor-pointer flex-col items-center justify-center rounded-lg border border-white py-5 text-sm font-semibold leading-normal drop-shadow transition-all ease-in-out",
             {
               "bg-transparent p-4 hover:bg-green-100": !isActive,
               "bg-green-300 px-6 hover:bg-green-300": isActive,

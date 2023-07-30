@@ -4,7 +4,6 @@ import Gradient from "./Gradient";
 
 import { default as c } from "classnames";
 import { useTrackerContext } from "~/context/TrackerContext";
-import HabitLoading from "./HabitLoading";
 import type { Habit } from "~/types";
 
 import { createStyles, Menu, Modal, Tooltip } from "@mantine/core";
@@ -31,10 +30,16 @@ const HabitCard = ({ habit, theme }: Props) => {
   const { classes } = useStyles();
 
   const { logHabit, loggedOnDate } = habitAPI;
-  const { data, isLoading, isFetched } = loggedOnDate.useQuery({
-    id: habit.id,
-    date: activeDate,
-  });
+  const { data, isFetched, refetch } = loggedOnDate.useQuery(
+    {
+      id: habit.id,
+      date: activeDate,
+    },
+    {
+      // refetch every 5 minutes to avoid stale data
+      refetchInterval: 1000 * 60 * 5,
+    }
+  );
 
   const habitLogCreation = logHabit.useMutation({
     onError() {
@@ -59,6 +64,14 @@ const HabitCard = ({ habit, theme }: Props) => {
     },
   });
 
+  // test see if this works
+  // useEffect(() => {
+  //   console.log("refetching");
+  //   void refetch().then((data) => {
+  //     console.log(data.data);
+  //   });
+  // }, [activeDate, refetch]);
+
   useEffect(() => {
     if (data) {
       setShowCheck(data.completed);
@@ -82,9 +95,9 @@ const HabitCard = ({ habit, theme }: Props) => {
     }
   }, [theme]);
 
-  if (isLoading) {
-    return <HabitLoading />;
-  }
+  // if (isLoading) {
+  //   return <HabitLoading />;
+  // }
 
   return (
     <div>
