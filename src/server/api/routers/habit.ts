@@ -184,16 +184,23 @@ export const habitRouter = createTRPCRouter({
     }),
 
   loggedOnDate: publicProcedure
-    .input(z.object({ id: z.string(), date: z.date() }))
+    .input(
+      z.object({
+        id: z.string(),
+        date: z.date(),
+        startTime: z.date(),
+        endTime: z.date(),
+      })
+    )
     .query(({ ctx, input }) => {
-      const { dayStart, dayEnd } = getDateInterval(input.date);
+      const { id, startTime, endTime } = input;
 
       const habitLogs = ctx.prisma.habitLog.findFirst({
         where: {
-          habitId: input.id,
+          habitId: id,
           date: {
-            gte: dayStart,
-            lt: dayEnd,
+            gte: startTime,
+            lte: endTime,
           },
           completed: true,
         },
