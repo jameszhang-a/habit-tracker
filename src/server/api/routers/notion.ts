@@ -5,10 +5,10 @@ import type {
 } from "@notionhq/client/build/src/api-endpoints";
 import { z } from "zod";
 
-import { env } from "~/env.mjs";
+import { env } from "@/env.mjs";
 import { createTRPCRouter, protectedProcedure } from "../trpc";
-import type { NotionAuthRes } from "~/types";
-import { getWeekKey } from "~/utils";
+import type { NotionAuthRes } from "@/types";
+import { getWeekKey } from "@/utils";
 
 type HabitLogDate = {
   year: number;

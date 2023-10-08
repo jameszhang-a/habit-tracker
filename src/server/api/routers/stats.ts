@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { totalWeeksBetween } from "~/utils";
+import { totalWeeksBetween } from "@/utils";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 

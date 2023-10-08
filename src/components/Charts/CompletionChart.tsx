@@ -1,9 +1,9 @@
 import ReactECharts from "echarts-for-react";
 
-import useChartOptions from "~/hooks/useChartOptions";
-import { api } from "~/utils/api";
+import useChartOptions from "@/hooks/useChartOptions";
+import { api } from "@/utils/api";
 
-import type { Habits } from "~/types";
+import type { Habits } from "@/types";
 
 const statsAPI = api.stats;
 

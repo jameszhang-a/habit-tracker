@@ -1,6 +1,6 @@
 import { createSafeContext } from "@mantine/utils";
 
-import type { Habits } from "~/types";
+import type { Habits } from "@/types";
 
 interface HabitDataContext {
   habits: Habits;

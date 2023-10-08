@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getWeekKey, getDateInterval } from "~/utils";
+import { getWeekKey, getDateInterval } from "@/utils";
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
 

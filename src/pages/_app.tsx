@@ -1,8 +1,8 @@
 import { SessionProvider } from "next-auth/react";
 import { MantineProvider } from "@mantine/core";
 
-import "~/styles/globals.css";
-import { api } from "~/utils/api";
+import "@/styles/globals.css";
+import { api } from "@/utils/api";
 import { styleCache } from "style-cache";
 
 import type { AppType } from "next/app";

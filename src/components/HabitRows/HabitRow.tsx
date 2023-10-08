@@ -8,10 +8,10 @@ import {
 } from "@heroicons/react/24/outline";
 import { createStyles, Menu, Modal, Tooltip } from "@mantine/core";
 
-import { useHabitDataContext } from "~/context/HabitDataContext";
+import { useHabitDataContext } from "@/context/HabitDataContext";
 import HabitCreation from "../HabitCreation/HabitCreation";
 
-import type { Habit } from "~/types";
+import type { Habit } from "@/types";
 
 interface HabitRowProps {
   children?: React.ReactNode;

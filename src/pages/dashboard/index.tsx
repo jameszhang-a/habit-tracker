@@ -5,15 +5,15 @@ import dynamic from "next/dynamic";
 import { Loader, Modal } from "@mantine/core";
 import { useSession, signOut, signIn } from "next-auth/react";
 
-import { api } from "~/utils/api";
-import WidgetLink from "~/components/WidgetLink";
-import HabitCreation from "~/components/HabitCreation/HabitCreation";
-import { HabitDataContextProvider } from "~/context/HabitDataContext";
-import { useWindowSize } from "~/hooks/useWindowSize";
+import { api } from "@/utils/api";
+import WidgetLink from "@/components/WidgetLink";
+import HabitCreation from "@/components/HabitCreation/HabitCreation";
+import { HabitDataContextProvider } from "@/context/HabitDataContext";
+import { useWindowSize } from "@/hooks/useWindowSize";
 
-import type { Habits } from "~/types";
+import type { Habits } from "@/types";
 
-const HabitRows = dynamic(() => import("~/components/HabitRows/HabitRows"));
+const HabitRows = dynamic(() => import("@/components/HabitRows/HabitRows"));
 
 const habitAPI = api.habit;
 

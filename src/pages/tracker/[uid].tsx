@@ -5,23 +5,28 @@ import { Carousel } from "@mantine/carousel";
 import { createStyles, getStylesRef } from "@mantine/core";
 import { default as c } from "classnames";
 
-import HeadWrapper from "~/components/HeadWrapper";
-import HabitCard from "~/components/HabitCard";
-import HabitLoading from "~/components/HabitLoading";
-import Refresh from "~/components/Refresh";
-import { DatePicker } from "~/components/DatePicker";
+import HeadWrapper from "@/components/HeadWrapper";
+import HabitCard from "@/components/HabitCard";
+import HabitLoading from "@/components/HabitLoading";
+import Refresh from "@/components/Refresh";
+import { DatePicker } from "@/components/DatePicker";
 
-import { api } from "~/utils/api";
-import { useWindowSize } from "~/hooks/useWindowSize";
-import { TrackerContextProvider } from "~/context/TrackerContext";
+import { api } from "@/utils/api";
+import { useWindowSize } from "@/hooks/useWindowSize";
+import { TrackerContextProvider } from "@/context/TrackerContext";
 
-import type { Habits } from "~/types";
+import type { Habits } from "@/types";
 import { type NextPage } from "next";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
-import useUserConfiguration from "~/hooks/useUserConfiguration";
-import TrackerBackground from "~/components/TrackerBackground";
+import useUserConfiguration from "@/hooks/useUserConfiguration";
+import TrackerBackground from "@/components/TrackerBackground";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const habitAPI = api.habit;
 
@@ -100,6 +105,12 @@ const Tracker: NextPage = () => {
         {/* actual component */}
         <TrackerContextProvider value={{ activeDate, setActiveDate }}>
           <TrackerBackground theme={theme}>
+            <Popover>
+              <PopoverTrigger>Open</PopoverTrigger>
+              <PopoverContent>
+                Place content for the popover here.
+              </PopoverContent>
+            </Popover>
             <DatePicker numDays={7} theme={theme} />
             <Carousel
               w={isBigWidget ? 515 : 320}

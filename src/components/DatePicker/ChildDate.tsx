@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { default as c } from "classnames";
 
-import { useTrackerContext } from "~/context/TrackerContext";
+import { useTrackerContext } from "@/context/TrackerContext";
 
 interface ChildDateProps {
   date: Date;

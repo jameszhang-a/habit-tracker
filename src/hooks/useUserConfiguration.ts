@@ -1,7 +1,7 @@
 import { useLocalStorage } from "@mantine/hooks";
 import { useEffect, useState } from "react";
-import type { RouterOutputs } from "~/utils/api";
-import { api } from "~/utils/api";
+import type { RouterOutputs } from "@/utils/api";
+import { api } from "@/utils/api";
 
 const userAPI = api.user;
 

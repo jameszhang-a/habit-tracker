@@ -1,4 +1,4 @@
-import type { RouterOutputs } from "~/utils/api";
+import type { RouterOutputs } from "@/utils/api";
 
 type Habit = RouterOutputs["habit"]["getHabits"][number];
 type Habits = Habit[];
