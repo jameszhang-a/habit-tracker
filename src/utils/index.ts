@@ -81,14 +81,10 @@ const weekDay = (n: number, mode: "full" | "short" | "first") => {
 };
 
 const getDateInterval = (currDate?: Date) => {
-  const now = currDate ? new Date(currDate) : new Date();
+  const now = currDate ?? new Date();
 
-  const dayStart = new Date(now);
-  dayStart.setHours(0, 0, 0, 0);
-
-  const dayEnd = new Date(now);
-  dayEnd.setHours(0, 0, 0, 0);
-  dayEnd.setDate(dayEnd.getDate() + 1);
+  const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
 
   return { dayStart, dayEnd };
 };
