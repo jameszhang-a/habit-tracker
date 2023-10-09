@@ -1,8 +1,9 @@
 # Habit Genie 🧞
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/83667312/226559839-bfedff23-bf41-4639-b6b3-3fb725a915a3.png" alt="Custom widget screenshot" />
+  <img src="https://github.com/jameszhang-a/habit-tracker/assets/83667312/f025b4e2-879b-48d3-85b1-25f5d51e0c97" alt="Custom widget screenshot" />
 </p>
+
 
 
 Keep track of your habits and goals with a custom [Notion](https://www.notion.so/) widget.
