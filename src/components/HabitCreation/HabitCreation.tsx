@@ -7,11 +7,11 @@ import { z } from "zod";
 import type { FloatingInputProps } from "./FloatingInput";
 import { FloatingLabelInput } from "./FloatingInput";
 import { FrequencyPicker } from "./FrequencyPicker";
-import { emojiLength } from "~/utils";
-import { useHabitDataContext } from "~/context/HabitDataContext";
+import { emojiLength } from "@/utils";
+import { useHabitDataContext } from "@/context/HabitDataContext";
 
 import type { ChangeEvent } from "react";
-import type { Habit } from "~/types";
+import type { Habit } from "@/types";
 import type { OS } from "@mantine/hooks";
 
 interface HabitCreationProps {

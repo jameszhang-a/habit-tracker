@@ -5,21 +5,21 @@ import { Carousel } from "@mantine/carousel";
 import { createStyles, getStylesRef } from "@mantine/core";
 import { default as c } from "classnames";
 
-import HeadWrapper from "~/components/HeadWrapper";
-import HabitCard from "~/components/HabitCard";
-import HabitLoading from "~/components/HabitLoading";
-import Refresh from "~/components/Refresh";
-import { DatePicker } from "~/components/DatePicker";
-
-import { api } from "~/utils/api";
-import { useWindowSize } from "~/hooks/useWindowSize";
-import { TrackerContextProvider } from "~/context/TrackerContext";
-
-import type { Habits } from "~/types";
-import { type NextPage } from "next";
+import HeadWrapper from "@/components/HeadWrapper";
+import HabitCard from "@/components/HabitCard";
+import HabitLoading from "@/components/HabitLoading";
+import Refresh from "@/components/Refresh";
+import TrackerBackground from "@/components/TrackerBackground";
+import { DatePicker2 } from "@/components/ui/datepicker";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
-import useUserConfiguration from "~/hooks/useUserConfiguration";
-import TrackerBackground from "~/components/TrackerBackground";
+
+import { api } from "@/utils/api";
+import { useWindowSize } from "@/hooks/useWindowSize";
+import useUserConfiguration from "@/hooks/useUserConfiguration";
+import { TrackerContextProvider } from "@/context/TrackerContext";
+
+import type { Habits } from "@/types";
+import { type NextPage } from "next";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
@@ -100,7 +100,7 @@ const Tracker: NextPage = () => {
         {/* actual component */}
         <TrackerContextProvider value={{ activeDate, setActiveDate }}>
           <TrackerBackground theme={theme}>
-            <DatePicker numDays={7} theme={theme} />
+            <DatePicker2 />
             <Carousel
               w={isBigWidget ? 515 : 320}
               slideSize={`${isBigWidget ? 33.333 : 50}%`}
@@ -116,7 +116,6 @@ const Tracker: NextPage = () => {
               {slides}
             </Carousel>
             <Refresh />
-
             {/* <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l text-gray-500 hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" /> */}
           </TrackerBackground>
         </TrackerContextProvider>

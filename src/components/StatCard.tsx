@@ -1,5 +1,5 @@
-import type { Habit } from "~/types";
-import { api } from "~/utils/api";
+import type { Habit } from "@/types";
+import { api } from "@/utils/api";
 
 interface StatCardProps {
   habit: Habit;

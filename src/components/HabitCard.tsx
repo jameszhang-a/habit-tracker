@@ -1,15 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { api } from "~/utils/api";
+import { api } from "@/utils/api";
 import Gradient from "./Gradient";
 
 import { default as c } from "classnames";
-import { useTrackerContext } from "~/context/TrackerContext";
-import type { Habit } from "~/types";
+import { useTrackerContext } from "@/context/TrackerContext";
+import type { Habit } from "@/types";
 
 import { createStyles, Menu, Modal, Tooltip } from "@mantine/core";
 
 import { DatePicker } from "@mantine/dates";
-import { useTime } from "~/hooks/useTime";
+import { useTime } from "@/hooks/useTime";
 import ReactCanvasConfetti from "react-canvas-confetti";
 
 type Props = {
@@ -225,7 +225,7 @@ const HabitCard = ({ habit, theme }: Props) => {
               "rotate-[360deg] scale-[20]": animateCheck,
               "-rotate-[360deg] scale-[0.2]": animateUncheck,
             },
-            `transform cursor-default text-4xl duration-[500ms] ease-in-out`
+            `duration-[500ms] transform cursor-default text-4xl ease-in-out`
           )}
         >
           {habit.emoji}

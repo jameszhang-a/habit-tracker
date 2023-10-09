@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { scramble } from "~/utils";
+import { scramble } from "@/utils";
 
 type ChartOptionsType = {
   type: "weeklyCompletion";

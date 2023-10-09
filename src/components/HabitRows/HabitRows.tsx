@@ -1,6 +1,6 @@
 import type { DropResult } from "react-beautiful-dnd";
 import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
-import { useHabitDataContext } from "~/context/HabitDataContext";
+import { useHabitDataContext } from "@/context/HabitDataContext";
 import HabitRow from "./HabitRow";
 import { default as c } from "classnames";
 
@@ -21,7 +21,7 @@ const HabitRows = () => {
           {...provided.draggableProps}
         >
           <div
-            className="pr-4 pl-2 text-gray-500"
+            className="pl-2 pr-4 text-gray-500"
             {...provided.dragHandleProps}
           >
             <svg

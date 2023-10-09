@@ -2,12 +2,12 @@ import { type NextPage } from "next";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import CompletionChart from "~/components/Charts/CompletionChart";
-import HeadWrapper from "~/components/HeadWrapper";
-import StatCard from "~/components/StatCard";
-import { api } from "~/utils/api";
+import CompletionChart from "@/components/Charts/CompletionChart";
+import HeadWrapper from "@/components/HeadWrapper";
+import StatCard from "@/components/StatCard";
+import { api } from "@/utils/api";
 
-import type { Habits } from "~/types";
+import type { Habits } from "@/types";
 
 const habitAPI = api.habit;
 

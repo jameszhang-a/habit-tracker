@@ -1,14 +1,14 @@
 import { type NextPage } from "next";
 
 import Link from "next/link";
-import HeadWrapper from "~/components/HeadWrapper";
+import HeadWrapper from "@/components/HeadWrapper";
 
 const Home: NextPage = () => {
   return (
     <HeadWrapper>
       <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-indigo-400 to-cyan-400">
         <div className="flex flex-col items-center justify-center gap-12 px-4 py-16 ">
-          <h1 className="sm:text-[5rem] text-5xl font-extrabold tracking-tight text-white">
+          <h1 className="text-5xl font-extrabold tracking-tight text-white sm:text-[5rem]">
             Habit{" "}
             <span className="animate-gradient-x bg-gradient-to-br from-fuchsia-400 to-violet-600 bg-clip-text text-transparent">
               Genie

@@ -13,10 +13,10 @@ import {
   rem,
 } from "@mantine/core";
 
-import { env } from "~/env.mjs";
-import { api } from "~/utils/api";
-import { formatDate } from "~/utils";
-import type { TableRow } from "~/types";
+import { env } from "@/env.mjs";
+import { api } from "@/utils/api";
+import { formatDate } from "@/utils";
+import type { TableRow } from "@/types";
 
 const NotionPage = () => {
   const [userConnected, setUserConnected] = useState(false);
