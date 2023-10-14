@@ -109,7 +109,7 @@ const Tracker: NextPage = () => {
               height={150}
               controlsOffset={"-30px"}
               classNames={classes}
-              withIndicators={exceedsCount && isBigWidget}
+              withIndicators={exceedsCount}
               withControls={exceedsCount}
               draggable={exceedsCount}
             >
@@ -139,11 +139,19 @@ const useStyles = createStyles(() => ({
     backgroundColor: "rgba(255, 255, 255, 0.5) !important",
   },
 
+  indicators: {
+    bottom: "0.5rem",
+  },
+
   indicator: {
     ref: getStylesRef("indicator"),
     transition: "opacity 150ms ease",
-    opacity: 0.1,
+    border: "1px",
+    opacity: 0.2,
     backgroundColor: "rgba(255, 255, 255, 0.5) !important",
+    ":hover": {
+      opacity: 1,
+    },
   },
 
   root: {
