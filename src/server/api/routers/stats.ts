@@ -1,6 +1,6 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { totalWeeksBetween } from "@/utils";
+import { getWeeks, totalWeeksBetween } from "@/utils";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
@@ -32,6 +32,8 @@ export const statsRouter = createTRPCRouter({
         throw new TRPCError({ code: "NOT_FOUND", message: "Habit not found" });
       }
 
+      const inversedGoal = habit.inversedGoal;
+
       // get the earliest completed date
       const earliestLog = await ctx.prisma.habitLog.findFirst({
         where: { habitId: hid, completed: true },
@@ -39,17 +41,12 @@ export const statsRouter = createTRPCRouter({
         select: { date: true },
       });
 
-      if (!earliestLog) {
-        return {
-          completionRate: 0,
-          goalsMet: 0,
-          totalWeeks: 0,
-        };
-      }
-
-      const startDate = earliestLog.date;
+      const startDate = !!earliestLog ? earliestLog.date : habit.createdAt;
       const currDate = new Date();
       const totalWeeks = totalWeeksBetween(startDate, currDate) + 1;
+      const allWeeks = getWeeks(startDate, currDate);
+
+      console.log("allWeeks", allWeeks);
 
       const logs = await ctx.prisma.habitLog.groupBy({
         by: ["weekKey"],
@@ -61,8 +58,13 @@ export const statsRouter = createTRPCRouter({
 
       let count = 0;
 
-      for (const week of logs) {
-        if (week._count.completed >= frequency) {
+      for (const weekKey of allWeeks) {
+        const log = logs.find((log) => log.weekKey === weekKey);
+        if (inversedGoal) {
+          if (!log || (log && log._count.completed <= frequency)) {
+            count++;
+          }
+        } else if (log && log._count.completed >= frequency) {
           count++;
         }
       }

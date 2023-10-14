@@ -109,6 +109,18 @@ const scramble = <T>(array: T[]) => {
   return array;
 };
 
+const getWeeks = (startDate: Date, currDate: Date) => {
+  const date = new Date(startDate);
+  const weeks = [];
+
+  while (date <= currDate) {
+    weeks.push(getWeekKey(date)); // assuming getWeekKey is a function that gives you the weekKey for a date
+    date.setDate(date.getDate() + 7);
+  }
+
+  return weeks;
+};
+
 export {
   formatDate,
   emojiLength,
@@ -118,4 +130,5 @@ export {
   getWeekKey,
   weekFromDate,
   scramble,
+  getWeeks,
 };
