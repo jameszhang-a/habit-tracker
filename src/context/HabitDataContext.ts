@@ -10,6 +10,7 @@ interface HabitDataContext {
     emoji: string;
     frequency: number;
     habitId: string;
+    inversedGoal: boolean;
   }) => void;
   handleDelete: (habitId: string) => void;
   handleReorderHabits: (newOrder: Habits) => void;

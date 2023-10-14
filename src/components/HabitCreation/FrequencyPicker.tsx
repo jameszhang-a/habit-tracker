@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { createStyles, SegmentedControl, rem } from "@mantine/core";
 
 const useStyles = createStyles((theme) => ({
   root: {
     backgroundColor:
       theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.white,
-    boxShadow: theme.shadows.md,
+    boxShadow: theme.shadows.sm,
     border: `${rem(1)} solid ${
       theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[1]
     }`,
@@ -31,9 +31,11 @@ const useStyles = createStyles((theme) => ({
 export function FrequencyPicker({
   onChange,
   defaultValue,
+  startAtZero,
 }: {
   onChange: (value: string) => void;
   defaultValue?: string;
+  startAtZero: boolean;
 }) {
   const [value, setValue] = useState(defaultValue || "1");
   const { classes } = useStyles();
@@ -43,20 +45,21 @@ export function FrequencyPicker({
     onChange(value);
   };
 
+  const data = useMemo(
+    () =>
+      Array.from({ length: 7 }, (_, i) => {
+        const value = `${i + (startAtZero ? 0 : 1)}`;
+        return { label: value, value };
+      }),
+    [startAtZero]
+  );
+
   return (
     <SegmentedControl
       radius="xl"
       size="sm"
       value={value}
-      data={[
-        { label: "1", value: "1" },
-        { label: "2", value: "2" },
-        { label: "3", value: "3" },
-        { label: "4", value: "4" },
-        { label: "5", value: "5" },
-        { label: "6", value: "6" },
-        { label: "7", value: "7" },
-      ]}
+      data={data}
       classNames={classes}
       onChange={(value) => handleValueChange(value)}
     />

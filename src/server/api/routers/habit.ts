@@ -51,30 +51,6 @@ export const habitRouter = createTRPCRouter({
     }),
 
   /**
-   * Creates a new habit for the current user
-   */
-  createHabit: protectedProcedure
-    .input(
-      z.object({
-        name: z.string(),
-        emoji: z.string().regex(/\p{Emoji}/gu),
-        frequency: z.number().min(1).max(7),
-      })
-    )
-    .mutation(({ ctx, input }) => {
-      const habit = ctx.prisma.habit.create({
-        data: {
-          name: input.name,
-          userId: ctx.session.user.id,
-          emoji: input.emoji,
-          frequency: input.frequency,
-        },
-      });
-
-      return habit;
-    }),
-
-  /**
    * Creates a new habit for the current user, updating an existing habit if the habitId is provided
    */
   createEditHabit: protectedProcedure
@@ -83,6 +59,7 @@ export const habitRouter = createTRPCRouter({
         name: z.string(),
         emoji: z.string().regex(/\p{Emoji}/gu),
         frequency: z.number().min(1).max(7),
+        inversedGoal: z.boolean(),
         habitId: z.string().optional(),
       })
     )
@@ -93,12 +70,14 @@ export const habitRouter = createTRPCRouter({
           name: input.name,
           emoji: input.emoji,
           frequency: input.frequency,
+          inversedGoal: input.inversedGoal,
         },
         create: {
-          name: input.name,
           userId: ctx.session.user.id,
+          name: input.name,
           emoji: input.emoji,
           frequency: input.frequency,
+          inversedGoal: input.inversedGoal,
         },
       });
 

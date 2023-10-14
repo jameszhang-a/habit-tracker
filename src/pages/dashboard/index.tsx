@@ -91,6 +91,7 @@ const Page = () => {
     emoji: string;
     frequency: number;
     habitId: string;
+    inversedGoal: boolean;
   }) => {
     editHabitMutate({ ...data });
   };
@@ -210,7 +211,7 @@ const Page = () => {
                   showLoading ? "pb-12" : "pb-[100px]"
                 } shadow`}
               >
-                <h1 className="text-2xl font-bold text-slate-800">
+                <h1 className="mb-4 text-2xl font-bold text-slate-800">
                   Your Habits
                 </h1>
                 <button
@@ -219,6 +220,7 @@ const Page = () => {
                 >
                   {winSize.width >= 640 ? "create new" : "+"}
                 </button>
+
                 <div className="flex w-5/6 flex-col divide-y divide-slate-400/25 sm:w-2/3">
                   {winReady && !showLoading && habits.length === 0 ? (
                     <div className="text-center text-slate-700">

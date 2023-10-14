@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 
 import { Popover, Button, Tooltip } from "@mantine/core";
 import { useOs } from "@mantine/hooks";
@@ -13,6 +13,8 @@ import { useHabitDataContext } from "@/context/HabitDataContext";
 import type { ChangeEvent } from "react";
 import type { Habit } from "@/types";
 import type { OS } from "@mantine/hooks";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
 
 interface HabitCreationProps {
   children?: React.ReactNode;
@@ -30,6 +32,7 @@ const HabitData = z.object({
       { message: "Please enter a valid emoji" }
     ),
   frequency: z.number().min(1).max(7),
+  inversedGoal: z.boolean(),
 });
 
 const HabitCreation: React.FC<HabitCreationProps> = ({
@@ -42,6 +45,7 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
   const [frequency, setFrequency] = useState("1");
   const [nameError, setNameError] = useState("");
   const [emojiError, setEmojiError] = useState("");
+  const [goalType, setGoalType] = useState<"atLeast" | "atMost">("atLeast");
 
   const ctx = useHabitDataContext();
 
@@ -66,6 +70,7 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
       name: nameData,
       emoji: emojiData,
       frequency: parseInt(frequency),
+      inversedGoal: goalType === "atMost",
     });
 
     if (parsed.success) {
@@ -113,6 +118,22 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
     setEmojiError("");
   };
 
+  const atLeastHint = useMemo(
+    () =>
+      `You aim to complete this goal at least ${frequency} time${
+        parseInt(frequency) > 1 ? "s" : ""
+      } a week`,
+    [frequency]
+  );
+
+  const atMostHint = useMemo(
+    () =>
+      `You aim to complete this goal ${frequency} time${
+        parseInt(frequency) === 1 ? "" : "s"
+      } or less a week`,
+    [frequency]
+  );
+
   return (
     <div
       className={`font-body flex w-[80vw] flex-col items-center overflow-clip rounded-lg bg-white backdrop-blur sm:w-[500px]`}
@@ -126,7 +147,7 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
         <div className="mb-4 text-3xl">Create a Habit!</div>
       )}
       <form
-        className="flex w-full flex-col items-center justify-center gap-6"
+        className="flex w-full flex-col items-center justify-center"
         onSubmit={handleSubmit}
       >
         <div>
@@ -150,7 +171,7 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
           </Tooltip>
         </div>
 
-        <div>
+        <div className="mt-4">
           <Tooltip
             label={emojiError}
             color="orange"
@@ -171,12 +192,43 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
           </Tooltip>
         </div>
 
-        <div className="">
-          <div>Times per week?</div>
+        {/* GOAL setting */}
+        <div className="mt-8 flex flex-col gap-2 transition-all">
+          <div>Goal type?</div>
+          <RadioGroup defaultValue="atLeast">
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem
+                value="atLeast"
+                id="r1"
+                checked={goalType === "atLeast"}
+                onClick={() => setGoalType("atLeast")}
+              />
+              <Label htmlFor="r1">At least</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <RadioGroupItem
+                value="atMost"
+                id="r2"
+                checked={goalType === "atMost"}
+                onClick={() => setGoalType("atMost")}
+              />
+              <Label htmlFor="r2">At most</Label>
+            </div>
+          </RadioGroup>
           <FrequencyPicker
             onChange={setFrequency}
-            defaultValue={edit && habit ? habit.frequency.toString() : "1"}
+            defaultValue={
+              edit && habit
+                ? habit.frequency.toString()
+                : goalType === "atLeast"
+                ? "1"
+                : "0"
+            }
+            startAtZero={goalType === "atMost"}
           />
+        </div>
+        <div className="font-mono mb-6 mt-3 w-[80%] text-xs font-medium text-slate-500">
+          {goalType === "atLeast" ? atLeastHint : atMostHint}
         </div>
 
         <div className="flex min-w-full flex-row-reverse gap-2 px-4 py-3 sm:px-6">
