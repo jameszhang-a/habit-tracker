@@ -42,7 +42,8 @@ export function DatePicker2() {
   };
 
   const dateText = useMemo(() => {
-    if (activeDate.getDate() === new Date().getDate()) return "Today";
+    if (activeDate.getDate() === new Date().getDate())
+      return "Today, " + format(activeDate, "MMM dd");
 
     return format(activeDate, "PP");
   }, [activeDate]);
