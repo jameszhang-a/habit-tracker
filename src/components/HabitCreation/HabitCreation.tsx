@@ -45,7 +45,9 @@ const HabitCreation: React.FC<HabitCreationProps> = ({
   const [frequency, setFrequency] = useState("1");
   const [nameError, setNameError] = useState("");
   const [emojiError, setEmojiError] = useState("");
-  const [goalType, setGoalType] = useState<"atLeast" | "atMost">("atLeast");
+  const [goalType, setGoalType] = useState<"atLeast" | "atMost">(() =>
+    edit && habit ? (habit.inversedGoal ? "atMost" : "atLeast") : "atLeast"
+  );
 
   const ctx = useHabitDataContext();
 
