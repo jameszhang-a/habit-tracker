@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "@/utils/api";
 import Gradient from "./Gradient";
 
@@ -6,11 +6,12 @@ import { default as c } from "classnames";
 import { useTrackerContext } from "@/context/TrackerContext";
 import type { Habit } from "@/types";
 
-import { createStyles, Menu, Modal, Tooltip } from "@mantine/core";
+import { createStyles, Modal } from "@mantine/core";
 
 import { DatePicker } from "@mantine/dates";
 import { useTime } from "@/hooks/useTime";
-import ReactCanvasConfetti from "react-canvas-confetti";
+
+import CheckMark from "./CheckMark";
 
 type Props = {
   habit: Habit;
@@ -34,7 +35,7 @@ const HabitCard = ({ habit, theme }: Props) => {
   const { dayStart, dayEnd, isoEnd, isoStart } = useTime(activeDate);
 
   const { logHabit, loggedOnDate } = habitAPI;
-  const { data, isFetched } = loggedOnDate.useQuery(
+  const { data, isFetched, isLoading } = loggedOnDate.useQuery(
     {
       id: habit.id,
       date: activeDate,
@@ -49,16 +50,21 @@ const HabitCard = ({ habit, theme }: Props) => {
 
   const habitLogCreation = logHabit.useMutation({
     onError() {
+      console.log("error");
       setShowCheck((prev) => !prev);
     },
     onSuccess(data) {
+      console.log("success", data);
       setShowCheck(data.completed);
     },
     onMutate() {
+      console.log("mutate!");
       if (showCheck) {
-        setAnimateUncheck(true);
+        console.log("uncheck");
+        // setAnimateUncheck(true);
       } else {
-        setAnimateCheck(true);
+        console.log("check");
+        // setAnimateCheck(true);
       }
     },
     onSettled() {
@@ -79,14 +85,16 @@ const HabitCard = ({ habit, theme }: Props) => {
   }, [isFetched, data, activeDate]);
 
   const handleClick = () => {
+    console.log("Clicking on habit:", {
+      id: habit.id,
+      name: habit.name,
+      activeDate,
+    });
     habitLogCreation.mutate({ id: habit.id, date: activeDate });
-    // fire();
   };
 
   const hoverEffect =
     "hover:scale-105 transition ease-in-out delay-50 duration-150";
-
-  const { current: inputId } = useRef(`habit-${habit.id}`);
 
   const Background = useMemo(() => {
     if (theme === "default") {
@@ -97,50 +105,6 @@ const HabitCard = ({ habit, theme }: Props) => {
   // if (isLoading) {
   //   return <HabitLoading />;
   // }
-
-  // const refAnimationInstance = useRef(null);
-
-  // const getInstance = useCallback((instance) => {
-  //   refAnimationInstance.current = instance;
-  // }, []);
-
-  // const makeShot = useCallback((particleRatio, opts) => {
-  //   refAnimationInstance.current &&
-  //     refAnimationInstance.current({
-  //       ...opts,
-  //       origin: { y: 0.7 },
-  //       particleCount: Math.floor(200 * particleRatio),
-  //     });
-  // }, []);
-
-  // const fire = useCallback(() => {
-  //   makeShot(0.25, {
-  //     spread: 26,
-  //     startVelocity: 55,
-  //   });
-
-  //   makeShot(0.2, {
-  //     spread: 60,
-  //   });
-
-  //   makeShot(0.35, {
-  //     spread: 100,
-  //     decay: 0.91,
-  //     scalar: 0.8,
-  //   });
-
-  //   makeShot(0.1, {
-  //     spread: 120,
-  //     startVelocity: 25,
-  //     decay: 0.92,
-  //     scalar: 1.2,
-  //   });
-
-  //   makeShot(0.1, {
-  //     spread: 120,
-  //     startVelocity: 45,
-  //   });
-  // }, [makeShot]);
 
   return (
     <div>
@@ -219,6 +183,7 @@ const HabitCard = ({ habit, theme }: Props) => {
         onClick={() => setShowOptionsModal(true)}
       >
         {Background}
+
         <div
           className={c(
             {
@@ -231,7 +196,7 @@ const HabitCard = ({ habit, theme }: Props) => {
           {habit.emoji}
         </div>
 
-        <div className={`relative col-start-3`}>
+        {/* <div className={`relative col-start-3`}>
           <input
             id={inputId}
             type="checkbox"
@@ -254,8 +219,25 @@ const HabitCard = ({ habit, theme }: Props) => {
               left: "50%",
               transform: "translate(-50%, -50%)",
             }}
+          ></label>
+          <div className="absolute -translate-x-[30%] -translate-y-1/4 border border-red-500">
+            {CheckAnimation}
+          </div>
+        </div> */}
+        {isLoading || habitLogCreation.isLoading ? (
+          <button
+            type="button"
+            disabled
+            className="col-start-3 h-8 w-8 animate-pulse rounded-full bg-slate-700/25 disabled:cursor-progress"
           />
-        </div>
+        ) : (
+          <CheckMark
+            className="col-start-3"
+            id={habit.id}
+            onCheck={handleClick}
+            checked={showCheck}
+          />
+        )}
         <div
           className={`font-body col-span-3 cursor-default self-center text-xl leading-none tracking-tighter`}
         >
