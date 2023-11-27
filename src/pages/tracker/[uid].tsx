@@ -22,6 +22,7 @@ import type { Habits } from "@/types";
 import { type NextPage } from "next";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { useTime } from "@/hooks/useTime";
 
 const habitAPI = api.habit;
 
@@ -29,6 +30,10 @@ const Tracker: NextPage = () => {
   const [habits, setHabits] = useState<Habits>([]);
   const [activeDate, setActiveDate] = useState<Date>(new Date());
   const [isBigWidget, setIsBigWidget] = useState(true);
+
+  console.log("active date is", activeDate);
+  const { date } = useTime(activeDate);
+  console.log("hook date is:", date);
 
   const { classes } = useStyles();
 
