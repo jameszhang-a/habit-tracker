@@ -34,7 +34,6 @@ const CheckMark: React.FC<CheckMarkProps> = ({
     if (ranOnceRef.current) return;
 
     if (checked) {
-      console.log("goto and stop");
       goToAndPlay(17, true);
       ranOnceRef.current = true;
     } else {
@@ -45,10 +44,8 @@ const CheckMark: React.FC<CheckMarkProps> = ({
   const handleClick = () => {
     console.log("clicked");
     if (checked) {
-      console.log("stopping animation");
       stop();
     } else {
-      console.log("playing animation");
       goToAndPlay(17, true);
     }
     onCheck && onCheck();

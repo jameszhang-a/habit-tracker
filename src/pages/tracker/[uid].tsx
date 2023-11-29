@@ -29,9 +29,21 @@ const habitAPI = api.habit;
 const Tracker: NextPage = () => {
   const [habits, setHabits] = useState<Habits>([]);
   const [activeDate, setActiveDate] = useState<Date>(new Date());
+  const [dayOffset, setDayOffset] = useState<number>(0);
   const [isBigWidget, setIsBigWidget] = useState(true);
 
-  console.log("active date is", activeDate);
+  console.log(
+    "current date is",
+    activeDate.toLocaleDateString(),
+    "current dayOffset is",
+    dayOffset
+  );
+
+  useEffect(() => {
+    console.log("App Start");
+    setActiveDate(new Date());
+  }, []);
+
   const { date } = useTime(activeDate);
   console.log("hook date is:", date);
 
@@ -103,7 +115,9 @@ const Tracker: NextPage = () => {
         )}
       >
         {/* actual component */}
-        <TrackerContextProvider value={{ activeDate, setActiveDate }}>
+        <TrackerContextProvider
+          value={{ activeDate, setActiveDate, dayOffset, setDayOffset }}
+        >
           <TrackerBackground theme={theme}>
             <DatePicker2 />
             <Carousel

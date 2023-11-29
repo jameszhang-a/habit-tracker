@@ -14,12 +14,15 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function DatePicker2() {
   const [calendarOpen, setCalendarOpen] = useState(false);
-  const { activeDate, setActiveDate } = useTrackerContext();
+  const { activeDate, setActiveDate, setDayOffset } = useTrackerContext();
 
   const onDateSelect = (date?: Date) => {
     if (!date) return;
 
+    const dayDiff = daysBetweenDates(new Date(), date);
+
     setActiveDate(date);
+    setDayOffset(dayDiff);
     setCalendarOpen(false);
   };
 
@@ -30,6 +33,7 @@ export function DatePicker2() {
     prevDay.setDate(prevDay.getDate() - 1);
 
     setActiveDate(prevDay);
+    setDayOffset((prev) => prev - 1);
   };
 
   const onNextDayClick = () => {
@@ -39,6 +43,7 @@ export function DatePicker2() {
     nextDay.setDate(nextDay.getDate() + 1);
 
     setActiveDate(nextDay);
+    setDayOffset((prev) => prev + 1);
   };
 
   const dateText = useMemo(() => {
@@ -82,9 +87,22 @@ export function DatePicker2() {
           selected={activeDate}
           defaultMonth={activeDate}
           onSelect={onDateSelect}
+          onDayClick={(x) => console.log("day click", x)}
           initialFocus
         />
       </PopoverContent>
     </Popover>
   );
+}
+
+function daysBetweenDates(startDate: Date, endDate: Date) {
+  const parsedGivenDate = new Date(endDate);
+
+  const currentTimeMillis = startDate.getTime();
+  const givenTimeMillis = parsedGivenDate.getTime();
+
+  const differenceInMillis = givenTimeMillis - currentTimeMillis;
+  const differenceInDays = differenceInMillis / (1000 * 60 * 60 * 24);
+
+  return Math.round(differenceInDays);
 }

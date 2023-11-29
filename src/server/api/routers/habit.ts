@@ -124,6 +124,15 @@ export const habitRouter = createTRPCRouter({
         },
       });
 
+      console.log(
+        "mutating habit log",
+        "start Date:",
+        dayStart,
+        "endDate:",
+        dayEnd
+      );
+      console.log("habitlog:", habitLog);
+
       if (!habitLog) {
         return ctx.prisma.habitLog.create({
           data: {
@@ -142,28 +151,6 @@ export const habitRouter = createTRPCRouter({
       }
     }),
 
-  /**
-   * Returns the habit log for the current day if it's completed
-   */
-  loggedToday: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(({ ctx, input }) => {
-      const { dayStart, dayEnd } = getDateInterval();
-
-      const habitLogs = ctx.prisma.habitLog.findFirst({
-        where: {
-          habitId: input.id,
-          date: {
-            gte: dayStart,
-            lt: dayEnd,
-          },
-          completed: true,
-        },
-      });
-
-      return habitLogs;
-    }),
-
   loggedOnDate: publicProcedure
     .input(
       z.object({
@@ -173,10 +160,10 @@ export const habitRouter = createTRPCRouter({
         endTime: z.date(),
       })
     )
-    .query(({ ctx, input }) => {
+    .query(async ({ ctx, input }) => {
       const { id, startTime, endTime } = input;
 
-      const habitLogs = ctx.prisma.habitLog.findFirst({
+      const habitLogs = await ctx.prisma.habitLog.findFirst({
         where: {
           habitId: id,
           date: {
@@ -186,6 +173,98 @@ export const habitRouter = createTRPCRouter({
           completed: true,
         },
       });
+
+      if (id === "clfgo0daa0001l908fjyu0g39") {
+        console.log("startTime", startTime);
+        console.log("endTime", endTime);
+        console.log("habitLogs", habitLogs);
+      }
+
+      return habitLogs;
+    }),
+
+  /**
+   * Marks the current day as completed for the habit
+   *
+   * if the habit has already been logged today, it will be marked as not completed.
+   * if the habit has not been logged today, it will be marked as completed.
+   * if the habit doesn't exist, it will be created and marked as completed.
+   */
+  logHabitV2: publicProcedure
+    .input(z.object({ id: z.string().min(1), offset: z.number() }))
+    .mutation(async ({ ctx, input }) => {
+      const timeDiff = input.offset * 24 * 60 * 60 * 1000;
+      const date = new Date(Date.now() + timeDiff);
+
+      const { dayStart, dayEnd } = getDateInterval(date);
+
+      const habitLog = await ctx.prisma.habitLog.findFirst({
+        where: {
+          habitId: input.id,
+          date: {
+            gte: dayStart,
+            lt: dayEnd,
+          },
+        },
+      });
+
+      console.log(
+        "mutating habit log",
+        "start Date:",
+        dayStart,
+        "endDate:",
+        dayEnd
+      );
+      console.log("habitlog:", habitLog);
+
+      if (!habitLog) {
+        return ctx.prisma.habitLog.create({
+          data: {
+            habitId: input.id,
+            date,
+            completed: true,
+            weekKey: getWeekKey(date),
+          },
+        });
+      } else {
+        // set the habit to completed if it's not already
+        return ctx.prisma.habitLog.update({
+          where: { id: habitLog.id },
+          data: { completed: !habitLog.completed },
+        });
+      }
+    }),
+
+  loggedOnDateV2: publicProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        offset: z.number(),
+      })
+    )
+    .query(({ ctx, input }) => {
+      const { id, offset } = input;
+
+      const timeDiff = offset * 24 * 60 * 60 * 1000;
+      const date = new Date(Date.now() + timeDiff);
+
+      const { dayStart, dayEnd } = getDateInterval(date);
+
+      const habitLogs = ctx.prisma.habitLog.findFirst({
+        where: {
+          habitId: id,
+          date: {
+            gte: dayStart,
+            lte: dayEnd,
+          },
+          completed: true,
+        },
+      });
+
+      if (id === "clfgo0daa0001l908fjyu0g39") {
+        console.log("startTime", dayStart);
+        console.log("endTime", dayEnd);
+      }
 
       return habitLogs;
     }),
