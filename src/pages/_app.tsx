@@ -1,5 +1,6 @@
 import { SessionProvider } from "next-auth/react";
 import { MantineProvider } from "@mantine/core";
+import { ThemeProvider } from "@/components/theme-provider";
 
 import "@/styles/globals.css";
 import { api } from "@/utils/api";
@@ -15,7 +16,14 @@ const MyApp: AppType<{ session: Session | null }> = ({
   return (
     <SessionProvider session={session}>
       <MantineProvider emotionCache={styleCache}>
-        <Component {...pageProps} />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <Component {...pageProps} />
+        </ThemeProvider>
       </MantineProvider>
     </SessionProvider>
   );

@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/utils/api";
 
 import type { Habits } from "@/types";
+import { StatsContextProvider } from "@/context/StatsContext";
 
 const habitAPI = api.habit;
 
@@ -47,35 +48,37 @@ const Stats: NextPage = () => {
       title="Habit Completion Stats Widget"
       description="Check your habit completion stats, and embed into your Notion dashboard!"
     >
-      <main className="mx-auto flex grow flex-col items-center gap-4 pt-4">
-        <div>Stats page</div>
-        <div>User id: {uid}</div>
-        <div className="start-0 flex w-full"></div>
+      <StatsContextProvider
+        value={{ setActiveHabit: setSelectedHabit, activeHabit: selectedHabit }}
+      >
+        <main className="mx-auto flex grow flex-col items-center gap-4 pt-4">
+          <div>User id: {uid}</div>
+          <div className="start-0 flex w-full"></div>
 
-        <section
-          className={`container relative mb-4 w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow`}
-        >
-          <h1 className="text-xl font-bold">Daily Completion</h1>
-          <CompletionChart habits={habits} />
-        </section>
+          <Tabs
+            className="container flex flex-col items-center"
+            value={selectedHabit}
+            onValueChange={setSelectedHabit}
+          >
+            <TabsList className="mb-8">{tabs}</TabsList>
 
-        <Tabs
-          className="container flex flex-col items-center"
-          // defaultValue={habitsData?.[0]?.id}
-          value={selectedHabit}
-          onValueChange={setSelectedHabit}
-        >
-          <TabsList className="mb-8">{tabs}</TabsList>
+            <section
+              className={`container relative mb-4 w-[90vw] flex-col items-center gap-4 rounded-xl border border-slate-300 bg-[#f4f5f6]/80 p-5 shadow`}
+            >
+              <h1 className="text-xl font-bold">Daily Completion</h1>
+              <CompletionChart habits={habits} />
+            </section>
 
-          <div className="container mx-auto flex items-center justify-center rounded-xl border bg-violet-300 p-8">
-            {habits.map((habit) => (
-              <TabsContent key={habit.id} value={habit.id}>
-                <StatCard habit={habit} />
-              </TabsContent>
-            ))}
-          </div>
-        </Tabs>
-      </main>
+            <div className="container mx-auto flex items-center justify-center rounded-xl border bg-violet-300 p-8">
+              {habits.map((habit) => (
+                <TabsContent key={habit.id} value={habit.id}>
+                  <StatCard habit={habit} />
+                </TabsContent>
+              ))}
+            </div>
+          </Tabs>
+        </main>
+      </StatsContextProvider>
     </HeadWrapper>
   );
 };

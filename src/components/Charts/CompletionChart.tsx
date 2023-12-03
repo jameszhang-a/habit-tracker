@@ -4,6 +4,7 @@ import useChartOptions from "@/hooks/useChartOptions";
 import { api } from "@/utils/api";
 
 import type { Habits } from "@/types";
+import { memo } from "react";
 
 const statsAPI = api.stats;
 
@@ -33,4 +34,4 @@ const CompletionChart = ({ habits }: Props) => {
   return <ReactECharts option={option} />;
 };
 
-export default CompletionChart;
+export default memo(CompletionChart);
