@@ -1,3 +1,5 @@
+import { addWeeks, parseISO, startOfWeek } from "date-fns";
+
 const formatDate = (date: Date) => {
   return date.toLocaleString("en-GB", {
     day: "numeric",
@@ -59,6 +61,7 @@ const getWeekKey = (date: Date) => {
   const year = date.getFullYear();
   const week = weekFromDate(date);
 
+  // console.log("date-fn, weekKey:", `${getYear(date)}-${getWeek(date)}`);
   return `${year}-${week}`;
 };
 
@@ -121,6 +124,26 @@ const getWeeks = (startDate: Date, currDate: Date) => {
   return weeks;
 };
 
+/**
+ * Converts a weekKey in the format 'YYYY-WW' to the start date of that week.
+ * @param {string} weekKey - The week key in 'YYYY-WW' format.
+ * @returns {Date} - The start date of the week.
+ */
+function convertWeekKeyToStartDate(weekKey: string) {
+  // Split the weekKey into year and week number
+  const [year, weekStr] = weekKey.split("-") as [string, string];
+  const week = parseInt(weekStr, 10); // Convert week number to zero-based index
+
+  // Parse the start of the year
+  const startOfYear = parseISO(`${year}-01-01`);
+
+  // Add the weeks to the start of the year
+  const weekDate = addWeeks(startOfYear, week);
+
+  // Get the start of the week
+  return startOfWeek(weekDate, { weekStartsOn: 1 }); // Set weekStartsOn depending on your locale (0 for Sunday, 1 for Monday, etc.)
+}
+
 export {
   formatDate,
   emojiLength,
@@ -131,4 +154,5 @@ export {
   weekFromDate,
   scramble,
   getWeeks,
+  convertWeekKeyToStartDate,
 };

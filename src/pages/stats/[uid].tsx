@@ -13,6 +13,7 @@ import type { Habits } from "@/types";
 import { StatsContextProvider } from "@/context/StatsContext";
 
 const habitAPI = api.habit;
+const statsAPI = api.stats;
 
 const Stats: NextPage = () => {
   const [habits, setHabits] = useState<Habits>([]);
@@ -23,6 +24,10 @@ const Stats: NextPage = () => {
 
   const { data: habitsData } = habitAPI.getHabits.useQuery({
     uid,
+  });
+
+  const { data: weeklyRes } = statsAPI.getWeeklyCount.useQuery({
+    hid: selectedHabit,
   });
 
   useEffect(() => {
@@ -69,13 +74,29 @@ const Stats: NextPage = () => {
               <CompletionChart habits={habits} />
             </section>
 
-            <div className="container mx-auto flex items-center justify-center rounded-xl border bg-violet-300 p-8">
-              {habits.map((habit) => (
-                <TabsContent key={habit.id} value={habit.id}>
-                  <StatCard habit={habit} />
-                </TabsContent>
-              ))}
-            </div>
+            <section className="flex gap-2">
+              <div className="container mx-auto flex items-center justify-center rounded-xl border bg-violet-300 p-8">
+                {habits.map((habit) => (
+                  <TabsContent key={habit.id} value={habit.id}>
+                    <StatCard habit={habit} />
+                  </TabsContent>
+                ))}
+              </div>
+
+              <div className="container mx-auto flex items-center justify-center rounded-xl border bg-violet-300 p-8">
+                {habits.map((habit) => (
+                  <TabsContent key={habit.id} value={habit.id}>
+                    {habit.name}
+
+                    {weeklyRes?.map((week) => (
+                      <div key={week.weekKey}>
+                        {week.startDate.toLocaleDateString()}: {week.count}
+                      </div>
+                    ))}
+                  </TabsContent>
+                ))}
+              </div>
+            </section>
           </Tabs>
         </main>
       </StatsContextProvider>

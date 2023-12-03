@@ -1,8 +1,14 @@
 import { TRPCError } from "@trpc/server";
 import { z } from "zod";
-import { getWeeks, totalWeeksBetween } from "@/utils";
+import {
+  convertWeekKeyToStartDate,
+  getWeekKey,
+  getWeeks,
+  totalWeeksBetween,
+} from "@/utils";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import { subDays } from "date-fns";
 
 export const statsRouter = createTRPCRouter({
   /**
@@ -45,8 +51,6 @@ export const statsRouter = createTRPCRouter({
       const currDate = new Date();
       const totalWeeks = totalWeeksBetween(startDate, currDate) + 1;
       const allWeeks = getWeeks(startDate, currDate);
-
-      console.log("allWeeks", allWeeks);
 
       const logs = await ctx.prisma.habitLog.groupBy({
         by: ["weekKey"],
@@ -155,5 +159,39 @@ export const statsRouter = createTRPCRouter({
       }
 
       return res;
+    }),
+
+  /**
+   * Get the number of times a habit was completed for the last 6 weeks.
+   * return an array of objects where with the format { weekKey: string, count: number, startDate: Date}}
+   */
+  getWeeklyCount: publicProcedure
+    .input(z.object({ hid: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const { hid } = input;
+      const currDate = new Date();
+
+      const startDate = subDays(currDate, 42);
+      const allWeeks = getWeeks(startDate, currDate);
+
+      console.log("allWeeks", allWeeks);
+
+      const logs = await ctx.prisma.habitLog.groupBy({
+        by: ["weekKey"],
+        where: { habitId: hid, completed: true, weekKey: { in: allWeeks } },
+        _count: {
+          completed: true,
+        },
+      });
+
+      return allWeeks.map((week) => {
+        const log = logs.find((log) => log.weekKey === week);
+
+        return {
+          weekKey: week,
+          count: log ? log._count.completed : 0,
+          startDate: convertWeekKeyToStartDate(week),
+        };
+      });
     }),
 });
