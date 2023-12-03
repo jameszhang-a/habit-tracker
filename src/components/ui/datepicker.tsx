@@ -50,7 +50,7 @@ export function DatePicker2() {
     if (activeDate.getDate() === new Date().getDate())
       return "Today, " + format(activeDate, "MMM dd");
 
-    return format(activeDate, "PP");
+    return format(activeDate, "EEE, MMM d");
   }, [activeDate]);
 
   return (
