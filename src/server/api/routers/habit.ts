@@ -242,34 +242,25 @@ export const habitRouter = createTRPCRouter({
         offset: z.number(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .query(({ ctx, input }) => {
       const { id, offset } = input;
 
       const timeDiff = offset * 24 * 60 * 60 * 1000;
 
-      const tempTime = new Date(Date.UTC(2023, 11, 7, 15, 39, 0));
-      console.log("temp Time", tempTime);
-
-      const newnewTime = new Date(tempTime.getTime() + timeDiff);
-
       const date = new Date(Date.now() + timeDiff);
 
-      const { dayStart, dayEnd } = getDateInterval(newnewTime);
+      const { dayStart, dayEnd } = getDateInterval(date);
 
-      console.log("daystart", dayStart, "dayend", dayEnd);
-
-      const habitLogs = await ctx.prisma.habitLog.findFirst({
+      const habitLogs = ctx.prisma.habitLog.findFirst({
         where: {
           habitId: id,
           date: {
             gte: dayStart,
-            lte: dayEnd,
+            lt: dayEnd,
           },
           completed: true,
         },
       });
-
-      console.log("log", habitLogs);
 
       return habitLogs;
     }),
