@@ -1,6 +1,7 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import cat1Walking from "public/cats/cat01_gifs/cat01_walk_8fps.gif";
-import cat1Idle from "public/cats/cat01_gifs/cat01_sit_8fps.gif";
+import cat1Idle from "public/cats/cat01_gifs/cat01_idle_blink_8fps.gif";
+import cat1Laying from "public/cats/cat01_gifs/cat01_liedown_8fps.gif";
 import Image from "next/image";
 
 const speed = 30; // Pixels per second
@@ -8,14 +9,31 @@ const speed = 30; // Pixels per second
 export const Pets = () => {
   // State to manage pet's status and position
   const [isWalking, setIsWalking] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: -7 }); // Initial position
+  const [position, setPosition] = useState({ x: 56, y: -7 }); // Initial position
   const [duration, setDuration] = useState(0); // Add duration to state
   const [faceRight, setFaceRight] = useState(true); // Add faceRight to state
+  const [isLayingDown, setIsLayingDown] = useState(false);
 
   const petRef = useRef<HTMLDivElement>(null);
 
+  let layingDownTimeout: number | undefined = undefined;
+
+  useEffect(() => {
+    return () => {
+      if (layingDownTimeout !== undefined) {
+        clearTimeout(layingDownTimeout);
+      }
+    };
+  }, [layingDownTimeout]);
+
   const handlePetClick = () => {
+    if (layingDownTimeout !== undefined) {
+      clearTimeout(layingDownTimeout);
+      layingDownTimeout = undefined;
+    }
+
     setIsWalking(true);
+    setIsLayingDown(false);
 
     const currentPosition = getRelativePosition();
     const distance = Math.floor(Math.random() * 50 + 20);
@@ -62,6 +80,15 @@ export const Pets = () => {
     // Set a timeout to stop walking after the calculated duration
     setTimeout(() => {
       setIsWalking(false);
+
+      if (layingDownTimeout !== undefined) {
+        clearTimeout(layingDownTimeout);
+        layingDownTimeout = undefined;
+      }
+      layingDownTimeout = window.setTimeout(() => {
+        setIsWalking(false);
+        setIsLayingDown(true);
+      }, 5000);
     }, movementDuration * 1000); // Convert to milliseconds
   };
 
@@ -98,7 +125,7 @@ export const Pets = () => {
           style={{
             transform: faceRight ? "scaleX(1)" : "scaleX(-1)",
           }}
-          src={isWalking ? cat1Walking : cat1Idle}
+          src={isWalking ? cat1Walking : isLayingDown ? cat1Laying : cat1Idle}
         />
         <div
           className="absolute bottom-1 left-2 right-2 top-3 m-auto cursor-pointer"
