@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Carousel } from "@mantine/carousel";
-import { createStyles, getStylesRef } from "@mantine/core";
+import { Box, createStyles, getStylesRef } from "@mantine/core";
 import { default as c } from "classnames";
 
 import HeadWrapper from "@/components/HeadWrapper";
@@ -23,6 +23,11 @@ import { type NextPage } from "next";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useTime } from "@/hooks/useTime";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
+
+import cat1 from "public/cats/cat01_gifs/cat01_walk_8fps.gif";
+import { Pets } from "@/components/Pets/Pets";
 
 const habitAPI = api.habit;
 
@@ -42,6 +47,7 @@ const Tracker: NextPage = () => {
   useEffect(() => {
     console.log("App Start");
     setActiveDate(new Date());
+    setDayOffset(0);
   }, []);
 
   const { date } = useTime(activeDate);
@@ -111,7 +117,7 @@ const Tracker: NextPage = () => {
             "bg-[#ffffff]": lightTheme === "light",
             "bg-[#191919]": lightTheme === "dark",
           },
-          "flex h-screen w-screen justify-center"
+          "relative flex h-screen w-screen justify-center"
         )}
       >
         {/* actual component */}
@@ -120,6 +126,7 @@ const Tracker: NextPage = () => {
         >
           <TrackerBackground theme={theme}>
             <DatePicker2 />
+
             <Carousel
               w={isBigWidget ? 515 : 320}
               slideSize={`${isBigWidget ? 33.333 : 50}%`}
@@ -135,6 +142,9 @@ const Tracker: NextPage = () => {
               {slides}
             </Carousel>
             <Refresh />
+            <div className="absolute bottom-0 right-0 -z-50 h-[100%] w-[100%]">
+              <Pets />
+            </div>
             {/* <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l text-gray-500 hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" /> */}
           </TrackerBackground>
         </TrackerContextProvider>
