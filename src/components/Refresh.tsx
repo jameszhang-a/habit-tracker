@@ -1,26 +1,16 @@
 import { useRouter } from "next/router";
-import { useState } from "react";
+
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 const RefreshButton = () => {
-  const [hover, setHover] = useState(false);
   const router = useRouter();
 
   return (
     <button
-      onMouseOver={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
       onClick={() => router.reload()}
-      className="absolute bottom-3 right-5 rounded-md text-lg font-bold text-white transition duration-200 ease-in-out"
+      className="absolute bottom-3 right-3 rounded-md border border-input bg-background/[.4] p-1 align-middle transition duration-200 ease-in-out hover:bg-accent hover:text-accent-foreground"
     >
-      <ArrowPathIcon
-        color={`${
-          hover ? "rgba(37, 39, 46, 0.5)" : "rgba(149, 147, 217, 0.1)"
-        }`}
-        style={{ transition: "all .15s ease" }}
-        height="25px"
-        width="25px"
-      />
+      <ArrowPathIcon className="h-4 w-4 place-self-center" />
     </button>
   );
 };

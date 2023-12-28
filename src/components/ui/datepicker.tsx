@@ -9,7 +9,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useTrackerContext } from "@/context/TrackerContext";
-import { format } from "date-fns";
+import { format, differenceInCalendarDays } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function DatePicker2() {
@@ -96,13 +96,7 @@ export function DatePicker2() {
 }
 
 function daysBetweenDates(startDate: Date, endDate: Date) {
-  const parsedGivenDate = new Date(endDate);
+  const diffInCalendarDays = differenceInCalendarDays(endDate, startDate);
 
-  const currentTimeMillis = startDate.getTime();
-  const givenTimeMillis = parsedGivenDate.getTime();
-
-  const differenceInMillis = givenTimeMillis - currentTimeMillis;
-  const differenceInDays = differenceInMillis / (1000 * 60 * 60 * 24);
-
-  return Math.round(differenceInDays);
+  return diffInCalendarDays;
 }

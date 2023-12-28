@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Carousel } from "@mantine/carousel";
-import { Box, createStyles, getStylesRef } from "@mantine/core";
+import { CopyButton, createStyles, getStylesRef } from "@mantine/core";
 import { default as c } from "classnames";
 
 import HeadWrapper from "@/components/HeadWrapper";
@@ -11,7 +11,11 @@ import HabitLoading from "@/components/HabitLoading";
 import Refresh from "@/components/Refresh";
 import TrackerBackground from "@/components/TrackerBackground";
 import { DatePicker2 } from "@/components/ui/datepicker";
-import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import {
+  ClipboardDocumentCheckIcon,
+  ClipboardDocumentIcon,
+  CodeBracketSquareIcon,
+} from "@heroicons/react/24/outline";
 
 import { api } from "@/utils/api";
 import { useWindowSize } from "@/hooks/useWindowSize";
@@ -28,6 +32,11 @@ import Image from "next/image";
 
 import cat1 from "public/cats/cat01_gifs/cat01_walk_8fps.gif";
 import { Pets } from "@/components/Pets/Pets";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 const habitAPI = api.habit;
 
@@ -105,6 +114,13 @@ const Tracker: NextPage = () => {
     [habitsData, isLoading, habits, theme]
   );
 
+  const debugValue = `
+date: ${activeDate.toISOString()}
+useDate: ${date !== undefined ? date.toISOString() : "undefined"}
+local: ${activeDate.toLocaleString()}
+offset: ${dayOffset}
+`;
+
   return (
     <HeadWrapper
       title="Tracker Widget"
@@ -142,6 +158,34 @@ const Tracker: NextPage = () => {
               {slides}
             </Carousel>
             <Refresh />
+            <Popover>
+              <PopoverTrigger asChild>
+                <button className="align-center absolute bottom-3 right-11 flex grow justify-center rounded-md border border-input bg-background/[.2] p-1 align-middle hover:bg-accent hover:text-accent-foreground">
+                  <CodeBracketSquareIcon className="h-4 w-4 place-self-center" />
+                </button>
+              </PopoverTrigger>
+              <PopoverContent
+                className="absolute bottom-0 flex w-[280px] -translate-x-[130%] -translate-y-[30%] flex-col gap-1 p-4 text-xs font-normal"
+                align="center"
+                sideOffset={-40}
+              >
+                <div>{debugValue}</div>
+                <CopyButton value={debugValue}>
+                  {({ copied, copy }) => (
+                    <button
+                      className="align-center flex grow justify-center rounded-md border border-input bg-background/[.4] p-1 align-middle hover:bg-accent hover:text-accent-foreground"
+                      onClick={copy}
+                    >
+                      {copied ? (
+                        <ClipboardDocumentCheckIcon className="h-4 w-4 place-self-center text-teal-600" />
+                      ) : (
+                        <ClipboardDocumentIcon className="h-4 w-4 place-self-center" />
+                      )}
+                    </button>
+                  )}
+                </CopyButton>
+              </PopoverContent>
+            </Popover>
             <div className="absolute bottom-0 right-0 -z-50 h-[100%] w-[100%]">
               <Pets />
             </div>
