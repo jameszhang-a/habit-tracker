@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/router";
 
 import { Carousel } from "@mantine/carousel";
@@ -121,6 +121,23 @@ local: ${activeDate.toLocaleString()}
 offset: ${dayOffset}
 `;
 
+  const textRef = useRef<HTMLDivElement>(null);
+
+  const handleCopy = (copy: () => void) => {
+    const text = textRef.current;
+    if (text) {
+      // Select the text
+      const range = document.createRange();
+      range.selectNodeContents(text);
+      const selection = window.getSelection();
+
+      if (!selection) return;
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+    copy();
+  };
+
   return (
     <HeadWrapper
       title="Tracker Widget"
@@ -169,12 +186,12 @@ offset: ${dayOffset}
                 align="center"
                 sideOffset={-40}
               >
-                <div>{debugValue}</div>
+                <div ref={textRef}>{debugValue}</div>
                 <CopyButton value={debugValue}>
                   {({ copied, copy }) => (
                     <button
                       className="align-center flex grow justify-center rounded-md border border-input bg-background/[.4] p-1 align-middle hover:bg-accent hover:text-accent-foreground"
-                      onClick={copy}
+                      onClick={() => handleCopy(copy)}
                     >
                       {copied ? (
                         <ClipboardDocumentCheckIcon className="h-4 w-4 place-self-center text-teal-600" />
