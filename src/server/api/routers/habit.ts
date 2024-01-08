@@ -265,6 +265,22 @@ export const habitRouter = createTRPCRouter({
       return habitLogs;
     }),
 
+  timeNow: publicProcedure.input(z.number()).query(({ input: offset }) => {
+    const timeDiff = offset * 24 * 60 * 60 * 1000;
+    const now = new Date();
+
+    const newDate = new Date(Date.now() + timeDiff);
+
+    const { dayStart, dayEnd } = getDateInterval(newDate);
+
+    return {
+      now,
+      newDate,
+      dayStart,
+      dayEnd,
+    };
+  }),
+
   reorderHabits: protectedProcedure
     .input(
       z.object({

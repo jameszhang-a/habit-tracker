@@ -86,6 +86,8 @@ const Tracker: NextPage = () => {
     uid,
   });
 
+  const { data: serverTime } = habitAPI.timeNow.useQuery(dayOffset);
+
   useEffect(() => {
     if (habitsData) {
       setHabits(habitsData);
@@ -115,10 +117,14 @@ const Tracker: NextPage = () => {
   );
 
   const debugValue = `
-date: ${activeDate.toISOString()}
-useDate: ${date !== undefined ? date.toISOString() : "undefined"}
 local: ${activeDate.toLocaleString()}
 offset: ${dayOffset}
+date: ${activeDate.toISOString()}
+useDate: ${date !== undefined ? date.toISOString() : "undefined"}
+S_Time: ${!!serverTime ? serverTime.now.toISOString() : "undefined"}
+S_New: ${!!serverTime ? serverTime.newDate.toISOString() : "undefined"}
+S_Start: ${!!serverTime ? serverTime.dayStart.toISOString() : "undefined"}
+S_End: ${!!serverTime ? serverTime.dayEnd.toISOString() : "undefined"}
 `;
 
   const textRef = useRef<HTMLDivElement>(null);
@@ -182,11 +188,16 @@ offset: ${dayOffset}
                 </button>
               </PopoverTrigger>
               <PopoverContent
-                className="absolute bottom-0 flex w-[280px] -translate-x-[130%] -translate-y-[30%] flex-col gap-1 p-4 text-xs font-normal"
+                className="absolute bottom-0 flex w-[300px] -translate-x-[130%]  flex-col gap-1 p-4 text-xs font-normal"
                 align="center"
                 sideOffset={-40}
               >
-                <div ref={textRef}>{debugValue}</div>
+                <div ref={textRef}>
+                  {/* {debugValue} */}
+                  {debugValue.split("\n").map((str, i) => (
+                    <div key={i}>{str}</div>
+                  ))}
+                </div>
                 <CopyButton value={debugValue}>
                   {({ copied, copy }) => (
                     <button
