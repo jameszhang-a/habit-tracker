@@ -117,12 +117,12 @@ const HabitCard = ({ habit, theme }: Props) => {
   });
 
   useEffect(() => {
-    if (data) {
-      setShowCheck(data.completed);
+    if (data_v0) {
+      setShowCheck(data_v0.completed);
     } else {
       setShowCheck(false);
     }
-  }, [isFetched, data, activeDate]);
+  }, [isFetched_v0, data_v0, activeDate]);
 
   const handleClick = () => {
     console.log("Clicking on habit:", {
@@ -265,7 +265,7 @@ const HabitCard = ({ habit, theme }: Props) => {
             {CheckAnimation}
           </div>
         </div> */}
-        {isLoading || habitLogCreation.isLoading ? (
+        {isLoading_v0 || habitLogCreation.isLoading ? (
           <button
             type="button"
             disabled
