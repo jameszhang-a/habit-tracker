@@ -125,6 +125,8 @@ S_Time: ${!!serverTime ? serverTime.now.toISOString() : "undefined"}
 S_New: ${!!serverTime ? serverTime.newDate.toISOString() : "undefined"}
 S_Start: ${!!serverTime ? serverTime.dayStart.toISOString() : "undefined"}
 S_End: ${!!serverTime ? serverTime.dayEnd.toISOString() : "undefined"}
+SN_Start: ${!!serverTime ? serverTime.newDayStart.toISOString() : "undefined"}
+SN_End: ${!!serverTime ? serverTime.newDayEnd.toISOString() : "undefined"}
 `;
 
   const textRef = useRef<HTMLDivElement>(null);
@@ -188,7 +190,7 @@ S_End: ${!!serverTime ? serverTime.dayEnd.toISOString() : "undefined"}
                 </button>
               </PopoverTrigger>
               <PopoverContent
-                className="absolute bottom-0 flex w-[300px] -translate-x-[130%]  flex-col gap-1 p-4 text-xs font-normal"
+                className="absolute bottom-0 flex w-[300px] -translate-x-[130%] translate-y-8 flex-col gap-1 p-4 text-xs font-normal"
                 align="center"
                 sideOffset={-40}
               >

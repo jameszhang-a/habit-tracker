@@ -271,13 +271,16 @@ export const habitRouter = createTRPCRouter({
 
     const newDate = new Date(Date.now() + timeDiff);
 
-    const { dayStart, dayEnd } = getDateInterval(newDate);
+    const { dayStart, dayEnd, newDayEnd, newDayStart } =
+      getDateInterval(newDate);
 
     return {
       now,
       newDate,
       dayStart,
       dayEnd,
+      newDayStart,
+      newDayEnd,
     };
   }),
 

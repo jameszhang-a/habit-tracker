@@ -1,4 +1,10 @@
-import { addWeeks, parseISO, startOfWeek } from "date-fns";
+import {
+  addWeeks,
+  endOfDay,
+  parseISO,
+  startOfDay,
+  startOfWeek,
+} from "date-fns";
 
 const formatDate = (date: Date) => {
   return date.toLocaleString("en-GB", {
@@ -89,7 +95,10 @@ const getDateInterval = (currDate?: Date) => {
   const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
 
-  return { dayStart, dayEnd };
+  const newDayStart = startOfDay(now);
+  const newDayEnd = endOfDay(now);
+
+  return { dayStart, dayEnd, newDayEnd, newDayStart };
 };
 
 const scramble = <T>(array: T[]) => {
