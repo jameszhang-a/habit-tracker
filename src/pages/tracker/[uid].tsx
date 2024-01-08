@@ -59,7 +59,7 @@ const Tracker: NextPage = () => {
     setDayOffset(0);
   }, []);
 
-  const { date } = useTime(activeDate);
+  const { date, dayStart, dayEnd } = useTime(activeDate);
   console.log("hook date is:", date);
 
   const { classes } = useStyles();
@@ -123,8 +123,8 @@ date: ${activeDate.toISOString()}
 useDate: ${date !== undefined ? date.toISOString() : "undefined"}
 S_Time: ${!!serverTime ? serverTime.now.toISOString() : "undefined"}
 S_New: ${!!serverTime ? serverTime.newDate.toISOString() : "undefined"}
-S_Start: ${!!serverTime ? serverTime.dayStart.toISOString() : "undefined"}
-S_End: ${!!serverTime ? serverTime.dayEnd.toISOString() : "undefined"}
+L_Start: ${!!dayStart ? dayStart.toISOString() : "undefined"}
+L_End: ${!!dayEnd ? dayEnd.toISOString() : "undefined"}
 SN_Start: ${!!serverTime ? serverTime.newDayStart.toISOString() : "undefined"}
 SN_End: ${!!serverTime ? serverTime.newDayEnd.toISOString() : "undefined"}
 `;

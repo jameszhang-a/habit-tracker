@@ -35,21 +35,29 @@ const HabitCard = ({ habit, theme }: Props) => {
   const { dayStart, dayEnd, isoEnd, isoStart } = useTime(activeDate);
 
   const { logHabit, loggedOnDate, logHabitV2, loggedOnDateV2 } = habitAPI;
-  // const { data, isFetched, isLoading } = loggedOnDate.useQuery(
-  //   {
-  //     id: habit.id,
-  //     date: activeDate,
-  //     startTime: dayStart,
-  //     endTime: dayEnd,
-  //   },
-  //   {
-  //     // refetch every 5 minutes to avoid stale data
-  //     refetchInterval: 1000 * 60 * 5,
-  //   }
-  // );
+
+  const {
+    data: data_v0,
+    isFetched: isFetched_v0,
+    isLoading: isLoading_v0,
+  } = loggedOnDate.useQuery({
+    id: habit.id,
+    date: activeDate,
+    startTime: dayStart,
+    endTime: dayEnd,
+  });
+
   const { data, isFetched, isLoading } = loggedOnDateV2.useQuery({
     id: habit.id,
     offset: dayOffset,
+  });
+
+  console.log(habit.name, "v0", data_v0, {
+    start: dayStart.toISOString(),
+    end: dayEnd.toISOString(),
+  });
+  console.log(habit.name, "v1", data, {
+    dayOffset,
   });
 
   // const habitLogCreation = logHabit.useMutation({

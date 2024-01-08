@@ -1,3 +1,4 @@
+import { endOfDay, startOfDay } from "date-fns";
 import { useEffect, useState } from "react";
 
 export function useTime(t: Date) {
@@ -8,12 +9,8 @@ export function useTime(t: Date) {
     setDate(d);
   }, []);
 
-  const day = t.getDate();
-  const month = t.getMonth();
-  const year = t.getFullYear();
-
-  const start = new Date(year, month, day, 0, 0, 0);
-  const end = new Date(year, month, day, 23, 59, 59);
+  const start = startOfDay(t);
+  const end = endOfDay(t);
 
   return {
     date: date,
