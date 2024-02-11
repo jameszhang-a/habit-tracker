@@ -1,7 +1,120 @@
 import { z } from "zod";
 import { getWeekKey, getDateInterval } from "@/utils";
 
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import {
+  createInnerTRPCContext,
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "../trpc";
+import { getTimezoneOffset, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
+import { endOfDay, startOfDay } from "date-fns";
+
+export async function getUserTimezoneOffsetFromHid(
+  hid: string
+): Promise<number> {
+  const ctx = createInnerTRPCContext({ session: null });
+
+  const res = await ctx.prisma.habit.findFirst({
+    where: { id: hid },
+    select: { user: true },
+  });
+
+  const timezone = !res ? "America/New_York" : res.user.timezone;
+
+  return getTimezoneOffset(timezone);
+}
+
+type LoggedOnDateInput = {
+  hid: string;
+  date?: Date;
+  startTime?: Date;
+  endTime?: Date;
+};
+
+type LoggedOnDateRes = Promise<
+  | {
+      logExist: true;
+      logged: boolean;
+      logId: string;
+    }
+  | {
+      logExist: false;
+    }
+  | null
+>;
+
+async function loggedOnDate({
+  hid,
+  date,
+  startTime,
+  endTime,
+}: LoggedOnDateInput): LoggedOnDateRes {
+  console.log("⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄");
+  const ctx = createInnerTRPCContext({ session: null });
+
+  if (startTime && endTime) {
+    console.log("checking start and time: ", { startTime, endTime });
+    const log = await ctx.prisma.habitLog.findFirst({
+      where: {
+        habitId: hid,
+        date: {
+          gte: startTime,
+          lte: endTime,
+        },
+      },
+    });
+
+    console.log("log is", log);
+    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+    return log
+      ? { logged: log.completed, logId: log.id, logExist: true }
+      : { logExist: false };
+  }
+
+  if (!date) {
+    console.log("no date provided");
+    return null;
+  }
+  console.log("checking date: ", date);
+
+  const user = await ctx.prisma.habit.findFirst({
+    where: { id: hid },
+    select: { user: true },
+  });
+
+  const timezone = !user ? "America/New_York" : user.user.timezone;
+
+  // Convert the UTC date to the user's local time zone
+  const localDate = utcToZonedTime(date, timezone);
+
+  // Determine the start and end of the day in the user's local time zone
+  const startOfLocalDay = startOfDay(localDate);
+  const endOfLocalDay = endOfDay(localDate);
+
+  // Convert these times back to UTC
+  const utcStart = zonedTimeToUtc(startOfLocalDay, timezone);
+  const utcEnd = zonedTimeToUtc(endOfLocalDay, timezone);
+
+  console.log("converted to: ", { utcStart, utcEnd });
+
+  const log = await ctx.prisma.habitLog.findFirst({
+    where: {
+      habitId: hid,
+      date: {
+        gte: utcStart,
+        lte: utcEnd,
+      },
+    },
+  });
+
+  console.log("log is", log);
+  console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+
+  return log
+    ? { logged: log.completed, logId: log.id, logExist: true }
+    : { logExist: false };
+}
 
 export const habitRouter = createTRPCRouter({
   /**
@@ -99,58 +212,6 @@ export const habitRouter = createTRPCRouter({
       return habit;
     }),
 
-  /**
-   * Marks the current day as completed for the habit
-   *
-   * if the habit has already been logged today, it will be marked as not completed.
-   * if the habit has not been logged today, it will be marked as completed.
-   * if the habit doesn't exist, it will be created and marked as completed.
-   */
-  logHabit: publicProcedure
-    .input(z.object({ id: z.string().min(1), date: z.date() }))
-    .mutation(async ({ ctx, input }) => {
-      // check to see if the habit has already been logged for the date provided
-      // to do this, we need to check that the date of the log is less than the beginning 00:00 of the next day and greater than the beginning of the last dat 00:00
-      // this is because the date is stored as a timestamp in the database
-      const { dayStart, dayEnd } = getDateInterval(input.date);
-
-      const habitLog = await ctx.prisma.habitLog.findFirst({
-        where: {
-          habitId: input.id,
-          date: {
-            gte: dayStart,
-            lt: dayEnd,
-          },
-        },
-      });
-
-      console.log(
-        "mutating habit log",
-        "start Date:",
-        dayStart,
-        "endDate:",
-        dayEnd
-      );
-      console.log("habitlog:", habitLog);
-
-      if (!habitLog) {
-        return ctx.prisma.habitLog.create({
-          data: {
-            habitId: input.id,
-            date: input.date,
-            completed: true,
-            weekKey: getWeekKey(input.date),
-          },
-        });
-      } else {
-        // set the habit to completed if it's not already
-        return ctx.prisma.habitLog.update({
-          where: { id: habitLog.id },
-          data: { completed: !habitLog.completed },
-        });
-      }
-    }),
-
   loggedOnDate: publicProcedure
     .input(
       z.object({
@@ -160,27 +221,11 @@ export const habitRouter = createTRPCRouter({
         endTime: z.date(),
       })
     )
-    .query(async ({ ctx, input }) => {
+    .query(async ({ input }) => {
       const { id, startTime, endTime } = input;
+      const res = await loggedOnDate({ hid: id, startTime, endTime });
 
-      const habitLogs = await ctx.prisma.habitLog.findFirst({
-        where: {
-          habitId: id,
-          date: {
-            gte: startTime,
-            lte: endTime,
-          },
-          completed: true,
-        },
-      });
-
-      if (id === "clfgo0daa0001l908fjyu0g39") {
-        console.log("startTime", startTime);
-        console.log("endTime", endTime);
-        console.log("habitLogs", habitLogs);
-      }
-
-      return habitLogs;
+      return res?.logExist ? res.logged : false;
     }),
 
   /**
@@ -190,79 +235,27 @@ export const habitRouter = createTRPCRouter({
    * if the habit has not been logged today, it will be marked as completed.
    * if the habit doesn't exist, it will be created and marked as completed.
    */
-  logHabitV2: publicProcedure
-    .input(z.object({ id: z.string().min(1), offset: z.number() }))
+  logHabitV3: publicProcedure
+    .input(z.object({ hid: z.string().min(1), date: z.date() }))
     .mutation(async ({ ctx, input }) => {
-      const timeDiff = input.offset * 24 * 60 * 60 * 1000;
-      const date = new Date(Date.now() + timeDiff);
+      const { hid, date } = input;
+      const res = await loggedOnDate({ hid, date });
 
-      const { dayStart, dayEnd } = getDateInterval(date);
-
-      const habitLog = await ctx.prisma.habitLog.findFirst({
-        where: {
-          habitId: input.id,
-          date: {
-            gte: dayStart,
-            lt: dayEnd,
-          },
-        },
-      });
-
-      console.log(
-        "mutating habit log",
-        "start Date:",
-        dayStart,
-        "endDate:",
-        dayEnd
-      );
-      console.log("habitlog:", habitLog);
-
-      if (!habitLog) {
+      if (res?.logExist) {
+        return ctx.prisma.habitLog.update({
+          where: { id: res.logId },
+          data: { completed: !res.logged },
+        });
+      } else {
         return ctx.prisma.habitLog.create({
           data: {
-            habitId: input.id,
+            habitId: hid,
             date,
             completed: true,
             weekKey: getWeekKey(date),
           },
         });
-      } else {
-        // set the habit to completed if it's not already
-        return ctx.prisma.habitLog.update({
-          where: { id: habitLog.id },
-          data: { completed: !habitLog.completed },
-        });
       }
-    }),
-
-  loggedOnDateV2: publicProcedure
-    .input(
-      z.object({
-        id: z.string(),
-        offset: z.number(),
-      })
-    )
-    .query(({ ctx, input }) => {
-      const { id, offset } = input;
-
-      const timeDiff = offset * 24 * 60 * 60 * 1000;
-
-      const date = new Date(Date.now() + timeDiff);
-
-      const { dayStart, dayEnd } = getDateInterval(date);
-
-      const habitLogs = ctx.prisma.habitLog.findFirst({
-        where: {
-          habitId: id,
-          date: {
-            gte: dayStart,
-            lt: dayEnd,
-          },
-          completed: true,
-        },
-      });
-
-      return habitLogs;
     }),
 
   timeNow: publicProcedure.input(z.number()).query(({ input: offset }) => {

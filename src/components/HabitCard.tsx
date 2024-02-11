@@ -28,16 +28,16 @@ const HabitCard = ({ habit, theme }: Props) => {
   const [showOptionsModal, setShowOptionsModal] = useState(false);
   const [value, setValue] = useState<Date[]>([]);
 
-  const { activeDate, dayOffset } = useTrackerContext();
+  const { activeDate } = useTrackerContext();
 
   const { classes } = useStyles();
 
-  const { dayStart, dayEnd, isoEnd, isoStart } = useTime(activeDate);
+  const { dayStart, dayEnd } = useTime(activeDate);
 
-  const { logHabit, loggedOnDate, logHabitV2, loggedOnDateV2 } = habitAPI;
+  const { loggedOnDate, logHabitV3 } = habitAPI;
 
   const {
-    data: data_v0,
+    data: loggedOnDay,
     isFetched: isFetched_v0,
     isLoading: isLoading_v0,
   } = loggedOnDate.useQuery({
@@ -47,48 +47,7 @@ const HabitCard = ({ habit, theme }: Props) => {
     endTime: dayEnd,
   });
 
-  const { data, isFetched, isLoading } = loggedOnDateV2.useQuery({
-    id: habit.id,
-    offset: dayOffset,
-  });
-
-  console.log(habit.name, "v0", data_v0, {
-    start: dayStart.toISOString(),
-    end: dayEnd.toISOString(),
-  });
-  console.log(habit.name, "v1", data, {
-    dayOffset,
-  });
-
-  // const habitLogCreation = logHabit.useMutation({
-  //   onError() {
-  //     console.log("error");
-  //     setShowCheck((prev) => !prev);
-  //   },
-  //   onSuccess(data) {
-  //     console.log("success", data);
-  //     setShowCheck(data.completed);
-  //   },
-  //   onMutate() {
-  //     console.log("mutate!");
-  //     if (showCheck) {
-  //       console.log("uncheck");
-  //       // setAnimateUncheck(true);
-  //     } else {
-  //       console.log("check");
-  //       // setAnimateCheck(true);
-  //     }
-  //   },
-  //   onSettled() {
-  //     if (showCheck) {
-  //       setAnimateUncheck(false);
-  //     } else {
-  //       setAnimateCheck(false);
-  //     }
-  //   },
-  // });
-
-  const habitLogCreation = logHabitV2.useMutation({
+  const habitLogCreation = logHabitV3.useMutation({
     onError() {
       console.log("error");
       setShowCheck((prev) => !prev);
@@ -117,21 +76,21 @@ const HabitCard = ({ habit, theme }: Props) => {
   });
 
   useEffect(() => {
-    if (data_v0) {
-      setShowCheck(data_v0.completed);
+    if (loggedOnDay) {
+      setShowCheck(true);
     } else {
       setShowCheck(false);
     }
-  }, [isFetched_v0, data_v0, activeDate]);
+  }, [isFetched_v0, loggedOnDay, activeDate]);
 
   const handleClick = () => {
     console.log("Clicking on habit:", {
       id: habit.id,
       name: habit.name,
       activeDate,
-      dayOffSet: dayOffset,
     });
-    habitLogCreation.mutate({ id: habit.id, offset: dayOffset });
+
+    habitLogCreation.mutate({ hid: habit.id, date: activeDate });
   };
 
   const hoverEffect =
