@@ -60,7 +60,6 @@ const Tracker: NextPage = () => {
   }, []);
 
   const { date, dayStart, dayEnd } = useTime(activeDate);
-  console.log("hook date is:", date);
 
   const { classes } = useStyles();
 

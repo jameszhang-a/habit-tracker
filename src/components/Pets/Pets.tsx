@@ -42,28 +42,28 @@ export const Pets = () => {
 
     // Future position calculation
     const futureX = currentPosition.x + direction * distance;
-    console.log("direction", direction);
-    console.log("currentPosition", currentPosition);
-    console.log("futureX", futureX);
+    // console.log("direction", direction);
+    // console.log("currentPosition", currentPosition);
+    // console.log("futureX", futureX);
 
     // Collision detection with container boundaries
     const container = petRef.current?.parentNode as HTMLElement;
     if (container) {
       const containerWidth = container.offsetWidth;
-      console.log("containerWidth", containerWidth);
+      // console.log("containerWidth", containerWidth);
       if (futureX < 0 || futureX > containerWidth - 40) {
-        console.log(
-          "why are we flipping?",
-          futureX < 0,
-          futureX > containerWidth - 40,
-          {
-            futureX,
-            containerWidth,
-            petWidth: petRef.current?.offsetWidth,
-          }
-        );
+        // console.log(
+        //   "why are we flipping?",
+        //   futureX < 0,
+        //   futureX > containerWidth - 40,
+        //   {
+        //     futureX,
+        //     containerWidth,
+        //     petWidth: petRef.current?.offsetWidth,
+        //   }
+        // );
         direction *= -1; // Reverse the direction
-        console.log("reversing direction");
+        // console.log("reversing direction");
       }
     }
 
@@ -97,7 +97,7 @@ export const Pets = () => {
     };
   };
 
-  console.log("position", position);
+  // console.log("position", position);
   // console.log("relative position", getRelativePosition());
 
   return (
