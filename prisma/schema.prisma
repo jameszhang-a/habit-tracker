@@ -50,6 +50,7 @@ model User {
     // configurations
     theme      String @default("default")
     lightTheme String @default("dark")
+    timezone   String @default("America/New_York")
 
     notionToken String?
 }
@@ -68,7 +69,7 @@ model Habit {
     updatedAt DateTime @updatedAt
 
     name         String
-    emoji        String     @default("🏋️‍♀️")
+    emoji        String     @default("🔥")
     user         User       @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId       String
     frequency    Int        @default(1)
