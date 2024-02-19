@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Carousel } from "@mantine/carousel";
 import { createStyles, getStylesRef } from "@mantine/core";
 
-import Lottie, { useLottie } from "lottie-react";
+import { useLottie } from "lottie-react";
 import checkAnimation from "../../public/check_mark_json.json";
 
 import { type NextPage } from "next";
@@ -37,7 +37,7 @@ const slides = [1, 2, 3, 4, 5].map((item) => (
   </Carousel.Slide>
 ));
 
-const Test: NextPage = () => {
+const Playground: NextPage = () => {
   const [winReady, setWinReady] = useState(false);
   const {
     View: CheckAnimation,
@@ -66,7 +66,7 @@ const Test: NextPage = () => {
         Stop
       </Button>
       <div className="flex h-52 w-52 border">
-        <CheckMark />
+        <CheckMark className={""} id={""} checked={false} />
       </div>
       <Carousel
         slideSize="50%"
@@ -86,4 +86,4 @@ const Test: NextPage = () => {
   );
 };
 
-export default Test;
+export default Playground;
