@@ -1,10 +1,4 @@
-import {
-  addWeeks,
-  endOfDay,
-  parseISO,
-  startOfDay,
-  startOfWeek,
-} from "date-fns";
+import { endOfDay, startOfDay, subMilliseconds } from "date-fns";
 
 const formatDate = (date: Date) => {
   return date.toLocaleString("en-GB", {
@@ -63,13 +57,27 @@ const weekFromDate = (
   return Math.ceil((dayOfYear + dayOfYearOffset) / 7);
 };
 
-const getWeekKey = (date: Date) => {
-  const year = date.getFullYear();
-  const week = weekFromDate(date);
+function getWeekKey(date: Date): string {
+  // Getting ISO Week Number
+  const dayNum = date.getUTCDay() || 7; // Adjusting for Sunday
+  date.setUTCDate(date.getUTCDate() + 4 - dayNum); // Adjust to Thursday
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1)); // Getting the start of the year
+  const weekNo = Math.ceil(
+    ((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7
+  );
 
-  // console.log("date-fn, weekKey:", `${getYear(date)}-${getWeek(date)}`);
-  return `${year}-${week}`;
-};
+  // Determining the correct year for the ISO week
+  const year = date.getUTCFullYear();
+  let isoYear = year;
+  if (weekNo === 1 && date.getUTCMonth() === 11) {
+    isoYear = year + 1;
+  }
+  if (weekNo >= 52 && date.getUTCMonth() === 0) {
+    isoYear = year - 1;
+  }
+
+  return `${isoYear}-${weekNo}`;
+}
 
 const weekDay = (n: number, mode: "full" | "short" | "first") => {
   const days = {
@@ -89,16 +97,33 @@ const weekDay = (n: number, mode: "full" | "short" | "first") => {
   return days[mode][n];
 };
 
-const getDateInterval = (currDate?: Date) => {
+const getDateInterval = (currDate?: Date, offset?: number) => {
   const now = currDate ?? new Date();
-
   const dayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const dayEnd = new Date(dayStart.getTime() + 24 * 60 * 60 * 1000);
-
   const newDayStart = startOfDay(now);
   const newDayEnd = endOfDay(now);
 
-  return { dayStart, dayEnd, newDayEnd, newDayStart };
+  const startAdjusted = subMilliseconds(newDayStart, offset ?? 0);
+  const endAdjusted = subMilliseconds(newDayEnd, offset ?? 0);
+
+  const timezoneAdjusted = subMilliseconds(now, offset ?? 0);
+  const newnewDayStart = subMilliseconds(
+    startOfDay(timezoneAdjusted),
+    offset ?? 0
+  );
+  const newnewDayEnd = subMilliseconds(endOfDay(timezoneAdjusted), offset ?? 0);
+
+  return {
+    dayStart,
+    dayEnd,
+    newDayEnd,
+    newDayStart,
+    newnewDayStart,
+    newnewDayEnd,
+    startAdjusted,
+    endAdjusted,
+  };
 };
 
 const scramble = <T>(array: T[]) => {
@@ -133,24 +158,46 @@ const getWeeks = (startDate: Date, currDate: Date) => {
   return weeks;
 };
 
-/**
- * Converts a weekKey in the format 'YYYY-WW' to the start date of that week.
- * @param {string} weekKey - The week key in 'YYYY-WW' format.
- * @returns {Date} - The start date of the week.
- */
-function convertWeekKeyToStartDate(weekKey: string) {
-  // Split the weekKey into year and week number
-  const [year, weekStr] = weekKey.split("-") as [string, string];
-  const week = parseInt(weekStr, 10); // Convert week number to zero-based index
+// /**
+//  * Converts a weekKey in the format 'YYYY-WW' to the start date of that week.
+//  * @param {string} weekKey - The week key in 'YYYY-WW' format.
+//  * @returns {Date} - The start date of the week.
+//  */
+// function convertWeekKeyToStartDate(weekKey: string): Date {
+//   const [year, weekStr] = weekKey.split("-") as [string, string];
+//   const week = parseInt(weekStr, 10);
 
-  // Parse the start of the year
-  const startOfYear = parseISO(`${year}-01-01`);
+//   // Parse the start of the year
+//   const startOfYear = parseISO(`${year}-01-01`);
 
-  // Add the weeks to the start of the year
-  const weekDate = addWeeks(startOfYear, week);
+//   // Add the weeks to the start of the year
+//   const weekDate = addWeeks(startOfYear, week);
 
-  // Get the start of the week
-  return startOfWeek(weekDate, { weekStartsOn: 1 }); // Set weekStartsOn depending on your locale (0 for Sunday, 1 for Monday, etc.)
+//   console.log("weekDate", weekDate);
+
+//   // Get the start of the week
+//   return startOfWeek(weekDate, { weekStartsOn: 1 }); // Set weekStartsOn depending on your locale (0 for Sunday, 1 for Monday, etc.)
+// }
+
+function convertWeekKeyToStartDate(yearWeek: string): Date {
+  const parts = yearWeek.split("-");
+  const year = parseInt(parts[0], 10);
+  const week = parseInt(parts[1], 10);
+
+  // Getting the first day of the year
+  const yearStart = new Date(Date.UTC(year, 0, 1));
+
+  // Calculating the date of the first Monday of the year
+  const dayNum = yearStart.getUTCDay();
+  const diff = dayNum <= 4 ? dayNum - 1 : 7 - dayNum + 1;
+  const firstMonday = new Date(yearStart.getTime());
+  firstMonday.setUTCDate(yearStart.getUTCDate() - diff);
+
+  // Adding the correct number of weeks
+  const weekTime = (week - 1) * 7 * 24 * 60 * 60 * 1000;
+  const date = new Date(firstMonday.getTime() + weekTime);
+
+  return date;
 }
 
 export {

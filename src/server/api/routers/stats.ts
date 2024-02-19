@@ -2,13 +2,13 @@ import { TRPCError } from "@trpc/server";
 import { z } from "zod";
 import {
   convertWeekKeyToStartDate,
-  getWeekKey,
   getWeeks,
   totalWeeksBetween,
 } from "@/utils";
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
-import { subDays } from "date-fns";
+import { addMilliseconds, subDays, subMilliseconds } from "date-fns";
+import { getTimezoneOffset, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
 
 export const statsRouter = createTRPCRouter({
   /**
@@ -169,7 +169,27 @@ export const statsRouter = createTRPCRouter({
     .input(z.object({ hid: z.string() }))
     .query(async ({ ctx, input }) => {
       const { hid } = input;
+      const user = await ctx.prisma.habit.findFirst({
+        where: { id: hid },
+        select: { user: true },
+      });
+
+      const timezone = "America/Los_Angeles";
+
       const currDate = new Date();
+
+      const toUTC = zonedTimeToUtc(currDate, timezone);
+      const toLoc = utcToZonedTime(currDate, timezone);
+      const diff = getTimezoneOffset(timezone);
+      const newDate = addMilliseconds(currDate, diff);
+
+      console.log({
+        currDate,
+        toLoc,
+        toUTC,
+        diff,
+        newDate,
+      });
 
       const startDate = subDays(currDate, 42);
       const allWeeks = getWeeks(startDate, currDate);
@@ -186,7 +206,11 @@ export const statsRouter = createTRPCRouter({
 
       return allWeeks.map((week) => {
         const log = logs.find((log) => log.weekKey === week);
-
+        console.log({
+          weekKey: week,
+          count: log ? log._count.completed : 0,
+          startDate: convertWeekKeyToStartDate(week),
+        });
         return {
           weekKey: week,
           count: log ? log._count.completed : 0,
