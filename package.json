@@ -11,8 +11,8 @@
     "ts-node": "ts-node --compiler-options \"{\\\"module\\\":\\\"commonjs\\\"}\""
   },
   "dependencies": {
-    "@emotion/react": "^11.10.6",
-    "@emotion/server": "^11.10.0",
+    "@emotion/react": "^11.11.3",
+    "@emotion/server": "^11.11.0",
     "@heroicons/react": "^2.0.16",
     "@mantine/carousel": "^6.0.0",
     "@mantine/core": "^6.0.0",
@@ -51,7 +51,6 @@
     "patch-package": "^6.5.1",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
-    "react-canvas-confetti": "^1.4.0",
     "react-day-picker": "^8.8.2",
     "react-dom": "18.2.0",
     "recharts": "^2.12.0",
@@ -64,7 +63,6 @@
     "@babel/core": "^7.23.9",
     "@babel/preset-env": "^7.23.9",
     "@babel/preset-typescript": "^7.23.3",
-    "@simbathesailor/use-what-changed": "^2.0.0",
     "@types/jest": "^29.5.12",
     "@types/node": "^18.11.18",
     "@types/prettier": "^2.7.2",
