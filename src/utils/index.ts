@@ -33,46 +33,23 @@ const totalWeeksBetween = (startDate: Date, currDate: Date) => {
   );
 };
 
-const weekFromDate = (
-  date: Date,
-  weekStart: "monday" | "sunday" = "monday"
-) => {
-  const time = date.getTime();
-
-  // Create a new Date object for the beginning of the year
-  const startOfYear = new Date(time);
-  startOfYear.setMonth(0, 1);
-  startOfYear.setHours(0, 0, 0, 0);
-
-  // Calculate the difference between the input date and the beginning of the year in milliseconds
-  const diff = time - startOfYear.getTime();
-
-  // Convert the difference to days and add 1 to get the day number out of the year (starting at 1)
-  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24)) + 1;
-
-  // Offset the day of the year by the day of the week of the first day of the year
-  const dayOfYearOffset =
-    startOfYear.getDay() - (weekStart === "monday" ? 1 : 0);
-
-  return Math.ceil((dayOfYear + dayOfYearOffset) / 7);
-};
-
 function getWeekKey(date: Date): string {
+  const dateCopy = new Date(date);
   // Getting ISO Week Number
-  const dayNum = date.getUTCDay() || 7; // Adjusting for Sunday
-  date.setUTCDate(date.getUTCDate() + 4 - dayNum); // Adjust to Thursday
-  const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1)); // Getting the start of the year
+  const dayNum = dateCopy.getUTCDay() || 7; // Adjusting for Sunday
+  dateCopy.setUTCDate(dateCopy.getUTCDate() + 4 - dayNum); // Adjust to Thursday
+  const yearStart = new Date(Date.UTC(dateCopy.getUTCFullYear(), 0, 1)); // Getting the start of the year
   const weekNo = Math.ceil(
-    ((date.getTime() - yearStart.getTime()) / 86400000 + 1) / 7
+    ((dateCopy.getTime() - yearStart.getTime()) / 86400000 + 1) / 7
   );
 
   // Determining the correct year for the ISO week
-  const year = date.getUTCFullYear();
+  const year = dateCopy.getUTCFullYear();
   let isoYear = year;
-  if (weekNo === 1 && date.getUTCMonth() === 11) {
+  if (weekNo === 1 && dateCopy.getUTCMonth() === 11) {
     isoYear = year + 1;
   }
-  if (weekNo >= 52 && date.getUTCMonth() === 0) {
+  if (weekNo >= 52 && dateCopy.getUTCMonth() === 0) {
     isoYear = year - 1;
   }
 
@@ -151,53 +128,37 @@ const getWeeks = (startDate: Date, currDate: Date) => {
   const weeks = [];
 
   while (date <= currDate) {
-    weeks.push(getWeekKey(date)); // assuming getWeekKey is a function that gives you the weekKey for a date
+    weeks.push(getWeekKey(date));
     date.setDate(date.getDate() + 7);
   }
 
   return weeks;
 };
 
-// /**
-//  * Converts a weekKey in the format 'YYYY-WW' to the start date of that week.
-//  * @param {string} weekKey - The week key in 'YYYY-WW' format.
-//  * @returns {Date} - The start date of the week.
-//  */
-// function convertWeekKeyToStartDate(weekKey: string): Date {
-//   const [year, weekStr] = weekKey.split("-") as [string, string];
-//   const week = parseInt(weekStr, 10);
-
-//   // Parse the start of the year
-//   const startOfYear = parseISO(`${year}-01-01`);
-
-//   // Add the weeks to the start of the year
-//   const weekDate = addWeeks(startOfYear, week);
-
-//   console.log("weekDate", weekDate);
-
-//   // Get the start of the week
-//   return startOfWeek(weekDate, { weekStartsOn: 1 }); // Set weekStartsOn depending on your locale (0 for Sunday, 1 for Monday, etc.)
-// }
-
-function convertWeekKeyToStartDate(yearWeek: string): Date {
-  const parts = yearWeek.split("-");
+function convertWeekKeyToStartDate(weekKey: string): Date {
+  // Parsing the year and week from the weekKey
+  const parts = weekKey.split("-") as [string, string];
   const year = parseInt(parts[0], 10);
   const week = parseInt(parts[1], 10);
 
   // Getting the first day of the year
   const yearStart = new Date(Date.UTC(year, 0, 1));
 
-  // Calculating the date of the first Monday of the year
-  const dayNum = yearStart.getUTCDay();
-  const diff = dayNum <= 4 ? dayNum - 1 : 7 - dayNum + 1;
-  const firstMonday = new Date(yearStart.getTime());
-  firstMonday.setUTCDate(yearStart.getUTCDate() - diff);
+  // Calculating the day number for 1st Jan of the year
+  const dayNum = yearStart.getUTCDay() || 7;
 
-  // Adding the correct number of weeks
-  const weekTime = (week - 1) * 7 * 24 * 60 * 60 * 1000;
-  const date = new Date(firstMonday.getTime() + weekTime);
+  // Calculating the first Thursday of the year which is in week 1
+  // If the 1st of January is Friday, Saturday or Sunday (5, 6, 7), then the first Thursday is in the next week
+  const firstThursday = dayNum > 4 ? 1 + (7 - dayNum + 4) : 1 + (4 - dayNum);
 
-  return date;
+  // Calculating the Monday of the requested week
+  // The Monday of week 1 is 4 days before the first Thursday
+  // Each week adds 7 days
+  const mondayOfRequestedWeek = new Date(
+    Date.UTC(year, 0, firstThursday + (week - 1) * 7 - 3)
+  );
+
+  return mondayOfRequestedWeek;
 }
 
 export {
@@ -207,7 +168,6 @@ export {
   getDateInterval,
   totalWeeksBetween,
   getWeekKey,
-  weekFromDate,
   scramble,
   getWeeks,
   convertWeekKeyToStartDate,

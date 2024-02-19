@@ -4,20 +4,26 @@ import { convertWeekKeyToStartDate, getWeekKey } from ".";
 describe("Unit tests for util functions", () => {
   describe("convertWeekKeyToStartDate", () => {
     test.each([
-      ["2023-51", new Date("2023-12-18")],
-      ["2023-52", new Date("2023-12-25")],
-      ["2024-7", new Date("2024-02-12")],
-      ["2024-1", new Date("2024-01-01")],
-      ["2025-1", new Date("2024-12-30")],
-    ])("weekKey: '%s'", (a, date) => {
-      expect(convertWeekKeyToStartDate(a)).toStrictEqual(date);
-    });
-  });
+      // 2022
+      ["2022-01", "2022-01-03"],
+      ["2022-02", "2022-01-10"],
+      ["2022-51", "2022-12-19"],
+      ["2022-52", "2022-12-26"],
 
-  test("just testing the week key 2023-52", () => {
-    expect(convertWeekKeyToStartDate("2023-52")).toStrictEqual(
-      new Date("2023-12-25")
-    );
+      // 2023
+      ["2023-01", "2023-01-02"],
+      ["2023-52", "2023-12-25"],
+      // 2024
+      ["2024-01", "2024-01-01"],
+      ["2024-52", "2024-12-23"],
+      // 2025
+      ["2025-01", "2024-12-30"],
+      ["2025-52", "2025-12-22"],
+      // 2026
+      ["2026-01", "2025-12-29"],
+    ])("weekKey: '%s'", (a, date) => {
+      expect(convertWeekKeyToStartDate(a)).toStrictEqual(new Date(date));
+    });
   });
 
   describe("getWeekKey", () => {

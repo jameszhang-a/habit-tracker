@@ -50,7 +50,6 @@ async function loggedOnDate({
   startTime,
   endTime,
 }: LoggedOnDateInput): LoggedOnDateRes {
-  console.log("⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄⌄");
   const ctx = createInnerTRPCContext({ session: null });
 
   if (startTime && endTime) {
@@ -65,8 +64,6 @@ async function loggedOnDate({
       },
     });
 
-    console.log("log is", log);
-    console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
     return log
       ? { logged: log.completed, logId: log.id, logExist: true }
       : { logExist: false };
@@ -76,7 +73,6 @@ async function loggedOnDate({
     console.log("no date provided");
     return null;
   }
-  console.log("checking date: ", date);
 
   const user = await ctx.prisma.habit.findFirst({
     where: { id: hid },
@@ -96,8 +92,6 @@ async function loggedOnDate({
   const utcStart = zonedTimeToUtc(startOfLocalDay, timezone);
   const utcEnd = zonedTimeToUtc(endOfLocalDay, timezone);
 
-  console.log("converted to: ", { utcStart, utcEnd });
-
   const log = await ctx.prisma.habitLog.findFirst({
     where: {
       habitId: hid,
@@ -107,9 +101,6 @@ async function loggedOnDate({
       },
     },
   });
-
-  console.log("log is", log);
-  console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 
   return log
     ? { logged: log.completed, logId: log.id, logExist: true }
