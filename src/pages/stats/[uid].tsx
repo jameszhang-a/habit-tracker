@@ -11,6 +11,7 @@ import { api } from "@/utils/api";
 
 import type { Habits } from "@/types";
 import { StatsContextProvider } from "@/context/StatsContext";
+import WeeklyCompletionChart from "@/components/Charts/WeeklyCompletionChart";
 
 const habitAPI = api.habit;
 const statsAPI = api.stats;
@@ -93,6 +94,8 @@ const Stats: NextPage = () => {
                         {week.startDate.toLocaleDateString()}: {week.count}
                       </div>
                     ))}
+
+                    <WeeklyCompletionChart data={weeklyRes} />
                   </TabsContent>
                 ))}
               </div>
