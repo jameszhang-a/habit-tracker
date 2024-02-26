@@ -12,6 +12,13 @@ import Refresh from "@/components/Refresh";
 import TrackerBackground from "@/components/TrackerBackground";
 import { DatePicker2 } from "@/components/ui/datepicker";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { PetsContainer } from "@/components/Pets/PetsContainer";
+
+import {
   ClipboardDocumentCheckIcon,
   ClipboardDocumentIcon,
   CodeBracketSquareIcon,
@@ -27,16 +34,6 @@ import { type NextPage } from "next";
 
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { useTime } from "@/hooks/useTime";
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
-
-import cat1 from "public/cats/cat01_gifs/cat01_walk_8fps.gif";
-import { Pets } from "@/components/Pets/Pets";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 
 const habitAPI = api.habit;
 
@@ -182,6 +179,7 @@ SN_End: ${!!serverTime ? serverTime.newDayEnd.toISOString() : "undefined"}
               {slides}
             </Carousel>
             <Refresh />
+            {/* Debug info popover */}
             <Popover>
               <PopoverTrigger asChild>
                 <button className="align-center absolute bottom-3 right-11 flex grow justify-center rounded-md border border-input bg-background/[.2] p-1 align-middle hover:bg-accent hover:text-accent-foreground">
@@ -215,9 +213,12 @@ SN_End: ${!!serverTime ? serverTime.newDayEnd.toISOString() : "undefined"}
                 </CopyButton>
               </PopoverContent>
             </Popover>
-            <div className="absolute bottom-0 right-0 -z-50 h-[100%] w-[100%]">
-              <Pets />
-            </div>
+
+            <PetsContainer />
+            {/* <div className="">
+              <Pets name="cat5" />
+              <Cat name="cat1" id="1" onClick={() => console.log("onClick")} />
+            </div> */}
             {/* <EllipsisHorizontalIcon className="h-6 w-6 cursor-pointer rounded-l text-gray-500 hover:border hover:border-slate-200 hover:bg-[#f4f5f6]/60 hover:shadow-inner" /> */}
           </TrackerBackground>
         </TrackerContextProvider>
