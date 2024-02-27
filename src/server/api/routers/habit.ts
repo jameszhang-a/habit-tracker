@@ -25,6 +25,21 @@ export async function getUserTimezoneOffsetFromHid(
   return getTimezoneOffset(timezone);
 }
 
+export async function getUserTime(hid: string) {
+  const ctx = createInnerTRPCContext({ session: null });
+
+  const res = await ctx.prisma.habit.findFirst({
+    where: { id: hid },
+    select: { user: true },
+  });
+
+  const timezone = !res ? "America/New_York" : res.user.timezone;
+
+  return (date: Date) => {
+    return utcToZonedTime(date, timezone);
+  };
+}
+
 type LoggedOnDateInput = {
   hid: string;
   date?: Date;
@@ -53,7 +68,6 @@ async function loggedOnDate({
   const ctx = createInnerTRPCContext({ session: null });
 
   if (startTime && endTime) {
-    console.log("checking start and time: ", { startTime, endTime });
     const log = await ctx.prisma.habitLog.findFirst({
       where: {
         habitId: hid,

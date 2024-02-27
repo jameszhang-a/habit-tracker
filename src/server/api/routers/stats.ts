@@ -9,6 +9,7 @@ import {
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { addMilliseconds, subDays, subMilliseconds } from "date-fns";
 import { getTimezoneOffset, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
+import { getUserTime } from "./habit";
 
 export const statsRouter = createTRPCRouter({
   /**
@@ -134,6 +135,7 @@ export const statsRouter = createTRPCRouter({
     .input(z.object({ hid: z.string().array() }))
     .query(async ({ ctx, input }) => {
       const { hid } = input;
+      const getLocalTime = await getUserTime(hid[0] ?? "");
 
       const res: { [key: string]: number[] } = {};
 
@@ -150,7 +152,7 @@ export const statsRouter = createTRPCRouter({
 
         for (const log of logs) {
           // Get the day of the week (0-6) where 0 is monday and 6 is sunday.
-          const day = (log.date.getDay() + 6) % 7;
+          const day = (getLocalTime(log.date).getDay() + 6) % 7;
 
           data[day]++;
         }
