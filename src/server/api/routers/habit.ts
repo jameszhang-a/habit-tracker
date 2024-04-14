@@ -7,7 +7,7 @@ import {
   protectedProcedure,
   publicProcedure,
 } from "../trpc";
-import { getTimezoneOffset, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
+import { getTimezoneOffset, toZonedTime, fromZonedTime } from "date-fns-tz";
 import { endOfDay, startOfDay } from "date-fns";
 
 export async function getUserTimezoneOffsetFromHid(
@@ -36,7 +36,7 @@ export async function getUserTime(hid: string) {
   const timezone = !res ? "America/New_York" : res.user.timezone;
 
   return (date: Date) => {
-    return utcToZonedTime(date, timezone);
+    return toZonedTime(date, timezone);
   };
 }
 
@@ -96,15 +96,15 @@ async function loggedOnDate({
   const timezone = !user ? "America/New_York" : user.user.timezone;
 
   // Convert the UTC date to the user's local time zone
-  const localDate = utcToZonedTime(date, timezone);
+  const localDate = toZonedTime(date, timezone);
 
   // Determine the start and end of the day in the user's local time zone
   const startOfLocalDay = startOfDay(localDate);
   const endOfLocalDay = endOfDay(localDate);
 
   // Convert these times back to UTC
-  const utcStart = zonedTimeToUtc(startOfLocalDay, timezone);
-  const utcEnd = zonedTimeToUtc(endOfLocalDay, timezone);
+  const utcStart = fromZonedTime(startOfLocalDay, timezone);
+  const utcEnd = fromZonedTime(endOfLocalDay, timezone);
 
   const log = await ctx.prisma.habitLog.findFirst({
     where: {

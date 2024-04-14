@@ -8,7 +8,7 @@ import {
 
 import { createTRPCRouter, publicProcedure } from "../trpc";
 import { addMilliseconds, subDays, subMilliseconds } from "date-fns";
-import { getTimezoneOffset, utcToZonedTime, zonedTimeToUtc } from "date-fns-tz";
+import { getTimezoneOffset, toZonedTime, fromZonedTime } from "date-fns-tz";
 import { getUserTime } from "./habit";
 
 export const statsRouter = createTRPCRouter({
@@ -180,8 +180,8 @@ export const statsRouter = createTRPCRouter({
 
       const currDate = new Date();
 
-      const toUTC = zonedTimeToUtc(currDate, timezone);
-      const toLoc = utcToZonedTime(currDate, timezone);
+      const toUTC = fromZonedTime(currDate, timezone);
+      const toLoc = toZonedTime(currDate, timezone);
       const diff = getTimezoneOffset(timezone);
       const newDate = addMilliseconds(currDate, diff);
 
