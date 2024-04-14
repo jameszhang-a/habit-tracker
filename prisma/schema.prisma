@@ -84,13 +84,14 @@ model Habit {
 }
 
 model HabitLog {
-    id        String   @id @default(cuid())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
-    habitId   String
-    date      DateTime
-    completed Boolean  @default(false)
+    id          String   @id @default(cuid())
+    createdAt   DateTime @default(now())
+    createdAtV2 DateTime @default(now())
+    updatedAt   DateTime @updatedAt
+    habit       Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+    habitId     String
+    date        DateTime
+    completed   Boolean  @default(false)
 
     weekKey String @default("")
 

@@ -12,6 +12,8 @@
 /prisma/db.sqlite
 /prisma/db.sqlite-journal
 /prisma/*.db
+migration_lock.toml
+*.db-journal
 
 # next.js
 /.next/
@@ -24,6 +26,7 @@ next-env.d.ts
 # misc
 .DS_Store
 *.pem
+.temp_files
 
 # debug
 npm-debug.log*
