@@ -6,7 +6,10 @@
 
 
 
-Keep track of your habits and goals with a custom [Notion](https://www.notion.so/) widget.
+## Keep track of your habits and goals with a custom [Notion](https://www.notion.so/) widget.
+
+![CleanShot 2024-09-04 at 23 28 45@2x](https://github.com/user-attachments/assets/8d9ac144-3108-4823-887a-a03898f925bd)
+
 
 ## Features
 
